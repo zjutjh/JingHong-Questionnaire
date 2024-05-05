@@ -1,7 +1,7 @@
 import axios, { type AxiosRequestConfig } from 'axios'
 
 const axiosInstance = axios.create({
-  baseURL:"https://phlin.top/",
+  baseURL:"https://phlin.love",
   timeout: 10000,
 })
 

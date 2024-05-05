@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
-// import useExampleStore from "./service/exampleStore";
+ import useLoginStore from "./service/loginStore";
 
 export const useMainStore = defineStore("main", () => {
   return {
-    // useExampleStore,
+     useLoginStore,
   };
 },{ persist: true });
