@@ -36,7 +36,7 @@
         <span>
           <select class="select-xs w-5 h-5">
             <option disabled selected>选择位数</option>
-            <option v-for="item in 15">{{ item }}</option>
+            <option v-for="item in 15" >{{ item }}</option>
           </select>
           位数</span>
       </div>
