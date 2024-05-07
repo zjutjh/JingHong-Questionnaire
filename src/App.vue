@@ -15,7 +15,7 @@
     </div>
   </div>
     <router-view v-slot="{ Component }">
-      <transition name="fade">
+      <transition name="fade" mode="out-in">
         <component :is="Component" />
       </transition>
     </router-view>
@@ -41,7 +41,7 @@ const loginStore = useMainStore().useLoginStore();
   opacity: 0;
   transform: translateY(8px); /* 初始状态下下移 */
 }
-
+.fade-leave-from,
 .fade-enter-to {
   opacity: 1; /* 进入结束时透明度变为 1 */
   transform: translateY(0); /* 进入结束时上移至原位置 */
