@@ -5,6 +5,7 @@ const axiosInstance = axios.create({
   timeout: 10000,
 })
 
+
 const request = <ResponseType = unknown>(
   url: string,
   options?: AxiosRequestConfig<unknown>,
