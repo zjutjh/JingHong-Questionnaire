@@ -3,6 +3,7 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{vue,ts}",
+    "./src/**/**/*.{vue,ts}",
   ],
   theme: {
     spacing: Array.from({ length: 1000 }).reduce((map, _, index) => {
