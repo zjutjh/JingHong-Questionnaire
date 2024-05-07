@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { 
 login,
 home,
+detailInfo,
 } from "@/pages";
 // import pinia from "@/stores/createPinia";
 // import { useMainStore } from "@/stores";
@@ -18,6 +19,11 @@ const router = createRouter({
       path: "/Login",
       name: "login",
       component: login
+    },
+    {
+      path: "/DetailInfo",
+      name: "detailInfo",
+      component: detailInfo
     },
   ]
 });

@@ -4,11 +4,12 @@ import axios, { type AxiosRequestConfig } from 'axios'
 //自动存储cookie
 
 const axiosInstance = axios.create({
-  baseURL:"https://phlin.love",
+  baseURL:"/api",
   timeout: 10000,
 })
 
 axiosInstance.defaults.withCredentials = true;
+
 
 const request = <ResponseType = unknown>(
   url: string,

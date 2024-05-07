@@ -22,8 +22,8 @@
       </div>
       </div>
       <div class="flex justify-evenly items-center mb-20 ">
-        <el-button class="shadow-lg  hover:-translate-y-1 transform duration-800" size="large" type="success" @click="send">登陆</el-button>
-        <el-button class="shadow-lg hover:-translate-y-1 transform duration-800" size="large" type="danger" @click="clear">清空</el-button>
+        <el-button class="shadow-lg  hover:-translate-y-1 transform duration-800" size="large" type="success" @click="send" >登陆</el-button>
+        <el-button class="shadow-lg hover:-translate-y-1 transform duration-800" size="large" type="danger" @click="clear" >清空</el-button>
       </div>
     </div>
   </div>
@@ -87,8 +87,6 @@ const clear = () => {
   --tw-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
-
-
 
 
 </style>
