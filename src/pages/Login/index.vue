@@ -47,7 +47,7 @@ const send = () => {
     username:username.value,
     password:password.value
   }),{
-    onSuccess(res){
+    onSuccess(res: any){
       console.log(res)
       if(res.code === 200) {
         ElNotification.success('登陆成功');
