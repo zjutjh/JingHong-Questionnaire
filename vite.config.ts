@@ -12,6 +12,15 @@ export default defineConfig({
     vueJsx(),
     VueDevTools(),
   ],
+  server:{
+    proxy:{
+      '/api':{
+        target:"https://phlin.love",
+        changeOrigin: true,
+        rewrite:(path) => path.replace(/^\/api/,'')
+      }
+    }
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
