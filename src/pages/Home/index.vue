@@ -1,7 +1,7 @@
 <template>
   <div class="p-40 flex">
     <div class="basis-1/4 p-20 pl-0 flex justify-center gap-10">
-      <div class="btn btn-success" style="width: 80%;">
+      <div class="btn btn-success" style="width: 80%;" @click="() => router.push('/DetailInfo')">
         + 新建问卷
       </div>
     </div>
@@ -22,6 +22,7 @@ import questionnaireItem from './questionnaireItem.vue';
 import { useRequest } from 'vue-hooks-plus';
 import { getQuestionnaireListAPI } from '@/apis';
 import { ref } from 'vue';
+import router from '@/router';
 
 const pageSize = 4;
 const totalPageNum = ref(0);

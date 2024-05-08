@@ -4,18 +4,18 @@
     <div class="relative h-30">
       <div class="absolute left-0">{{ "标题:" + title }}</div>
       <div class="absolute right-5 flex flex-row gap-5">
-        <div class="btn btn-sm btn-ghost">查看数据</div>
+        <div class="btn btn-sm btn-ghost" @click="() => router.push('/DetailInfo')">查看数据</div>
         <div class="pt-4">{{ "id:" + idName }}</div>
       </div>
     </div>
     <div class="relative h-30">
       <div class="absolute left-0 flex flex-row gap-5">
-        <div class="btn btn-sm btn-ghost">编辑/设计问卷</div>
+        <div class="btn btn-sm btn-ghost" @click="() => router.push('/DetailInfo')">编辑/设计问卷</div>
         <div class="btn btn-sm btn-ghost" @click="() => showModal('statusConfirmModal'+idName)">{{ status===1 ? "发布问卷" : "下架问卷" }}</div>
         <div class="btn btn-sm btn-ghost" @click="() => showModal('delConfirmModal'+idName)">删除问卷</div>
       </div>
       <div class="absolute right-5 flex flex-row gap-5">
-        <div class="btn btn-sm btn-ghost">复制分享链接</div>
+        <div v-if="status===2" class="btn btn-sm btn-ghost" @click="() => copyShareCode()">复制分享链接</div>
         <div class="pt-4">{{ "状态:" + (status===1 ? "草稿" : "已发布") }}</div>
       </div>
     </div>
@@ -41,6 +41,7 @@ import { modal, showModal } from '@/components';
 import { updateQuestionnaireStatusAPI, delQuestionnaireAPI } from '@/apis';
 import { useRequest } from 'vue-hooks-plus';
 import { ElNotification } from 'element-plus';
+import router from '@/router';
 
 const props = defineProps<{
   title: string,
@@ -80,6 +81,10 @@ const delQuestionnaire = (id: number) => {
       }
     }
   })
+}
+
+const copyShareCode = () => {
+  navigator.clipboard.writeText("this is an url");
 }
 
 </script>
