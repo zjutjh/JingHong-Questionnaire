@@ -1,13 +1,17 @@
 <template>
   <div class="p-40 flex">
-    <div class="basis-1/4 pt-30 px-60 flex justify-center">
-      <div class="btn btn-success w-full">
+    <div class="basis-1/4 p-20 pl-0 flex justify-center gap-10">
+      <div class="btn btn-success" style="width: 80%;">
         + 新建问卷
       </div>
     </div>
-    <div class="basis-3/4">
+    <div class="basis-3/4 flex flex-col gap-8">
       <questionnaireItem
       v-for="item in questionnaireList"
+      :title="item.title"
+      :id-name="item.id"
+      :status="item.status"
+      @updateList="updateList"
       />
     </div>
   </div>
@@ -39,5 +43,9 @@ const getQuestionnaireList = (pageNum: number, pageSize: number, title?: string)
   })
 }
 getQuestionnaireList(1, pageSize);
+
+const updateList = () => {
+  getQuestionnaireList(1, pageSize);
+}
 
 </script>
