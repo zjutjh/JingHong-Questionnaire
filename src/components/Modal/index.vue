@@ -6,6 +6,9 @@
 ```template
 <modal modal-id="idName">
   // slot
+  <template #action>
+    // slot action
+  </template>
 </modal>
 ```
 ```ts
