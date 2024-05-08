@@ -37,6 +37,7 @@ import {useRequest} from "vue-hooks-plus";
 import {loginAPI} from "@/apis";
 import {ElNotification} from "element-plus";
 import {useMainStore} from "@/stores";
+import router from "@/router";
 
 const password = ref<string>('')
 const username = ref<string>('')
@@ -52,6 +53,7 @@ const send = () => {
       if(res.code === 200) {
         ElNotification.success('登陆成功');
         loginStore.setLogin(true)
+        router.push('/')
       }else{
         ElNotification.error(res.msg);
       }

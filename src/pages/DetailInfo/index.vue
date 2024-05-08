@@ -55,20 +55,65 @@
     <button class="btn btn-accent ">添加题目</button>
     </div>
   </div>
-  <div class="bg-gray-200 w-700 h-400 p-40 shadow-lg rounded-2xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700">
-      <div class="flex items-end justify-center gap-90"><span class="text-4xl">标题:xxxxxx </span><span class="text-xl ">id:</span></div>
+  <div class="bg-gray-200 w-700  p-40 shadow-lg rounded-2xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700">
+      <div class="flex items-end justify-center gap-90"><span class="text-4xl">标题: {{ title }}</span><span class="text-xl ">id: {{ id }}</span></div>
     <div class="divider"></div>
+    <div class="bg-gray-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700" v-if="question">
+      <div >
+        <span class="flex justify-between"><span>{{ question[0].id }}.{{ question[0].subject }}</span><span class="flex gap-10 justify-top"><input type="checkbox" :name=0  class="checkbox-sm"/><span>选答</span></span></span>
+        <div class="flex-col p-20">
+          <div v-for="item in question[0].options" class="flex items-center gap-10"><input  type="radio" :name=item class="radio-sm " /> {{ item.content }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="bg-gray-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
+      <span class="flex justify-between"><span>{{ question[1].id }}.{{ question[1].subject }}</span><span class="flex gap-10 justify-top"><input type="checkbox" :name=1  class="checkbox-sm"/><span>选答</span></span></span>
+      <div class="flex-col p-20">
+        <div v-for="item in question[1].options" class="flex items-center gap-10"><input  type="radio" :name=1 class="radio-sm " /> {{ item.content }}</div>
+      </div>
+    </div>
   </div>
-
 </div>
 
 </template>
 
 <script setup lang="ts">
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
+import {useRequest} from "vue-hooks-plus";
+import {getQuestionnaireDetailAPI} from "@/apis";
+import {ElNotification} from "element-plus";
+import router from "@/router";
+import {data} from "autoprefixer";
 
 const selectedOption = ref('select')
-const selectedNumber = ref(1)
+const selectedNumber = ref()
+const formData = ref()
+const question = ref()
+const title = ref()
+const id = ref<number>(2)
+onMounted(() => {
+  getInfo()
+})
+const getInfo = () => {
+  useRequest(() => getQuestionnaireDetailAPI({
+    id:id.value
+  }),{
+    onSuccess(res){
+      if(res.code === 200) {
+        console.log(res.data)
+        formData.value = res.data
+        title.value = res.data.title
+        question.value = res.data.questions
+        console.log(question.value)
+      }else{
+        ElNotification.error(res.msg);
+      }
+    },
+    onError(e){
+      ElNotification.error('获取失败，请重试' + e);
+    }
+  })
+}
 
 </script>
 
