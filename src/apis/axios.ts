@@ -6,10 +6,10 @@ import axios, { type AxiosRequestConfig } from 'axios'
 const axiosInstance = axios.create({
   baseURL:"/api",
   timeout: 10000,
+  withCredentials: true
 })
 
 axiosInstance.defaults.withCredentials = true;
-
 
 const request = <ResponseType = unknown>(
   url: string,
