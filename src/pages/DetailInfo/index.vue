@@ -52,27 +52,50 @@
     </div>
     </div>
     <div class="flex justify-center items-center ">
-    <button class="btn btn-accent ">添加题目</button>
+    <button class="btn btn-accent " @click="showModal('creatQuestion')">添加题目</button>
     </div>
   </div>
   <div class="bg-gray-200 w-700  p-40 shadow-lg rounded-2xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700">
       <div class="flex items-end justify-center gap-90"><span class="text-4xl">标题: {{ title }}</span><span class="text-xl ">id: {{ id }}</span></div>
     <div class="divider"></div>
-    <div class="bg-gray-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700" v-if="question">
-      <div >
-        <span class="flex justify-between"><span>{{ question[0].id }}.{{ question[0].subject }}</span><span class="flex gap-10 justify-top"><input type="checkbox" :name=0  class="checkbox-sm"/><span>选答</span></span></span>
+    <div class="overflow-y-auto h-600">
+      <div v-for="q in question" v-if="question && question.length > 0" >
+    <div class="bg-gray-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30" v-if="q.question_type === 1">
+        <span class="flex justify-between"><span class="text-xl">{{ q.id }}.{{ q.subject }}</span><span class="flex gap-10 justify-top"><span>选答</span><input type="checkbox" :name=q.id  class="checkbox-sm"/></span></span>
         <div class="flex-col p-20">
-          <div v-for="item in question[0].options" class="flex items-center gap-10"><input  type="radio" :name=item class="radio-sm " /> {{ item.content }}</div>
+          <div v-for="item in q.options" class="flex items-center gap-10"><input  type="radio" :name=item class="radio-sm my-5" /> {{ item.content }}</div>
+        </div>
+    </div>
+        <div class="bg-gray-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30" v-if="q.question_type === 2">
+          <span class="flex justify-between"><span class="text-xl">{{ q.id }}.{{ q.subject }}</span><span class="flex gap-10 justify-top"><span>选答</span><input type="checkbox" :name=q.id  class="checkbox-sm"/></span></span>
+          <div class="flex-col p-20">
+            <div v-for="item in q.options" class="flex items-center gap-10"><input  type="checkbox" :name=item class="checkbox-sm my-5" /> {{ item.content }}</div>
+          </div>
+        </div>
+        <div class="bg-gray-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30" v-if="q.question_type === 3">
+          <span class="flex justify-between"><span>{{ q.id }}.{{ q.subject }}</span><span class="flex gap-10 justify-top"><span>选答</span><input type="checkbox" :name=q.id  class="checkbox-sm"/></span></span>
+          <div class="flex-col p-20">
+            <input type="text" placeholder="Type here" class="input input-bordered w-full shadow-2xl" />
+          </div>
+        </div>
+        <div class="bg-gray-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30" v-if="q.question_type === 4">
+          <span class="flex justify-between"><span>{{ q.id }}.{{ q.subject }}</span><span class="flex gap-10 justify-top"><span>选答</span><input type="checkbox" :name=q.id  class="checkbox-sm"/></span></span>
+          <div class="flex-col p-20">
+            <textarea placeholder="Type here" class="textarea textarea-bordered shadow-2xl w-full h-100" />
+          </div>
+        </div>
+        <div class="bg-gray-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30" v-if="q.question_type === 5">
+          <span class="flex justify-between"><span>{{ q.id }}.{{ q.subject }}</span><span class="flex gap-10 justify-top"><span>选答</span><input type="checkbox" :name=q.id  class="checkbox-sm"/></span></span>
+          <div class="flex-col p-20">
+            <input type="file" class="file-input file-input-bordered w-full max-w-xs shadow-2xl" />
+          </div>
         </div>
       </div>
     </div>
-    <div class="bg-gray-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
-      <span class="flex justify-between"><span>{{ question[1].id }}.{{ question[1].subject }}</span><span class="flex gap-10 justify-top"><input type="checkbox" :name=1  class="checkbox-sm"/><span>选答</span></span></span>
-      <div class="flex-col p-20">
-        <div v-for="item in question[1].options" class="flex items-center gap-10"><input  type="radio" :name=1 class="radio-sm " /> {{ item.content }}</div>
-      </div>
-    </div>
   </div>
+  <modal :modal-id="'creatQuestion'">
+
+  </modal>
 </div>
 
 </template>
@@ -82,15 +105,14 @@ import {onMounted, ref, watch} from "vue";
 import {useRequest} from "vue-hooks-plus";
 import {getQuestionnaireDetailAPI} from "@/apis";
 import {ElNotification} from "element-plus";
-import router from "@/router";
-import {data} from "autoprefixer";
+import { modal, showModal } from '@/components';
 
 const selectedOption = ref('select')
-const selectedNumber = ref()
+const selectedNumber = ref(1)
 const formData = ref()
-const question = ref()
+const question = ref([])
 const title = ref()
-const id = ref<number>(2)
+const id = ref<number>(3)
 onMounted(() => {
   getInfo()
 })
