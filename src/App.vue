@@ -1,5 +1,5 @@
 <template>
-  <div class=" overflow-y-scroll h-screen">
+  <div class=" overflow-y-scroll h-screen bg-indigo-50">
   <div class="navbar bg-base-100 shadow-lg">
     <div class="flex-1">
       <a class="btn btn-ghost text-xl">JH Questionnaire Survey System</a>
@@ -16,11 +16,12 @@
   </div>
     <router-view v-slot="{ Component }">
       <transition name="fade" mode="out-in">
-        <component :is="Component" />
+        <component :is="Component" class="mt-90"/>
       </transition>
     </router-view>
     </div>
 </template>
+
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 import router from "@/router";

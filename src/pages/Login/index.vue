@@ -7,7 +7,7 @@
   <el-divider direction="vertical" ></el-divider>
   </div>
   <div class="flex justify-start items-center w-1/2">
-    <div class="shadow-lg h-auto p-20 bg-gray-100 rounded-3xl w-10/12 items-center justify-center hover:shadow-2xl hover:-translate-y-2 transform duration-700">
+    <div class="shadow-lg h-auto p-20 bg-indigo-100 rounded-3xl w-10/12 items-center justify-center hover:shadow-2xl hover:-translate-y-2 transform duration-700">
       <div class="flex justify-center items-center mt-15">
     <span class="text-4xl font-medium my-10">精弘⽹络问卷系统</span>
       </div>
