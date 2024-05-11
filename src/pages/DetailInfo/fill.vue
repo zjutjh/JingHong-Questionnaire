@@ -15,7 +15,7 @@
     </div>
     <div class="divider"></div>
     <div class="flex-col p-5 overflow-y-auto h-60">
-     <input class=" input input-bordered shadow-md w-full"/>
+     <input class=" input input-bordered shadow-md w-full" :placeholder=pal />
     </div>
     <div class="divider"></div>
     <div class="mt-20 flex justify-evenly items-center ">
@@ -26,18 +26,28 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {modal, showModal} from "@/components";
 
 const props = defineProps<{
   serial_num: number,
   title?: string,
+  reg?: string
   }>()
 const emit = defineEmits<{
   (e:'on-click'):void
 }>()
 const title = ref<string>(props.title? props.title : '')
-
+const pal = computed(() => {
+  if(props.reg === '^1[3456789]\\d{9}$') return `电话`
+  else if(props.reg === '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$') return `邮箱`
+  else if(props.reg === '^\\d{12}$') return `学号`
+  else if (props.reg === '') return `无限制`
+  else {
+    const num = props.reg[7]
+    return num + `位数`
+  }
+})
 
 </script>
 

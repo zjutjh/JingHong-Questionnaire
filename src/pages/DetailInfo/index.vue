@@ -5,43 +5,56 @@
     <div class="p-20">
     <div class="flex-col justify-center items-center ">
     <div class="flex gap-10 my-5">
-    <input type="radio" name="radio-1"  class="radio-sm" value="oneSelect" v-model="selectedOption" checked/>
+    <input type="radio" name="radio-1"  class="radio-sm" :value=1 v-model="selectedOption" checked/>
       <span>单选</span>
     </div>
     <div class="flex gap-10 my-5">
-      <input type="radio" name="radio-1"  class="radio-sm" value="select" v-model="selectedOption"/>
+      <input type="radio" name="radio-1"  class="radio-sm" :value=2 v-model="selectedOption"/>
       <span>多选</span>
     </div>
+      <div class="flex gap-10 my-5">
+        <input type="radio" name="radio-1" class="radio-sm" :value=4 v-model="selectedOption"/>
+        <span>论述</span>
+      </div>
+      <div class="flex gap-10 my-5">
+        <input type="radio" name="radio-1" class="radio-sm" :value=5 v-model="selectedOption"/>
+        <span>文件</span>
+      </div>
     <div class="flex gap-10 my-5">
-      <input type="radio" name="radio-1" class="radio-sm" value="fill" v-model="selectedOption"/>
+      <input type="radio" name="radio-1" class="radio-sm" :value=3 v-model="selectedOption"/>
       <span>填空</span>
     </div>
     </div>
-      <div v-show="selectedOption === 'fill'">
+      <div v-show="selectedOption === 3">
       <div class="divider"></div>
+        <div class="flex gap-10 my-5">
+          <input type="radio" name="radio-2" class="radio-sm" value="" v-model="reg"/>
+          <span>无限制</span>
+        </div>
       <div class="flex gap-10 my-5">
-        <input type="radio" name="radio-2" class="radio-sm" :disabled="selectedOption === 'select'" />
+        <input type="radio" name="radio-2" class="radio-sm" value="^1[3456789]\d{9}$" v-model="reg"/>
         <span>手机号</span>
       </div>
       <div class="flex gap-10 my-5">
-        <input type="radio" name="radio-2" class="radio-sm" :disabled="selectedOption === 'select'"/>
+        <input type="radio" name="radio-2" class="radio-sm" value="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" v-model="reg"/>
         <span>邮箱</span>
       </div>
       <div class="flex gap-10 my-5">
-        <input type="radio" name="radio-2" class="radio-sm" :disabled="selectedOption === 'select'"/>
+        <input type="radio" name="radio-2" class="radio-sm" value="^\d{12}$" v-model="reg"/>
         <span>学号</span>
       </div>
       <div class="flex gap-10 my-5">
-        <input type="radio" name="radio-2" class="radio-sm" :disabled="selectedOption === 'select'"/>
+        <input type="radio" name="radio-2" class="radio-sm" :value=regNum v-model="reg" />
         <span>
           <el-select
               v-model="selectedNumber"
               placeholder="Select"
               size="small"
               style="width: 50px"
+              @change="updateInputPattern"
           >
       <el-option
-          v-for="item in 15"
+          v-for="item in 9"
           :key="item"
           :label="item"
           :value="item"
@@ -69,7 +82,7 @@
           </checkbox>
         </div>
         <div v-if="q.question_type === 3">
-          <fill :title="q.subject"  :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)">
+          <fill :title="q.subject"  :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num) " :reg="q.reg" >
           </fill>
         </div>
         <div v-if="q.question_type === 4">
@@ -88,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {useRequest} from "vue-hooks-plus";
 import {getQuestionnaireDetailAPI} from "@/apis";
 import {ElNotification} from "element-plus";
@@ -99,16 +112,31 @@ import Fill from "@/pages/DetailInfo/fill.vue";
 import TextArea from "@/pages/DetailInfo/textArea.vue";
 import File from "@/pages/DetailInfo/file.vue";
 
-const selectedOption = ref('select')
+const selectedOption = ref(1)
 const selectedNumber = ref(1)
 const formData = ref()
 const question = ref([])
 const title = ref()
 const submitData = ref()
 const id = ref<number>(3)
+const reg = ref<string>('')
+const regNum = ref("^[0-9]{1}$");
+
 onMounted(() => {
   getInfo()
 })
+
+// 计算属性：动态生成正则表达式
+const inputPattern = computed(() => {
+  return `^[0-9]{${selectedNumber.value}}$`;
+});
+
+// 监听选项变化，更新输入框的验证规则
+const updateInputPattern = () => {
+  regNum.value = inputPattern.value
+  reg.value = inputPattern.value
+};
+
 const getInfo = () => {
   useRequest(() => getQuestionnaireDetailAPI({
     id:id.value
@@ -138,14 +166,14 @@ const getInfo = () => {
 }
 
 const addQuestion = () => {
-  console.log(1)
+  console.log(reg.value)
   question.value.push({
     description: '',
     img: '',
     options: [],
     other_option: '',
-    question_type: 1,
-    reg: '',
+    question_type: selectedOption.value,
+    reg: reg.value,
     required: false,
     serial_num: question.value.length + 1,
     subject: '',
@@ -153,6 +181,10 @@ const addQuestion = () => {
     unique: false
   })
 }
+const cleanReg = () => {
+  reg.value = ''
+}
+watch(selectedOption,cleanReg)
 
 const deleteQuestion = (serial_num:number) => {
   console.log(serial_num)

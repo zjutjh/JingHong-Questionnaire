@@ -14,7 +14,8 @@
       </div>
     </div>
     <div class="divider"></div>
-    <div class="flex-col p-5 overflow-y-auto h-180">
+    <span class="flex items-center justify-end gap-10"><span>有"其他"选项</span><input type="checkbox" :name=-1  class="checkbox-sm"/></span>
+    <div class="flex-col p-5 overflow-y-auto h-180 mt-10">
       <div v-for="item in options" class="flex items-center gap-10 my-5"><input  type="checkbox" :name=item class="checkbox-md my-5 " /> <input  type="text" :name=item class="input input-bordered h-40 shadow-md" placeholder="option" v-model="item.content"/><button class="btn btn-error btn-sm shadow-md" @click="deleteOption(item.serial_num)">删除</button></div>
     </div>
     <div class="divider"></div>
