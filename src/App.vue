@@ -16,7 +16,7 @@
   </div>
     <router-view v-slot="{ Component }">
       <transition name="fade" mode="out-in">
-        <component :is="Component" class="mt-90"/>
+        <component :is="Component" class="mt-60"/>
       </transition>
     </router-view>
     </div>

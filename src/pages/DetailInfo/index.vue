@@ -1,6 +1,6 @@
 <template>
 <div class="flex justify-center items-start gap-130 h-screen ">
-  <div class="bg-gray-200 p-30 rounded-2xl shadow-lg w-220 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700">
+  <div class="bg-gray-200 p-30 rounded-2xl shadow-lg w-220 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
 <div class="text-2xl">添加问卷题目</div>
     <div class="p-20">
     <div class="flex-col justify-center items-center ">
@@ -68,33 +68,39 @@
     <button class="btn btn-accent " @click="addQuestion">添加题目</button>
     </div>
   </div>
+  <div class="p-40">
   <div class="bg-gray-200 w-700  p-40 shadow-lg rounded-2xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700">
       <div class="flex items-end justify-center gap-90"><span class="text-4xl">标题: {{ title }}</span><span class="text-xl ">id: {{ id }}</span></div>
     <div class="divider"></div>
     <div class="overflow-y-auto h-600" >
       <div  v-for="q in question" v-if="question && question.length > 0"  >
     <div v-if="q.question_type === 1">
-        <radio :title="q.subject" :options="q.options" :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)">
+        <radio :title="q.subject" :options="q.options" :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique">
         </radio>
     </div>
         <div v-if="q.question_type === 2">
-          <checkbox :title="q.subject" :options="q.options" :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)">
+          <checkbox :title="q.subject" :options="q.options" :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" :unique="q.unique" :option-choose="!q.required" :other-option="q.other_option">
           </checkbox>
         </div>
         <div v-if="q.question_type === 3">
-          <fill :title="q.subject"  :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num) " :reg="q.reg" >
+          <fill :title="q.subject"  :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num) " :reg="q.reg" :unique="q.unique" :option-choose="!q.required">
           </fill>
         </div>
         <div v-if="q.question_type === 4">
-          <text-area :title="q.subject"  :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)">
+          <text-area :title="q.subject"  :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" :unique="q.unique" :option-choose="!q.required">
           </text-area>
         </div>
         <div v-if="q.question_type === 5">
-          <file :title="q.subject"  :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)">
+          <file :title="q.subject"  :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" :unique="q.unique" :option-choose="!q.required">
           </file>
         </div>
       </div>
     </div>
+    <div class="flex justify-center items-center gap-160 mt-20 ">
+      <button class="btn btn-success" @click="submit">保存更改</button>
+      <button class="btn btn-error" @click="dataReverse">放弃更改</button>
+    </div>
+  </div>
   </div>
 </div>
 
@@ -103,7 +109,7 @@
 <script setup lang="ts">
 import {computed, onMounted, ref, watch} from "vue";
 import {useRequest} from "vue-hooks-plus";
-import {getQuestionnaireDetailAPI} from "@/apis";
+import {getQuestionnaireDetailAPI, setQuestionnaireDetailAPI} from "@/apis";
 import {ElNotification} from "element-plus";
 import { modal, showModal } from '@/components';
 import Radio from "@/pages/DetailInfo/radio.vue";
@@ -118,7 +124,7 @@ const formData = ref()
 const question = ref([])
 const title = ref()
 const submitData = ref()
-const id = ref<number>(3)
+const id = ref<number>(6)
 const reg = ref<string>('')
 const regNum = ref("^[0-9]{1}$");
 
@@ -151,10 +157,9 @@ const getInfo = () => {
           });
         }
         formData.value = formDataCopy;
-        submitData.value = formData.value
+        submitData.value = JSON.parse(JSON.stringify(formData.value)); //深拷贝防止更改缓存数据formData
         title.value = res.data.title
         question.value = submitData.value.questions
-        console.log(submitData.value.questions)
       }else{
         ElNotification.error(res.msg);
       }
@@ -166,21 +171,21 @@ const getInfo = () => {
 }
 
 const addQuestion = () => {
-  console.log(reg.value)
   question.value.push({
     description: '',
     img: '',
     options: [],
-    other_option: '',
+    other_option: true,
     question_type: selectedOption.value,
     reg: reg.value,
     required: false,
     serial_num: question.value.length + 1,
     subject: '',
-    time: '',
-    unique: false
+    unique: true
   })
+  console.log(submitData.value)
 }
+
 const cleanReg = () => {
   reg.value = ''
 }
@@ -195,6 +200,31 @@ const deleteQuestion = (serial_num:number) => {
     }
   });
 }
+watch(question,(value) => {
+  question.value = value
+})
+
+const dataReverse = () => {
+  submitData.value = formData.value
+  question.value = formData.value.questions
+  console.log(question.value)
+  ElNotification.success('成功放弃修改')
+}
+const submit = () => {
+  useRequest(() => setQuestionnaireDetailAPI(submitData.value),{
+    onSuccess(res){
+      if(res.code === 200 && res.msg === 'OK'){
+        ElNotification.success('保存成功')
+      } else {
+        ElNotification.error(res.msg)
+      }
+    },
+    onError(e){
+      ElNotification.error(e)
+    }
+  })
+}
+
 
 </script>
 

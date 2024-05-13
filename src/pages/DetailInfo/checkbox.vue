@@ -6,15 +6,15 @@
       </span>
       <div class="flex-col justify-center items-center">
         <div class="flex gap-10 ">
-          <span>选答</span><input type="checkbox" :name=-1  class="checkbox-sm"/>
+          <span>选答</span><input type="checkbox" :name=-1  class="checkbox-sm" v-model="props.optionChoose" />
         </div>
         <div class="flex gap-10 ">
-          <span>唯一</span><input type="checkbox" :name=-1  class="checkbox-sm"/>
+          <span>唯一</span><input type="checkbox" :name=-1  class="checkbox-sm" v-model="props.unique"/>
         </div>
       </div>
     </div>
     <div class="divider"></div>
-    <span class="flex items-center justify-end gap-10"><span>有"其他"选项</span><input type="checkbox" :name=-1  class="checkbox-sm"/></span>
+    <span class="flex items-center justify-end gap-10"><span>有"其他"选项</span><input type="checkbox" :name=-1  class="checkbox-sm" v-model="props.otherOption"/></span>
     <div class="flex-col p-5 overflow-y-auto h-180 mt-10">
       <div v-for="item in options" class="flex items-center gap-10 my-5"><input  type="checkbox" :name=item class="checkbox-md my-5 " /> <input  type="text" :name=item class="input input-bordered h-40 shadow-md" placeholder="option" v-model="item.content"/><button class="btn btn-error btn-sm shadow-md" @click="deleteOption(item.serial_num)">删除</button></div>
     </div>
@@ -34,6 +34,9 @@ import {modal, showModal} from "@/components";
 const props = defineProps<{
   serial_num: number,
   title?: string,
+  optionChoose?: boolean
+  unique:boolean
+  otherOption:boolean,
   options?: {
     content: string;
     option_type: number;
