@@ -6,10 +6,10 @@
       </span>
       <div class="flex-col justify-center items-center">
         <div class="flex gap-10 ">
-          <span>选答</span><input type="checkbox" :name=-1  class="checkbox-sm"/>
+          <span>选答</span><input type="checkbox" :name=-1  class="checkbox-sm" v-model="props.optionChoose"/>
         </div>
         <div class="flex gap-10 ">
-          <span>唯一</span><input type="checkbox" :name=-1  class="checkbox-sm"/>
+          <span>唯一</span><input type="checkbox" :name=-1  class="checkbox-sm" v-model="props.unique"/>
         </div>
       </div>
     </div>
@@ -28,10 +28,13 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {modal, showModal} from "@/components";
+import {b} from "vite/dist/node/types.d-aGj9QkWt";
 
 const props = defineProps<{
   serial_num: number,
   title?: string,
+  optionChoose:boolean
+  unique:boolean
 }>()
 const emit = defineEmits<{
   (e:'on-click'):void
