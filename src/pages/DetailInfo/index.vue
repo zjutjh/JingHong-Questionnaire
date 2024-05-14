@@ -75,23 +75,23 @@
     <div class="overflow-y-auto h-600" >
       <div  v-for="q in question" v-if="question && question.length > 0"  >
     <div v-if="q.question_type === 1">
-        <radio :title="q.subject" :options="q.options" :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique">
+        <radio v-model:title="q.subject"  v-model:options="q.options" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description">
         </radio>
     </div>
         <div v-if="q.question_type === 2">
-          <checkbox :title="q.subject" :options="q.options" :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" :unique="q.unique" :option-choose="!q.required" :other-option="q.other_option">
+          <checkbox v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option">
           </checkbox>
         </div>
         <div v-if="q.question_type === 3">
-          <fill :title="q.subject"  :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num) " :reg="q.reg" :unique="q.unique" :option-choose="!q.required">
+          <fill v-model:title="q.subject"  v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num) " v-model:reg="q.reg" v-model:unique="q.unique" v-model:option-choose="q.required">
           </fill>
         </div>
         <div v-if="q.question_type === 4">
-          <text-area :title="q.subject"  :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" :unique="q.unique" :option-choose="!q.required">
+          <text-area v-model:title="q.subject"  v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required">
           </text-area>
         </div>
         <div v-if="q.question_type === 5">
-          <file :title="q.subject"  :serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" :unique="q.unique" :option-choose="!q.required">
+          <file v-model:title="q.subject"  v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required">
           </file>
         </div>
       </div>
@@ -107,30 +107,35 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, ref, watch} from "vue";
-import {useRequest} from "vue-hooks-plus";
-import {getQuestionnaireDetailAPI, setQuestionnaireDetailAPI} from "@/apis";
-import {ElNotification} from "element-plus";
-import { modal, showModal } from '@/components';
+import { computed, onMounted, ref, watch } from "vue";
+import { useRequest } from "vue-hooks-plus";
+import { getQuestionnaireDetailAPI, setQuestionnaireDetailAPI } from "@/apis";
+import { ElNotification } from "element-plus";
 import Radio from "@/pages/DetailInfo/radio.vue";
 import Checkbox from "@/pages/DetailInfo/checkbox.vue";
 import Fill from "@/pages/DetailInfo/fill.vue";
 import TextArea from "@/pages/DetailInfo/textArea.vue";
 import File from "@/pages/DetailInfo/file.vue";
+import radio from "@/pages/DetailInfo/radio.vue";
 
-const selectedOption = ref(1)
-const selectedNumber = ref(1)
-const formData = ref()
-const question = ref([])
-const title = ref()
-const submitData = ref()
-const id = ref<number>(6)
-const reg = ref<string>('')
+const selectedOption = ref(1);
+const selectedNumber = ref(1);
+const formData = ref();
+const question = ref([]);
+const title = ref();
+const submitData = ref();
+const id = ref<number>(6);
+const reg = ref<string>('');
 const regNum = ref("^[0-9]{1}$");
 
 onMounted(() => {
-  getInfo()
-})
+  getInfo();
+});
+
+// Deep copy function
+const deepCopy = (obj) => {
+  return JSON.parse(JSON.stringify(obj));
+};
 
 // 计算属性：动态生成正则表达式
 const inputPattern = computed(() => {
@@ -139,36 +144,34 @@ const inputPattern = computed(() => {
 
 // 监听选项变化，更新输入框的验证规则
 const updateInputPattern = () => {
-  regNum.value = inputPattern.value
-  reg.value = inputPattern.value
+  regNum.value = inputPattern.value;
+  reg.value = inputPattern.value;
 };
 
 const getInfo = () => {
-  useRequest(() => getQuestionnaireDetailAPI({
-    id:id.value
-  }),{
-    onSuccess(res){
-      if(res.code === 200) {
-        console.log(res.data)
-        const formDataCopy = { ...res.data };
+  useRequest(() => getQuestionnaireDetailAPI({ id: id.value }), {
+    onSuccess(res) {
+      if (res.code === 200) {
+        console.log(res.data);
+        const formDataCopy = deepCopy(res.data); // Use deep copy here
         if (formDataCopy.questions) {
-          formDataCopy.questions.forEach(item => {
+          formDataCopy.questions.forEach((item) => {
             delete item.id;
           });
         }
         formData.value = formDataCopy;
-        submitData.value = JSON.parse(JSON.stringify(formData.value)); //深拷贝防止更改缓存数据formData
-        title.value = res.data.title
-        question.value = submitData.value.questions
-      }else{
+        submitData.value = deepCopy(formData.value); // Deep copy to avoid reference issues
+        title.value = res.data.title;
+        question.value = submitData.value.questions;
+      } else {
         ElNotification.error(res.msg);
       }
     },
-    onError(e){
+    onError(e) {
       ElNotification.error('获取失败，请重试' + e);
-    }
-  })
-}
+    },
+  });
+};
 
 const addQuestion = () => {
   question.value.push({
@@ -181,36 +184,36 @@ const addQuestion = () => {
     required: false,
     serial_num: question.value.length + 1,
     subject: '',
-    unique: true
-  })
-  console.log(submitData.value)
-}
+    unique: true,
+  });
+};
 
 const cleanReg = () => {
-  reg.value = ''
-}
-watch(selectedOption,cleanReg)
+  reg.value = '';
+};
+watch(selectedOption, cleanReg);
 
-const deleteQuestion = (serial_num:number) => {
-  console.log(serial_num)
-  question.value = question.value.filter(item => item.serial_num !== serial_num)
+const deleteQuestion = (serial_num: number) => {
+  console.log(serial_num);
+  question.value = question.value.filter((item) => item.serial_num !== serial_num);
   question.value.forEach((item) => {
     if (item.serial_num > serial_num) {
       item.serial_num -= 1;
     }
   });
-}
-watch(question,(value) => {
-  question.value = value
-})
+};
 
 const dataReverse = () => {
-  submitData.value = formData.value
-  question.value = formData.value.questions
-  console.log(question.value)
-  ElNotification.success('成功放弃修改')
-}
+  submitData.value = deepCopy(formData.value);
+  question.value = deepCopy(formData.value.questions);
+  console.log(question.value);
+  ElNotification.success('成功放弃修改');
+};
+
 const submit = () => {
+  submitData.value.questions = question.value
+  console.log(question.value);
+  /*
   useRequest(() => setQuestionnaireDetailAPI(submitData.value),{
     onSuccess(res){
       if(res.code === 200 && res.msg === 'OK'){
@@ -222,12 +225,10 @@ const submit = () => {
     onError(e){
       ElNotification.error(e)
     }
-  })
-}
-
+  })*/
+};
 
 </script>
 
 <style scoped>
-
 </style>
