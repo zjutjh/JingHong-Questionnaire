@@ -1,113 +1,116 @@
 <template>
-<div class="flex justify-center items-start gap-130 h-screen ">
-  <div class="bg-gray-200 p-30 rounded-2xl shadow-lg w-220 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
-<div class="text-2xl">添加问卷题目</div>
-    <div class="p-20">
-    <div class="flex-col justify-center items-center ">
-    <div class="flex gap-10 my-5">
-    <input type="radio" name="radio-1"  class="radio-sm" :value=1 v-model="selectedOption" checked/>
-      <span>单选</span>
-    </div>
-    <div class="flex gap-10 my-5">
-      <input type="radio" name="radio-1"  class="radio-sm" :value=2 v-model="selectedOption"/>
-      <span>多选</span>
-    </div>
-      <div class="flex gap-10 my-5">
-        <input type="radio" name="radio-1" class="radio-sm" :value=4 v-model="selectedOption"/>
-        <span>论述</span>
-      </div>
-      <div class="flex gap-10 my-5">
-        <input type="radio" name="radio-1" class="radio-sm" :value=5 v-model="selectedOption"/>
-        <span>文件</span>
-      </div>
-    <div class="flex gap-10 my-5">
-      <input type="radio" name="radio-1" class="radio-sm" :value=3 v-model="selectedOption"/>
-      <span>填空</span>
-    </div>
-    </div>
-      <div v-show="selectedOption === 3">
-      <div class="divider"></div>
-        <div class="flex gap-10 my-5">
-          <input type="radio" name="radio-2" class="radio-sm" value="" v-model="reg"/>
-          <span>无限制</span>
+  <div class="flex justify-center items-start gap-130 h-screen ">
+    <div class="bg-gray-200 p-30 rounded-2xl shadow-lg w-220 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
+      <div class="text-2xl">添加问卷题目</div>
+      <div class="p-20">
+        <div class="flex-col justify-center items-center">
+          <div class="flex gap-10 my-5">
+            <input type="radio" name="radio-1" class="radio-sm" :value="1" v-model="selectedOption" checked/>
+            <span>单选</span>
+          </div>
+          <div class="flex gap-10 my-5">
+            <input type="radio" name="radio-1" class="radio-sm" :value="2" v-model="selectedOption"/>
+            <span>多选</span>
+          </div>
+          <div class="flex gap-10 my-5">
+            <input type="radio" name="radio-1" class="radio-sm" :value="4" v-model="selectedOption"/>
+            <span>论述</span>
+          </div>
+          <div class="flex gap-10 my-5">
+            <input type="radio" name="radio-1" class="radio-sm" :value="5" v-model="selectedOption"/>
+            <span>文件</span>
+          </div>
+          <div class="flex gap-10 my-5">
+            <input type="radio" name="radio-1" class="radio-sm" :value="3" v-model="selectedOption"/>
+            <span>填空</span>
+          </div>
         </div>
-      <div class="flex gap-10 my-5">
-        <input type="radio" name="radio-2" class="radio-sm" value="^1[3456789]\d{9}$" v-model="reg"/>
-        <span>手机号</span>
+        <div v-show="selectedOption === 3">
+          <div class="divider"></div>
+          <div class="flex gap-10 my-5">
+            <input type="radio" name="radio-2" class="radio-sm" value="" v-model="reg"/>
+            <span>无限制</span>
+          </div>
+          <div class="flex gap-10 my-5">
+            <input type="radio" name="radio-2" class="radio-sm" value="^1[3456789]\d{9}$" v-model="reg"/>
+            <span>手机号</span>
+          </div>
+          <div class="flex gap-10 my-5">
+            <input type="radio" name="radio-2" class="radio-sm" value="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" v-model="reg"/>
+            <span>邮箱</span>
+          </div>
+          <div class="flex gap-10 my-5">
+            <input type="radio" name="radio-2" class="radio-sm" value="^\d{12}$" v-model="reg"/>
+            <span>学号</span>
+          </div>
+          <div class="flex gap-10 my-5">
+            <input type="radio" name="radio-2" class="radio-sm" :value="regNum" v-model="reg" />
+            <span>
+              <el-select
+                  v-model="selectedNumber"
+                  placeholder="Select"
+                  size="small"
+                  style="width: 50px"
+                  @change="updateInputPattern"
+              >
+                <el-option
+                    v-for="item in 9"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                />
+              </el-select>
+              位数
+            </span>
+          </div>
+        </div>
       </div>
-      <div class="flex gap-10 my-5">
-        <input type="radio" name="radio-2" class="radio-sm" value="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" v-model="reg"/>
-        <span>邮箱</span>
-      </div>
-      <div class="flex gap-10 my-5">
-        <input type="radio" name="radio-2" class="radio-sm" value="^\d{12}$" v-model="reg"/>
-        <span>学号</span>
-      </div>
-      <div class="flex gap-10 my-5">
-        <input type="radio" name="radio-2" class="radio-sm" :value=regNum v-model="reg" />
-        <span>
-          <el-select
-              v-model="selectedNumber"
-              placeholder="Select"
-              size="small"
-              style="width: 50px"
-              @change="updateInputPattern"
-          >
-      <el-option
-          v-for="item in 9"
-          :key="item"
-          :label="item"
-          :value="item"
-      />
-    </el-select>
-          位数</span>
+      <div class="flex justify-center items-center">
+        <button class="btn btn-accent" @click="addQuestion">添加题目</button>
       </div>
     </div>
-    </div>
-    <div class="flex justify-center items-center ">
-    <button class="btn btn-accent " @click="addQuestion">添加题目</button>
+    <div class="p-40">
+      <div class="bg-gray-200 w-700 p-40 shadow-lg rounded-2xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700">
+        <div class="flex items-end justify-center gap-90">
+          <span class="text-4xl">标题: {{ title }}</span>
+          <span class="text-xl">id: {{ id }}</span>
+        </div>
+        <div class="divider"></div>
+        <div class="overflow-y-auto h-600" ref="questionnaireContainer" style="scroll-behavior: smooth;">
+          <transition-group name="fade" tag="div">
+          <div v-for="q in question" :key="q.serial_num">
+            <!-- 根据问题类型渲染组件 -->
+            <div v-if="q.question_type === 1">
+              <radio v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description"></radio>
+            </div>
+            <div v-if="q.question_type === 2">
+              <checkbox v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description"></checkbox>
+            </div>
+            <div v-if="q.question_type === 3">
+              <fill v-model:title="q.subject" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:reg="q.reg" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:describe="q.description"></fill>
+            </div>
+            <div v-if="q.question_type === 4">
+              <text-area v-model:title="q.subject" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:describe="q.description"></text-area>
+            </div>
+            <div v-if="q.question_type === 5">
+              <file v-model:title="q.subject" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:describe="q.description"></file>
+            </div>
+          </div>
+          <!-- 滚动标记 -->
+          <div id="questions-end"></div>
+          </transition-group>
+        </div>
+        <div class="flex justify-center items-center gap-160 mt-20">
+          <button class="btn btn-success" @click="submit">保存更改</button>
+          <button class="btn btn-error" @click="dataReverse">放弃更改</button>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="p-40">
-  <div class="bg-gray-200 w-700  p-40 shadow-lg rounded-2xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700">
-      <div class="flex items-end justify-center gap-90"><span class="text-4xl">标题: {{ title }}</span><span class="text-xl ">id: {{ id }}</span></div>
-    <div class="divider"></div>
-    <div class="overflow-y-auto h-600" >
-      <div  v-for="q in question" v-if="question && question.length > 0"  >
-    <div v-if="q.question_type === 1">
-        <radio v-model:title="q.subject"  v-model:options="q.options" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description">
-        </radio>
-    </div>
-        <div v-if="q.question_type === 2">
-          <checkbox v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option">
-          </checkbox>
-        </div>
-        <div v-if="q.question_type === 3">
-          <fill v-model:title="q.subject"  v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num) " v-model:reg="q.reg" v-model:unique="q.unique" v-model:option-choose="q.required">
-          </fill>
-        </div>
-        <div v-if="q.question_type === 4">
-          <text-area v-model:title="q.subject"  v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required">
-          </text-area>
-        </div>
-        <div v-if="q.question_type === 5">
-          <file v-model:title="q.subject"  v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required">
-          </file>
-        </div>
-      </div>
-    </div>
-    <div class="flex justify-center items-center gap-160 mt-20 ">
-      <button class="btn btn-success" @click="submit">保存更改</button>
-      <button class="btn btn-error" @click="dataReverse">放弃更改</button>
-    </div>
-  </div>
-  </div>
-</div>
-
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch, nextTick } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireDetailAPI, setQuestionnaireDetailAPI } from "@/apis";
 import { ElNotification } from "element-plus";
@@ -127,6 +130,9 @@ const submitData = ref();
 const id = ref<number>(6);
 const reg = ref<string>('');
 const regNum = ref("^[0-9]{1}$");
+
+// 用于获取问卷部分的容器元素
+const questionnaireContainer = ref(null);
 
 onMounted(() => {
   getInfo();
@@ -186,6 +192,13 @@ const addQuestion = () => {
     subject: '',
     unique: true,
   });
+
+  // 等待 DOM 更新完成后再执行滚动
+  nextTick(() => {
+    if (questionnaireContainer.value) {
+      questionnaireContainer.value.scrollTop = questionnaireContainer.value.scrollHeight;
+    }
+  });
 };
 
 const cleanReg = () => {
@@ -195,12 +208,14 @@ watch(selectedOption, cleanReg);
 
 const deleteQuestion = (serial_num: number) => {
   console.log(serial_num);
-  question.value = question.value.filter((item) => item.serial_num !== serial_num);
-  question.value.forEach((item) => {
-    if (item.serial_num > serial_num) {
-      item.serial_num -= 1;
-    }
-  });
+  setTimeout(() => {
+    question.value = question.value.filter((item) => item.serial_num !== serial_num);
+    question.value.forEach((item) => {
+      if (item.serial_num > serial_num) {
+        item.serial_num -= 1;
+      }
+    });
+  },500)
 };
 
 const dataReverse = () => {
@@ -211,24 +226,29 @@ const dataReverse = () => {
 };
 
 const submit = () => {
-  submitData.value.questions = question.value
+  submitData.value.questions = question.value;
   console.log(question.value);
-  /*
-  useRequest(() => setQuestionnaireDetailAPI(submitData.value),{
-    onSuccess(res){
-      if(res.code === 200 && res.msg === 'OK'){
-        ElNotification.success('保存成功')
+
+  useRequest(() => setQuestionnaireDetailAPI(submitData.value), {
+    onSuccess(res) {
+      if (res.code === 200 && res.msg === 'OK') {
+        ElNotification.success('保存成功');
       } else {
-        ElNotification.error(res.msg)
+        ElNotification.error(res.msg);
       }
     },
-    onError(e){
-      ElNotification.error(e)
+    onError(e) {
+      ElNotification.error(e);
     }
-  })*/
+  });
 };
-
 </script>
 
 <style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
 </style>

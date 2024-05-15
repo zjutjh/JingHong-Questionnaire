@@ -1,10 +1,16 @@
 <template>
   <div class="bg-gray-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
     <div class="flex justify-between">
-      <span class="flex items-center gap-20">
-        <span>{{ serial_num }}</span>
-        <input type="text" placeholder="Question" class="input input-bordered shadow-md w-350" v-model="localTitle"/>
-      </span>
+      <div class="flex-col">
+        <div class="flex items-center gap-20">
+          <span>{{ serial_num }}</span>
+          <input type="text" placeholder="Question" class="input input-bordered shadow-md w-350" v-model="localTitle"/>
+        </div>
+        <div class="flex items-center gap-20 my-10">
+          <span class="w-50">问题描述</span>
+          <textarea type="text" placeholder="Describe" class="textarea textarea-bordered shadow-md w-full h-70" v-model="localDescribe"/>
+        </div>
+      </div>
       <div class="flex-col justify-center items-center">
         <div class="flex gap-10">
           <span>必答</span>
@@ -45,6 +51,7 @@ const props = defineProps<{
   optionChoose: boolean,
   unique: boolean,
   otherOption: boolean,
+  describe: string,
   options?: {
     content: string;
     option_type: number;
@@ -52,13 +59,14 @@ const props = defineProps<{
   }[]
 }>();
 
-const emits = defineEmits(['update:unique', 'on-click', 'update:otherOption', 'update:optionChoose','update:title','update:options']);
+const emits = defineEmits(['update:unique', 'on-click', 'update:otherOption', 'update:optionChoose','update:title','update:options','update:describe']);
 
 // Local copies of props to maintain reactivity
 const localTitle = ref<string>(props.title || '');
 const localOptionChoose = ref<boolean>(props.optionChoose);
 const localUnique = ref<boolean>(props.unique);
 const localOtherOption = ref<boolean>(props.otherOption);
+const localDescribe = ref<string>(props.describe || '');
 const localOptions = ref(props.options ? [...props.options] : [{
   content: 'aaa',
   option_type: 1,
@@ -86,6 +94,10 @@ watch(() => props.options, (newOptions) => {
   localOptions.value = newOptions ? newOptions : [];
 });
 
+watch(() => props.describe, (newLocalDescribe) => {
+  localDescribe.value = newLocalDescribe
+});
+
 // Emit updates to parent component
 watch(localTitle, (newTitle) => {
   emits('update:title', newTitle);
@@ -97,6 +109,10 @@ watch(localOptionChoose, (newOptionChoose) => {
 
 watch(localUnique, (newUnique) => {
   emits('update:unique', newUnique);
+});
+
+watch(localDescribe, (newLocalDescribe) => {
+  emits('update:describe', newLocalDescribe);
 });
 
 watch(localOtherOption, (newOtherOption) => {
