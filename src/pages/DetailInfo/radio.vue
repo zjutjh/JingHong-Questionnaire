@@ -27,9 +27,9 @@
       <span>有"其他"选项</span>
       <input type="checkbox" class="checkbox-sm" v-model="localOtherOption"/>
     </span>
-    <div class="flex-col p-5 overflow-y-auto h-180 mt-10">
+    <div class="flex-col p-5 overflow-y-auto h-180 mt-10" ref="scrollContainer" style="scroll-behavior: smooth;">
       <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
-        <input type="radio" :name="item.serial_num" class="radio-sm my-5" />
+        <input type="radio" :name="props.serial_num" class="radio-sm my-5" />
         <input type="text" class="input input-bordered h-40 shadow-md" placeholder="option" v-model="item.content" />
         <button class="btn btn-error btn-sm shadow-md" @click="deleteOption(item.serial_num)">删除</button>
       </div>
@@ -43,8 +43,9 @@
 </template>
 
 <script setup lang="ts">
-import {ref, watch, defineProps, defineEmits, toRaw} from 'vue';
+import {ref, watch, defineProps, defineEmits, toRaw, nextTick} from 'vue';
 
+const scrollContainer = ref<HTMLDivElement>()
 const props = defineProps<{
   serial_num: number,
   title?: string,
@@ -54,7 +55,7 @@ const props = defineProps<{
   describe: string,
   options?: {
     content: string;
-    option_type: number;
+    img: string;
     serial_num: number;
   }[]
 }>();
@@ -67,11 +68,7 @@ const localDescribe = ref<string>(props.describe || '');
 const localOptionChoose = ref<boolean>(props.optionChoose);
 const localUnique = ref<boolean>(props.unique);
 const localOtherOption = ref<boolean>(props.otherOption);
-const localOptions = ref(props.options ? [...props.options] : [{
-  content: 'aaa',
-  option_type: 1,
-  serial_num: 1
-}]);
+const localOptions = ref(props.options ? [...props.options] : []);
 
 // Watchers to sync local state with props
 watch(() => props.title, (newTitle) => {
@@ -120,21 +117,24 @@ watch(localOtherOption, (newOtherOption) => {
 });
 
 watch(localOptions.value, (newOptions) => {
-  console.log(newOptions);
-
-  const rawOptions = newOptions.map(item => toRaw(item));
-
-  console.log(rawOptions);
-
-  emits('update:options', rawOptions);
+    const rawOptions = newOptions.map(item => toRaw(item));
+    console.log(rawOptions);
+    emits('update:options', rawOptions);
 });
 
 const addOption = () => {
   localOptions.value.push({
     content: '',
-    option_type: 1,
+    img: '',
     serial_num: localOptions.value.length + 1
   });
+  console.log(localOptions.value)
+  console.log(props.options)
+  nextTick(() => {
+    if (scrollContainer.value) {
+      scrollContainer.value!.scrollTop = scrollContainer.value!.scrollHeight;
+    }
+  })
 };
 
 const deleteOption = (serial_num: number) => {
@@ -144,6 +144,7 @@ const deleteOption = (serial_num: number) => {
       item.serial_num -= 1;
     }
   });
+  emits('update:options',localOptions.value)
 };
 </script>
 
