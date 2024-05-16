@@ -27,9 +27,9 @@
       <span>有"其他"选项</span>
       <input type="checkbox" class="checkbox-sm" v-model="localOtherOption"/>
     </span>
-    <div class="flex-col p-5 overflow-y-auto h-180 mt-10">
+    <div class="flex-col p-5 overflow-y-auto h-180 mt-10" ref="scrollContainer" style="scroll-behavior: smooth;" >
       <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
-        <input type="checkbox" :name="item.serial_num" class="radio-sm my-5" />
+        <input type="checkbox" :name="item.serial_num" class="checkbox-sm my-5" />
         <input type="text" class="input input-bordered h-40 shadow-md" placeholder="option" v-model="item.content" />
         <button class="btn btn-error btn-sm shadow-md" @click="deleteOption(item.serial_num)">删除</button>
       </div>
@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, watch, defineProps, defineEmits, toRaw} from 'vue';
+import {ref, watch, defineProps, defineEmits, toRaw, nextTick} from 'vue';
 
 const props = defineProps<{
   serial_num: number,
@@ -59,6 +59,7 @@ const props = defineProps<{
   }[]
 }>();
 
+const scrollContainer = ref<HTMLDivElement>()
 const emits = defineEmits(['update:unique', 'on-click', 'update:otherOption', 'update:optionChoose','update:title','update:options','update:describe']);
 
 // Local copies of props to maintain reactivity
@@ -135,6 +136,12 @@ const addOption = () => {
     option_type: 1,
     serial_num: localOptions.value.length + 1
   });
+
+  nextTick(() => {
+    if (scrollContainer.value) {
+      scrollContainer.value!.scrollTop = scrollContainer.value!.scrollHeight;
+    }
+  })
 };
 
 const deleteOption = (serial_num: number) => {
@@ -144,6 +151,7 @@ const deleteOption = (serial_num: number) => {
       item.serial_num -= 1;
     }
   });
+  emits('update:options',localOptions.value)
 };
 </script>
 

@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@element-plus/icons-vue':
+    specifier: ^2.3.1
+    version: registry.npmmirror.com/@element-plus/icons-vue@2.3.1(vue@3.4.26)
   '@types/node':
     specifier: ^20.12.8
     version: 20.12.8
@@ -14,6 +17,9 @@ dependencies:
   axios:
     specifier: ^1.6.8
     version: 1.6.8
+  dayjs:
+    specifier: ^1.11.11
+    version: registry.npmmirror.com/dayjs@1.11.11
   element-plus:
     specifier: ^2.7.2
     version: 2.7.2(vue@3.4.26)
@@ -460,14 +466,6 @@ packages:
   /@ctrl/tinycolor@3.6.1:
     resolution: {integrity: sha512-SITSV6aIXsuVNV3f3O0f2n/cgyEDWoSqtZMYiAmcsYHydcKrOz3gUxB/iXd/Qf08+IZX4KpgNbvUdMBmWz+kcA==}
     engines: {node: '>=10'}
-    dev: false
-
-  /@element-plus/icons-vue@2.3.1(vue@3.4.26):
-    resolution: {integrity: sha512-XxVUZv48RZAd87ucGS48jPf6pKu0yV5UCg9f4FFwtrYxXOwWuVJo6wOvSLKEoMQKjv8GsX/mhP6UsC1lRwbUWg==}
-    peerDependencies:
-      vue: ^3.2.0
-    dependencies:
-      vue: 3.4.26(typescript@5.4.5)
     dev: false
 
   /@emotion/hash@0.8.0:
@@ -1048,10 +1046,6 @@ packages:
       '@babel/runtime': 7.24.5
     dev: true
 
-  /dayjs@1.11.11:
-    resolution: {integrity: sha512-okzr3f11N6WuqYtZSvm+F776mB41wRZMhKP+hc34YdW+KmtYYK9iqvHSwo2k9FEH3fhGXvOPV6yz2IcSrfRUDg==}
-    dev: false
-
   /de-indent@1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}
     dev: true
@@ -1126,14 +1120,14 @@ packages:
       vue: ^3.2.0
     dependencies:
       '@ctrl/tinycolor': 3.6.1
-      '@element-plus/icons-vue': 2.3.1(vue@3.4.26)
+      '@element-plus/icons-vue': registry.npmmirror.com/@element-plus/icons-vue@2.3.1(vue@3.4.26)
       '@floating-ui/dom': 1.6.4
       '@popperjs/core': registry.npmmirror.com/@sxzz/popperjs-es@2.11.7
       '@types/lodash': 4.17.0
       '@types/lodash-es': 4.17.12
       '@vueuse/core': 9.13.0(vue@3.4.26)
       async-validator: 4.2.5
-      dayjs: 1.11.11
+      dayjs: registry.npmmirror.com/dayjs@1.11.11
       escape-html: 1.0.3
       lodash: 4.17.21
       lodash-es: 4.17.21
@@ -2447,6 +2441,17 @@ packages:
     hasBin: true
     dev: true
 
+  registry.npmmirror.com/@element-plus/icons-vue@2.3.1(vue@3.4.26):
+    resolution: {integrity: sha512-XxVUZv48RZAd87ucGS48jPf6pKu0yV5UCg9f4FFwtrYxXOwWuVJo6wOvSLKEoMQKjv8GsX/mhP6UsC1lRwbUWg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@element-plus/icons-vue/-/icons-vue-2.3.1.tgz}
+    id: registry.npmmirror.com/@element-plus/icons-vue/2.3.1
+    name: '@element-plus/icons-vue'
+    version: 2.3.1
+    peerDependencies:
+      vue: ^3.2.0
+    dependencies:
+      vue: 3.4.26(typescript@5.4.5)
+    dev: false
+
   registry.npmmirror.com/@esbuild/aix-ppc64@0.20.2:
     resolution: {integrity: sha512-D+EBOJHXdNZcLJRBkhENNG8Wji2kgc9AZ9KiPr1JuZjsNtyHzrsfLRrY0tk2H2aoFu6RANO1y1iPPUCDYWkb5g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@esbuild/aix-ppc64/-/aix-ppc64-0.20.2.tgz}
     name: '@esbuild/aix-ppc64'
@@ -3321,6 +3326,12 @@ packages:
     transitivePeerDependencies:
       - postcss
     dev: true
+
+  registry.npmmirror.com/dayjs@1.11.11:
+    resolution: {integrity: sha512-okzr3f11N6WuqYtZSvm+F776mB41wRZMhKP+hc34YdW+KmtYYK9iqvHSwo2k9FEH3fhGXvOPV6yz2IcSrfRUDg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/dayjs/-/dayjs-1.11.11.tgz}
+    name: dayjs
+    version: 1.11.11
+    dev: false
 
   registry.npmmirror.com/debug@4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/debug/-/debug-4.3.4.tgz}
