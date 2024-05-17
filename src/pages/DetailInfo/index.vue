@@ -83,8 +83,15 @@
             </div>
         </div>
         <div class="divider"></div>
-        <div class="overflow-y-auto h-600" ref="questionnaireContainer" style="scroll-behavior: smooth;">
-          <div v-for="q in question" :key="q.serial_num">
+        <div class="overflow-y-auto h-800" ref="questionnaireContainer" style="scroll-behavior: smooth;">
+          <VueDraggable
+              v-model="question"
+              animation="300"
+              ghostClass="ghost"
+              group="people"
+              @update="onUpdate"
+          >
+          <div v-for="(q, index) in question" :key="q.serial_num">
             <!-- 根据问题类型渲染组件 -->
             <div v-if="q.question_type === 1">
               <radio v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description"></radio>
@@ -102,6 +109,7 @@
               <file v-model:title="q.subject" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:describe="q.description"></file>
             </div>
           </div>
+          </VueDraggable>
         </div>
         <div class="flex justify-center items-center gap-160 mt-20">
           <button class="btn btn-success" @click="submit">保存更改</button>
@@ -109,7 +117,7 @@
         </div>
       </div>
     </div>
-    <modal modal-id="setting" gray>
+    <modal modal-id="setting" gray >
       <header class="text-3xl">Setting</header>
       <body>
       <title>默认设置</title>
@@ -135,7 +143,8 @@ import Fill from "@/pages/DetailInfo/fill.vue";
 import TextArea from "@/pages/DetailInfo/textArea.vue";
 import File from "@/pages/DetailInfo/file.vue";
 import radio from "@/pages/DetailInfo/radio.vue";
-
+import {SortableEvent, VueDraggable} from 'vue-draggable-plus'
+import {loadConfigFromFile} from "vite";
 
 const selectedOption = ref(1);
 const selectedNumber = ref(1);
@@ -191,7 +200,7 @@ const getInfo = () => {
         submitData.value = deepCopy(formData.value); // Deep copy to avoid reference issues
         title.value = res.data.title;
         question.value = submitData.value.questions;
-        time.value = submitData.value.time ? new Date(submitData.value.time).toISOString().slice(0, 16) : null; // Ensure correct time format
+        time.value = submitData.value.time
       } else {
         ElNotification.error(res.msg);
       }
@@ -242,13 +251,13 @@ const deleteQuestion = (serial_num: number) => {
 const dataReverse = () => {
   submitData.value = deepCopy(formData.value);
   question.value = deepCopy(formData.value.questions);
-  time.value = submitData.value.time ? new Date(submitData.value.time).toISOString().slice(0, 16) : null;
+  time.value = submitData.value.time
   console.log(question.value);
   ElNotification.success('成功放弃修改');
 };
 
 const submit = () => {
-  submitData.value.time = time.value ? new Date(time.value).toISOString() : null; // Convert time to ISO string
+  submitData.value.time = time.value
   submitData.value.questions = question.value;
   console.log(question.value);
 
@@ -266,6 +275,11 @@ const submit = () => {
   });
 };
 
+const onUpdate = () => {
+  question.value.forEach((q, index) => {
+    q.serial_num = index + 1;
+  });
+};
 </script>
 
 <style scoped>
