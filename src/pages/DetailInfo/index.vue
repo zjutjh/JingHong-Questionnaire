@@ -84,14 +84,14 @@
         </div>
         <div class="divider"></div>
         <div class="overflow-y-auto h-800" ref="questionnaireContainer" style="scroll-behavior: smooth;">
-          <VueDraggable
+         <!-- <VueDraggable
               v-model="question"
               animation="300"
               ghostClass="ghost"
               group="people"
               @update="onUpdate"
-          >
-          <div v-for="(q, index) in question" :key="q.serial_num">
+          >-->
+          <div v-for="(q, index) in question" :key="q.serial_num" >
             <!-- 根据问题类型渲染组件 -->
             <div v-if="q.question_type === 1">
               <radio v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description"></radio>
@@ -109,7 +109,7 @@
               <file v-model:title="q.subject" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:describe="q.description"></file>
             </div>
           </div>
-          </VueDraggable>
+          <!--</VueDraggable>-->
         </div>
         <div class="flex justify-center items-center gap-160 mt-20">
           <button class="btn btn-success" @click="submit">保存更改</button>
@@ -144,7 +144,6 @@ import TextArea from "@/pages/DetailInfo/textArea.vue";
 import File from "@/pages/DetailInfo/file.vue";
 import radio from "@/pages/DetailInfo/radio.vue";
 import {SortableEvent, VueDraggable} from 'vue-draggable-plus'
-import {loadConfigFromFile} from "vite";
 
 const selectedOption = ref(1);
 const selectedNumber = ref(1);
@@ -215,7 +214,22 @@ const addQuestion = () => {
   question.value.push({
     description: '',
     img: '',
-    options: [],
+    options: [{
+      content: '',
+      img: '',
+      serial_num: 1
+    },
+      {
+        content: '',
+        img: '',
+        serial_num: 2
+      },
+      {
+        content: '',
+        img: '',
+        serial_num: 3
+      },
+    ],
     other_option: setting.isOtherOptions,
     question_type: selectedOption.value,
     reg: reg.value,
@@ -276,10 +290,11 @@ const submit = () => {
 };
 
 const onUpdate = () => {
-  question.value.forEach((q, index) => {
-    q.serial_num = index + 1;
+  question.value.forEach((q, idx) => {
+    q.serial_num = idx + 1;
   });
 };
+
 </script>
 
 <style scoped>

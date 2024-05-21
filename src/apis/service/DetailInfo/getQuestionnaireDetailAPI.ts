@@ -1,7 +1,5 @@
 import { request } from "@/apis/axios";
 
-
-
 const getQuestionnaireDetailAPI = (data:{
     id:number
 }) => {
