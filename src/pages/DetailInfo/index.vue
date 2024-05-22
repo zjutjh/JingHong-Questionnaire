@@ -236,7 +236,7 @@ const getInfo = () => {
         title.value = res.data.title;
         question.value = submitData.value.questions;
         time.value = submitData.value.time
-          loading.value = false
+        loading.value = false
       } else {
         ElNotification.error(res.msg);
       }
