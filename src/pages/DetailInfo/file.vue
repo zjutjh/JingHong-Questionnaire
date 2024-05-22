@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
+  <div class="bg-sky-100 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
@@ -34,8 +34,6 @@
 
 <script setup lang="ts">
 import {defineEmits, ref, watch} from "vue";
-import {modal, showModal} from "@/components";
-import {b} from "vite/dist/node/types.d-aGj9QkWt";
 
 const props = defineProps<{
   serial_num: number,
