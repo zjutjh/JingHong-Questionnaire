@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-center items-start gap-130 h-screen ">
-    <div class="bg-gray-200 p-30 rounded-2xl shadow-lg w-230 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
+    <div class="bg-blue-200 p-30 rounded-2xl shadow-lg w-230 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
       <span class="flex justify-center items-center  gap-10"><el-icon @click="showModal('setting')"><Setting /></el-icon><span class="text-2xl">添加问卷题目</span></span>
       <div class="p-20">
         <div class="flex-col justify-center items-center">
@@ -70,8 +70,10 @@
       </div>
     </div>
     <div class="p-40">
-      <div class="bg-gray-200 w-700 p-40 shadow-lg rounded-2xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700">
+      <div class="bg-blue-200 w-750 p-40 shadow-lg rounded-2xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700">
         <div class="flex-col justify-center">
+          <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
+            <template #default>
           <div class="text-4xl">{{ title }}</div>
           <div class="flex gap-20 items-center my-15">
           <span>问卷截止时间</span>
@@ -81,9 +83,11 @@
               placeholder="截止时间"
           />
             </div>
+            </template>
+          </el-skeleton>
         </div>
         <div class="divider"></div>
-        <div class="overflow-y-auto h-800" ref="questionnaireContainer" style="scroll-behavior: smooth;">
+        <div class="overflow-y-auto h-800 p-20" ref="questionnaireContainer" style="scroll-behavior: smooth;">
          <!-- <VueDraggable
               v-model="question"
               animation="300"
@@ -94,19 +98,49 @@
           <div v-for="(q, index) in question" :key="q.serial_num" >
             <!-- 根据问题类型渲染组件 -->
             <div v-if="q.question_type === 1">
+              <el-skeleton animated :loading="loading">
               <radio v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description"></radio>
+              </el-skeleton>
             </div>
             <div v-if="q.question_type === 2">
+              <el-skeleton animated  :loading="loading">
+                <template #template>
+                  <skeleton-card></skeleton-card>
+                </template>
+                <template #default>
               <checkbox v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description"></checkbox>
+                </template>
+              </el-skeleton>
             </div>
             <div v-if="q.question_type === 3">
+              <el-skeleton animated  :loading="loading">
+                <template #template>
+                  <skeleton-card></skeleton-card>
+                </template>
+                <template #default>
               <fill v-model:title="q.subject" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:reg="q.reg" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:describe="q.description"></fill>
+                </template>
+              </el-skeleton>
             </div>
             <div v-if="q.question_type === 4">
+              <el-skeleton animated  :loading="loading">
+                <template #template>
+                  <skeleton-card></skeleton-card>
+                </template>
+                <template #default>
               <text-area v-model:title="q.subject" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:describe="q.description"></text-area>
+                </template>
+              </el-skeleton>
             </div>
             <div v-if="q.question_type === 5">
+              <el-skeleton animated  :loading="loading">
+                <template #template>
+                  <skeleton-card></skeleton-card>
+                </template>
+                <template #default>
               <file v-model:title="q.subject" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:describe="q.description"></file>
+                </template>
+              </el-skeleton>
             </div>
           </div>
           <!--</VueDraggable>-->
@@ -136,7 +170,7 @@ import {computed, onMounted, ref, watch, nextTick, reactive} from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireDetailAPI, setQuestionnaireDetailAPI } from "@/apis";
 import { ElNotification } from "element-plus";
-import { modal, showModal } from '@/components';
+import { modal, showModal, skeleton } from '@/components';
 import Radio from "@/pages/DetailInfo/radio.vue";
 import Checkbox from "@/pages/DetailInfo/checkbox.vue";
 import Fill from "@/pages/DetailInfo/fill.vue";
@@ -144,6 +178,7 @@ import TextArea from "@/pages/DetailInfo/textArea.vue";
 import File from "@/pages/DetailInfo/file.vue";
 import radio from "@/pages/DetailInfo/radio.vue";
 import {SortableEvent, VueDraggable} from 'vue-draggable-plus'
+import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 
 const selectedOption = ref(1);
 const selectedNumber = ref(1);
@@ -155,6 +190,7 @@ const id = ref<number>(6);
 const reg = ref<string>('');
 const regNum = ref("^[0-9]{1}$");
 const time = ref();
+const loading = ref(true)
 const setting = reactive({
   isUnique: false,
   isOtherOptions: false,
@@ -200,6 +236,7 @@ const getInfo = () => {
         title.value = res.data.title;
         question.value = submitData.value.questions;
         time.value = submitData.value.time
+        loading.value = false
       } else {
         ElNotification.error(res.msg);
       }

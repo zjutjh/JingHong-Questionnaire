@@ -9,5 +9,4 @@ const saveImgAPI = (data: FormData | null) => {
         }
     });
 };
-
 export default saveImgAPI;

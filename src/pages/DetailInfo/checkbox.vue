@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
+  <div class="bg-sky-100 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
@@ -90,6 +90,7 @@ const handleFileChange = async (event, serial_num: number) => {
       if (option) {
         option.img = res.data;
       }
+      ElNotification.success('上传图片成功')
     },
     onError(error) {
       ElNotification.error("上传图片失败"+ error);
