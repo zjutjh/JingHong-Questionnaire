@@ -1,5 +1,5 @@
 <template>
-  <div class=" overflow-y-scroll h-screen">
+  <div class=" overflow-y-scroll h-screen bg-sky-100">
   <div class="navbar bg-base-100 shadow-lg">
     <div class="flex-1">
       <a class="btn btn-ghost text-xl">JH Questionnaire Survey System</a>
@@ -8,19 +8,20 @@
       <ul class="menu menu-horizontal px-1">
         <li @click="router.push('/login')" v-show="!loginStore.loginSession"><a>登陆</a></li>
         <li @click="router.push('/detailInfo')" v-show="loginStore.loginSession"><a>问卷详情</a></li>
-        <li @click="router.push('/login')" v-show="loginStore.loginSession"><a>问卷列表</a></li>
-        <li @click="router.push('/login')" v-show="loginStore.loginSession"><a>数据信息</a></li>
+        <li @click="router.push('/')" v-show="loginStore.loginSession"><a>问卷列表</a></li>
+        <li @click="router.push('/Data')" v-show="loginStore.loginSession"><a>数据信息</a></li>
         <li @click="router.push('/login');loginStore.setLogin(false);ElNotification.success('登出成功')" v-show="loginStore.loginSession"><a>登出</a></li>
       </ul>
     </div>
   </div>
     <router-view v-slot="{ Component }">
       <transition name="fade" mode="out-in">
-        <component :is="Component" />
+        <component :is="Component" class="mt-60"/>
       </transition>
     </router-view>
     </div>
 </template>
+
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 import router from "@/router";

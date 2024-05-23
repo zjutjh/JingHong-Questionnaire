@@ -4,7 +4,7 @@
     <div class="relative h-30">
       <div class="absolute left-0">{{ "标题:" + title }}</div>
       <div class="absolute right-5 flex flex-row gap-5">
-        <div class="btn btn-sm btn-ghost" @click="() => router.push('/DetailInfo')">查看数据</div>
+        <div class="btn btn-sm btn-ghost" @click="() => router.push('/Data')">查看数据</div>
         <div class="pt-4">{{ "id:" + idName }}</div>
       </div>
     </div>
@@ -24,14 +24,14 @@
     <div class="text-xl font-bold">{{ status===1 ? "发布问卷" : "下架问卷" }}</div>
     <div class="px-40 pt-10">{{ status===1 ? "确认发布问卷: " : "确认下架问卷: " + title + "?"}}</div>
     <template #action>
-      <div class="btn btn-sm btn-success" @click="() => updateQuestionnaireStatus(idName, status===1?2:1)">确认</div>
+      <div class="btn btn-success" @click="() => updateQuestionnaireStatus(idName, status===1?2:1)">确认</div>
     </template>
   </modal>
   <modal :modal-id="'delConfirmModal'+idName">
     <div class="text-xl font-bold">删除问卷</div>
     <div class="px-40 pt-10">将删除 {{ title }}</div>
     <template #action>
-      <div class="btn btn-sm btn-success" @click="() => delQuestionnaire(idName)">确认</div>
+      <div class="btn btn-success" @click="() => delQuestionnaire(idName)">确认</div>
     </template>
   </modal>
 </template>

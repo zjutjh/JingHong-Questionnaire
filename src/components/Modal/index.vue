@@ -1,4 +1,4 @@
-<!-- 
+<!--
 # Modal组件
 用于表现弹窗
 
@@ -18,7 +18,7 @@ showModal("idName", ture) // 关闭modal
 ```
 
 ## 属性
-<modal 
+<modal
   modal-id="idName"
   noCloseBtn // 禁用关闭按钮
   centerBtn // 将按钮布局在中心
@@ -27,14 +27,14 @@ showModal("idName", ture) // 关闭modal
 !注意: 请留意id重叠的问题!
  -->
 <template>
-  <dialog :id="modalId" class="modal">
-    <div class="modal-box p-30">
+  <dialog :id="modalId" class="modal" >
+    <div class="modal-box p-30" :class="gray ? 'bg-gray-300' : undefined">
       <div>
         <slot></slot>
       </div>
-      <div class="modal-action" :class="[centerBtn ? 'flex justify-center' : undefined]">
+      <div class="modal-action flex justify-evenly" :class="[centerBtn ? 'flex justify-center' : undefined]">
         <slot name="action"></slot>
-        <button v-if="!noCloseBtn" class="btn btn-sm" @click="showModal(modalId, true)">关闭</button>
+        <button v-if="!noCloseBtn" class="btn btn-md btn-error shadow-md" @click="showModal(modalId, true)">关闭</button>
       </div>
     </div>
   </dialog>
@@ -47,6 +47,7 @@ defineProps<{
   noCloseBtn?: boolean,
   centerBtn?: boolean,
   modalId: string,
+  gray?: boolean
 }>();
 
 </script>
