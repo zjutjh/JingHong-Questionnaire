@@ -24,14 +24,14 @@
     <div class="text-xl font-bold">{{ status===1 ? "发布问卷" : "下架问卷" }}</div>
     <div class="px-40 pt-10">{{ status===1 ? "确认发布问卷: " : "确认下架问卷: " + title + "?"}}</div>
     <template #action>
-      <div class="btn btn-sm btn-success" @click="() => updateQuestionnaireStatus(idName, status===1?2:1)">确认</div>
+      <div class="btn btn-success" @click="() => updateQuestionnaireStatus(idName, status===1?2:1)">确认</div>
     </template>
   </modal>
   <modal :modal-id="'delConfirmModal'+idName">
     <div class="text-xl font-bold">删除问卷</div>
     <div class="px-40 pt-10">将删除 {{ title }}</div>
     <template #action>
-      <div class="btn btn-sm btn-success" @click="() => delQuestionnaire(idName)">确认</div>
+      <div class="btn btn-success" @click="() => delQuestionnaire(idName)">确认</div>
     </template>
   </modal>
 </template>
