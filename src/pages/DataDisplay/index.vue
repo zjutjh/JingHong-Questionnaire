@@ -28,6 +28,12 @@
         </tr>
       </tbody>
     </table>
+    <el-pagination
+      :current-page="pageNum"
+      layout="prev, pager, next"
+      :page-count="totalPageNum"
+      @current-change="handleCurrentChange"
+    />
   </div>
 </div>
 </template>
@@ -37,11 +43,13 @@ import { getAnswersAPI } from '@/apis';
 import { ref } from 'vue';
 import { useRequest } from 'vue-hooks-plus';
 import router from '@/router';
+import { ElPagination } from 'element-plus';
 
 const id = ref(15);
 const title = ref("Tiele");
 const pageNum = ref(1);
 const totalPageNum = ref(1);
+const pageSize = ref(10);
 const answers = ref();
 const time = ref();
 
@@ -49,7 +57,7 @@ const getAnswers = () => {
   useRequest(() => getAnswersAPI({
     id: id.value,
     page_num: pageNum.value,
-    page_size: 10,
+    page_size: pageSize.value,
   }), {
     onSuccess(res: any) {
       console.log(res);
@@ -62,5 +70,10 @@ const getAnswers = () => {
   })
 }
 getAnswers();
+
+const handleCurrentChange = (val: number) => {
+  pageNum.value = val;
+  getAnswers();
+}
 
 </script>
