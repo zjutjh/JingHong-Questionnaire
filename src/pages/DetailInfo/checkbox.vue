@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
+  <div class="bg-sky-100 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
@@ -27,10 +27,16 @@
       <span>有"其他"选项</span>
       <input type="checkbox" class="checkbox-sm" v-model="localOtherOption"/>
     </span>
-    <div class="flex-col p-5 overflow-y-auto h-180 mt-10">
+    <div class="flex-col p-5 overflow-y-auto h-180 mt-10" ref="scrollContainer" style="scroll-behavior: smooth;" >
       <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
-        <input type="checkbox" :name="item.serial_num" class="radio-sm my-5" />
+        <input type="checkbox" :name="item.serial_num" class="checkbox-sm my-5" />
         <input type="text" class="input input-bordered h-40 shadow-md" placeholder="option" v-model="item.content" />
+        <div class="ml-10 flex items-center gap-20">
+          <div v-if="item.img" class="mt-4">
+            <img :src="item.img" alt="Preview" style="max-width: 50px; max-height: 50px;" />
+          </div>
+          <input type="file" class="file-input file-input-bordered file-input-sm w-7/12" @change="handleFileChange($event, item.serial_num)" />
+        </div>
         <button class="btn btn-error btn-sm shadow-md" @click="deleteOption(item.serial_num)">删除</button>
       </div>
     </div>
@@ -43,7 +49,10 @@
 </template>
 
 <script setup lang="ts">
-import {ref, watch, defineProps, defineEmits, toRaw} from 'vue';
+import {ref, watch, defineProps, defineEmits, toRaw, nextTick} from 'vue';
+import {useRequest} from "vue-hooks-plus";
+import {saveImgAPI} from "@/apis";
+import {ElNotification} from "element-plus";
 
 const props = defineProps<{
   serial_num: number,
@@ -54,11 +63,12 @@ const props = defineProps<{
   describe: string,
   options?: {
     content: string;
-    option_type: number;
+    img: string;
     serial_num: number;
   }[]
 }>();
 
+const scrollContainer = ref<HTMLDivElement>()
 const emits = defineEmits(['update:unique', 'on-click', 'update:otherOption', 'update:optionChoose','update:title','update:options','update:describe']);
 
 // Local copies of props to maintain reactivity
@@ -67,13 +77,52 @@ const localOptionChoose = ref<boolean>(props.optionChoose);
 const localUnique = ref<boolean>(props.unique);
 const localOtherOption = ref<boolean>(props.otherOption);
 const localDescribe = ref<string>(props.describe || '');
-const localOptions = ref(props.options ? [...props.options] : [{
-  content: 'aaa',
-  option_type: 1,
-  serial_num: 1
-}]);
+const localOptions = ref(props.options );
 
+const handleFileChange = async (event, serial_num: number) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  const formData = new FormData();
+  formData.append('img', file);
+  useRequest(() => saveImgAPI(formData), {
+    onSuccess(res) {
+      const option = localOptions.value.find(item => item.serial_num === serial_num);
+      if (option) {
+        option.img = res.data;
+      }
+      ElNotification.success('上传图片成功')
+    },
+    onError(error) {
+      ElNotification.error("上传图片失败"+ error);
+    }
+  });
+};
 // Watchers to sync local state with props
+
+const addOption = () => {
+  localOptions.value.push({
+    content: '',
+    img: '',
+    serial_num: localOptions.value.length + 1
+  });
+
+  nextTick(() => {
+    if (scrollContainer.value) {
+      scrollContainer.value!.scrollTop = scrollContainer.value!.scrollHeight;
+    }
+  })
+};
+
+const deleteOption = (serial_num: number) => {
+  localOptions.value = localOptions.value.filter(item => item.serial_num !== serial_num);
+  localOptions.value.forEach((item) => {
+    if (item.serial_num > serial_num) {
+      item.serial_num -= 1;
+    }
+  });
+  emits('update:options',localOptions.value)
+};
+
 watch(() => props.title, (newTitle) => {
   localTitle.value = newTitle || '';
 });
@@ -129,22 +178,6 @@ watch(localOptions.value, (newOptions) => {
   emits('update:options', rawOptions);
 });
 
-const addOption = () => {
-  localOptions.value.push({
-    content: '',
-    option_type: 1,
-    serial_num: localOptions.value.length + 1
-  });
-};
-
-const deleteOption = (serial_num: number) => {
-  localOptions.value = localOptions.value.filter(item => item.serial_num !== serial_num);
-  localOptions.value.forEach((item) => {
-    if (item.serial_num > serial_num) {
-      item.serial_num -= 1;
-    }
-  });
-};
 </script>
 
 <style scoped>

@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-center items-start gap-130 h-screen ">
-    <div class="bg-gray-200 p-30 rounded-2xl shadow-lg w-220 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
-      <div class="text-2xl">添加问卷题目</div>
+    <div class="bg-blue-200 p-30 rounded-2xl shadow-lg w-230 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
+      <span class="flex justify-center items-center  gap-10"><el-icon @click="showModal('setting')"><Setting /></el-icon><span class="text-2xl">添加问卷题目</span></span>
       <div class="p-20">
         <div class="flex-col justify-center items-center">
           <div class="flex gap-10 my-5">
@@ -70,35 +70,80 @@
       </div>
     </div>
     <div class="p-40">
-      <div class="bg-gray-200 w-700 p-40 shadow-lg rounded-2xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700">
-        <div class="flex items-end justify-center gap-90">
-          <span class="text-4xl">标题: {{ title }}</span>
-          <span class="text-xl">id: {{ id }}</span>
+      <div class="bg-blue-200 w-750 p-40 shadow-lg rounded-2xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700">
+        <div class="flex-col justify-center">
+          <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
+            <template #default>
+          <div class="text-4xl">{{ title }}</div>
+          <div class="flex gap-20 items-center my-15">
+          <span>问卷截止时间</span>
+          <el-date-picker
+              v-model="time"
+              type="datetime"
+              placeholder="截止时间"
+          />
+            </div>
+            </template>
+          </el-skeleton>
         </div>
         <div class="divider"></div>
-        <div class="overflow-y-auto h-600" ref="questionnaireContainer" style="scroll-behavior: smooth;">
-          <transition-group name="fade" tag="div">
-          <div v-for="q in question" :key="q.serial_num">
+        <div class="overflow-y-auto h-800 p-20" ref="questionnaireContainer" style="scroll-behavior: smooth;">
+         <!-- <VueDraggable
+              v-model="question"
+              animation="300"
+              ghostClass="ghost"
+              group="people"
+              @update="onUpdate"
+          >-->
+          <div v-for="(q, index) in question" :key="q.serial_num" >
             <!-- 根据问题类型渲染组件 -->
             <div v-if="q.question_type === 1">
+              <el-skeleton animated :loading="loading">
               <radio v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description"></radio>
+              </el-skeleton>
             </div>
             <div v-if="q.question_type === 2">
+              <el-skeleton animated  :loading="loading">
+                <template #template>
+                  <skeleton-card></skeleton-card>
+                </template>
+                <template #default>
               <checkbox v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description"></checkbox>
+                </template>
+              </el-skeleton>
             </div>
             <div v-if="q.question_type === 3">
+              <el-skeleton animated  :loading="loading">
+                <template #template>
+                  <skeleton-card></skeleton-card>
+                </template>
+                <template #default>
               <fill v-model:title="q.subject" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:reg="q.reg" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:describe="q.description"></fill>
+                </template>
+              </el-skeleton>
             </div>
             <div v-if="q.question_type === 4">
+              <el-skeleton animated  :loading="loading">
+                <template #template>
+                  <skeleton-card></skeleton-card>
+                </template>
+                <template #default>
               <text-area v-model:title="q.subject" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:describe="q.description"></text-area>
+                </template>
+              </el-skeleton>
             </div>
             <div v-if="q.question_type === 5">
+              <el-skeleton animated  :loading="loading">
+                <template #template>
+                  <skeleton-card></skeleton-card>
+                </template>
+                <template #default>
               <file v-model:title="q.subject" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:describe="q.description"></file>
+                </template>
+              </el-skeleton>
             </div>
           </div>
-          <!-- 滚动标记 -->
-          <div id="questions-end"></div>
-          </transition-group>
+          <!--</VueDraggable>-->
         </div>
         <div class="flex justify-center items-center gap-160 mt-20">
           <button class="btn btn-success" @click="submit">保存更改</button>
@@ -106,20 +151,34 @@
         </div>
       </div>
     </div>
+    <modal modal-id="setting" gray >
+      <header class="text-3xl">Setting</header>
+      <body>
+      <title>默认设置</title>
+      <div class="flex justify-evenly my-20">
+        <span class="flex items-center gap-10"><span>默认唯一</span><input type="checkbox" class="checkbox" v-model="setting.isUnique"/></span>
+        <span class="flex items-center gap-10"><span>默认必答</span><input type="checkbox" class="checkbox" v-model="setting.isRequired"/></span>
+        <span class="flex items-center gap-10"><span>默认有"其他"选项</span><input type="checkbox" class="checkbox" v-model="setting.isOtherOptions"/></span>
+      </div>
+      </body>
+    </modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch, nextTick } from "vue";
+import {computed, onMounted, ref, watch, nextTick, reactive} from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireDetailAPI, setQuestionnaireDetailAPI } from "@/apis";
 import { ElNotification } from "element-plus";
+import { modal, showModal, skeleton } from '@/components';
 import Radio from "@/pages/DetailInfo/radio.vue";
 import Checkbox from "@/pages/DetailInfo/checkbox.vue";
 import Fill from "@/pages/DetailInfo/fill.vue";
 import TextArea from "@/pages/DetailInfo/textArea.vue";
 import File from "@/pages/DetailInfo/file.vue";
 import radio from "@/pages/DetailInfo/radio.vue";
+import {SortableEvent, VueDraggable} from 'vue-draggable-plus'
+import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 
 const selectedOption = ref(1);
 const selectedNumber = ref(1);
@@ -130,9 +189,16 @@ const submitData = ref();
 const id = ref<number>(6);
 const reg = ref<string>('');
 const regNum = ref("^[0-9]{1}$");
+const time = ref();
+const loading = ref(true)
+const setting = reactive({
+  isUnique: false,
+  isOtherOptions: false,
+  isRequired: false
+})
 
 // 用于获取问卷部分的容器元素
-const questionnaireContainer = ref(null);
+const questionnaireContainer = ref<HTMLDivElement>();
 
 onMounted(() => {
   getInfo();
@@ -169,6 +235,8 @@ const getInfo = () => {
         submitData.value = deepCopy(formData.value); // Deep copy to avoid reference issues
         title.value = res.data.title;
         question.value = submitData.value.questions;
+        time.value = submitData.value.time
+        loading.value = false
       } else {
         ElNotification.error(res.msg);
       }
@@ -183,20 +251,35 @@ const addQuestion = () => {
   question.value.push({
     description: '',
     img: '',
-    options: [],
-    other_option: true,
+    options: [{
+      content: '',
+      img: '',
+      serial_num: 1
+    },
+      {
+        content: '',
+        img: '',
+        serial_num: 2
+      },
+      {
+        content: '',
+        img: '',
+        serial_num: 3
+      },
+    ],
+    other_option: setting.isOtherOptions,
     question_type: selectedOption.value,
     reg: reg.value,
-    required: false,
+    required: setting.isRequired,
     serial_num: question.value.length + 1,
     subject: '',
-    unique: true,
+    unique: setting.isUnique,
   });
 
   // 等待 DOM 更新完成后再执行滚动
   nextTick(() => {
     if (questionnaireContainer.value) {
-      questionnaireContainer.value.scrollTop = questionnaireContainer.value.scrollHeight;
+      questionnaireContainer.value!.scrollTop = questionnaireContainer.value!.scrollHeight;
     }
   });
 };
@@ -208,24 +291,24 @@ watch(selectedOption, cleanReg);
 
 const deleteQuestion = (serial_num: number) => {
   console.log(serial_num);
-  setTimeout(() => {
     question.value = question.value.filter((item) => item.serial_num !== serial_num);
     question.value.forEach((item) => {
       if (item.serial_num > serial_num) {
         item.serial_num -= 1;
       }
     });
-  },500)
 };
 
 const dataReverse = () => {
   submitData.value = deepCopy(formData.value);
   question.value = deepCopy(formData.value.questions);
+  time.value = submitData.value.time
   console.log(question.value);
   ElNotification.success('成功放弃修改');
 };
 
 const submit = () => {
+  submitData.value.time = time.value
   submitData.value.questions = question.value;
   console.log(question.value);
 
@@ -242,13 +325,14 @@ const submit = () => {
     }
   });
 };
+
+const onUpdate = () => {
+  question.value.forEach((q, idx) => {
+    q.serial_num = idx + 1;
+  });
+};
+
 </script>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
 </style>

@@ -5,6 +5,7 @@ import updateQuestionnaireStatusAPI from "./service/Home/updateQuestionnaireStat
 import delQuestionnaireAPI from "./service/Home/delQuestionnaireAPI";
 import setQuestionnaireDetailAPI from "@/apis/service/DetailInfo/setQuestionnaireDetailAPI.ts";
 import getAnswersAPI from "./service/DataDisplay/getAnswersAPI";
+import saveImgAPI from "@/apis/service/saveImg.ts";
 
 export {
     loginAPI,
@@ -14,4 +15,5 @@ export {
     delQuestionnaireAPI,
     setQuestionnaireDetailAPI,
     getAnswersAPI,
+    saveImgAPI,
 }

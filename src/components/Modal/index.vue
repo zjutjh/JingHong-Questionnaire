@@ -32,9 +32,9 @@ showModal("idName", ture) // 关闭modal
       <div>
         <slot></slot>
       </div>
-      <div class="modal-action" :class="[centerBtn ? 'flex justify-center' : undefined]">
+      <div class="modal-action flex justify-evenly" :class="[centerBtn ? 'flex justify-center' : undefined]">
         <slot name="action"></slot>
-        <button v-if="!noCloseBtn" class="btn btn-sm" @click="showModal(modalId, true)">关闭</button>
+        <button v-if="!noCloseBtn" class="btn btn-md btn-error shadow-md" @click="showModal(modalId, true)">关闭</button>
       </div>
     </div>
   </dialog>
