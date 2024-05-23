@@ -11,7 +11,13 @@
       :title="item.title"
       :id-name="item.id"
       :status="item.status"
-      @updateList="updateList"
+      @updateList="() => getQuestionnaireList()"
+      />
+      <el-pagination
+        :current-page="pageNum"
+        layout="prev, pager, next"
+        :page-count="totalPageNum"
+        @current-change="handleCurrentChange"
       />
     </div>
   </div>
@@ -25,12 +31,13 @@ import { ref } from 'vue';
 import router from '@/router';
 
 const pageSize = 4;
-const totalPageNum = ref(0);
+const pageNum = ref(1);
+const totalPageNum = ref(1);
 const questionnaireList = ref();
 
-const getQuestionnaireList = (pageNum: number, pageSize: number, title?: string) => {
+const getQuestionnaireList = (title?: string) => {
   useRequest(() => getQuestionnaireListAPI({
-    page_num: pageNum,
+    page_num: pageNum.value,
     page_size: pageSize,
     title: title
   }), {
@@ -43,10 +50,11 @@ const getQuestionnaireList = (pageNum: number, pageSize: number, title?: string)
     }
   })
 }
-getQuestionnaireList(1, pageSize);
+getQuestionnaireList();
 
-const updateList = () => {
-  getQuestionnaireList(1, pageSize);
+const handleCurrentChange = (val: number) => {
+  pageNum.value = val;
+  getQuestionnaireList();
 }
 
 </script>
