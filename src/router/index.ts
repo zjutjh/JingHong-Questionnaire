@@ -3,6 +3,7 @@ import {
 login,
 home,
 detailInfo,
+datadisplay,
 } from "@/pages";
 // import pinia from "@/stores/createPinia";
 // import { useMainStore } from "@/stores";
@@ -24,6 +25,11 @@ const router = createRouter({
       path: "/DetailInfo",
       name: "detailInfo",
       component: detailInfo
+    },
+    {
+      path: "/Data",
+      name: "datadisplay",
+      component: datadisplay
     },
   ]
 });
