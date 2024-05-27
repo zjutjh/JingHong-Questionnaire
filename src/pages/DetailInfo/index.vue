@@ -72,11 +72,15 @@
     <div class="p-40">
       <div class="bg-blue-200 w-750 p-40 shadow-lg rounded-2xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700">
         <div class="flex-col justify-center">
-          <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
+          <el-skeleton :loading="loading" :rows="2" animated style="height: 60px">
             <template #default>
           <div class="text-4xl">{{ title }}</div>
+          <div class="flex items-top gap-20  my-15" >
+            <span>问卷内容描述</span>
+            <textarea class="textarea textarea-bordered w-300" placeholder="描述问卷" v-model="submitData.desc" ></textarea>
+          </div>
           <div class="flex gap-20 items-center my-15">
-          <span>问卷截止时间</span>
+          <span >问卷截止时间</span>
           <el-date-picker
               v-model="time"
               type="datetime"
@@ -186,7 +190,7 @@ const formData = ref();
 const question = ref([]);
 const title = ref();
 const submitData = ref();
-const id = ref<number>(6);
+const id = ref<number>(14);
 const reg = ref<string>('');
 const regNum = ref("^[0-9]{1}$");
 const time = ref();
