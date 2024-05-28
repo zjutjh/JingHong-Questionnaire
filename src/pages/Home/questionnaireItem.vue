@@ -10,7 +10,7 @@
     </div>
     <div class="relative h-30">
       <div class="absolute left-0 flex flex-row gap-5">
-        <div class="btn btn-sm btn-ghost" @click="() => router.push('/DetailInfo')">编辑/设计问卷</div>
+        <div class="btn btn-sm btn-ghost" @click="DetailInfo">编辑/设计问卷</div>
         <div class="btn btn-sm btn-ghost" @click="() => showModal('statusConfirmModal'+idName)">{{ status===1 ? "发布问卷" : "下架问卷" }}</div>
         <div class="btn btn-sm btn-ghost" @click="() => showModal('delConfirmModal'+idName)">删除问卷</div>
       </div>
@@ -21,17 +21,21 @@
     </div>
   </div>
   <modal :modal-id="'statusConfirmModal'+idName">
-    <div class="text-xl font-bold">{{ status===1 ? "发布问卷" : "下架问卷" }}</div>
-    <div class="px-40 pt-10">{{ status===1 ? "确认发布问卷: " : "确认下架问卷: " + title + "?"}}</div>
+    <template #title>
+      {{ status===1 ? "发布问卷" : "下架问卷" }}
+    </template>
+    <template #default>
+      {{ status===1 ? "确认发布问卷: " : "确认下架问卷: " }} {{ title }}
+    </template>
     <template #action>
-      <div class="btn btn-success" @click="() => updateQuestionnaireStatus(idName, status===1?2:1)">确认</div>
+      <div class="btn btn-success w-80" @click="() => updateQuestionnaireStatus(idName, status===1?2:1)">确认</div>
     </template>
   </modal>
   <modal :modal-id="'delConfirmModal'+idName">
-    <div class="text-xl font-bold">删除问卷</div>
-    <div class="px-40 pt-10">将删除 {{ title }}</div>
+    <template #title>删除问卷</template>
+    <template #default>将删除标题为<span class="text-red-500">{{ title }}</span>的问卷</template>
     <template #action>
-      <div class="btn btn-success" @click="() => delQuestionnaire(idName)">确认</div>
+      <div class="btn btn-success w-80" @click="() => delQuestionnaire(idName)">确认</div>
     </template>
   </modal>
 </template>
@@ -42,6 +46,7 @@ import { updateQuestionnaireStatusAPI, delQuestionnaireAPI } from '@/apis';
 import { useRequest } from 'vue-hooks-plus';
 import { ElNotification } from 'element-plus';
 import router from '@/router';
+import {closeLoading, startLoading} from "@/utilities";
 
 const props = defineProps<{
   title: string,
@@ -73,13 +78,15 @@ const updateQuestionnaireStatus = (id: number, status: 1 | 2) => {
 
 const delQuestionnaire = (id: number) => {
   useRequest(() => delQuestionnaireAPI({id: id}), {
+    onBefore: () => startLoading(),
     onSuccess(res: any) {
       if(res.code === 200) {
         ElNotification("删除成功");
         updateList();
         showModal('delConfirmModal'+props.idName, true);
       }
-    }
+    },
+    onFinally: () => closeLoading()
   })
 }
 
@@ -87,4 +94,9 @@ const copyShareCode = () => {
   navigator.clipboard.writeText("this is an url");
 }
 
+const DetailInfo = () => {
+  localStorage.setItem('isNew','false')
+  localStorage.setItem('id',String(props.idName))
+  router.push('/DetailInfo')
+}
 </script>

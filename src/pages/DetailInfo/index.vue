@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center items-start gap-130 h-screen ">
+  <div class="flex justify-center items-start h-screen gap-50">
     <div class="bg-blue-200 p-30 rounded-2xl shadow-lg w-230 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
       <span class="flex justify-center items-center  gap-10"><el-icon @click="showModal('setting')"><Setting /></el-icon><span class="text-2xl">添加问卷题目</span></span>
       <div class="p-20">
@@ -72,9 +72,9 @@
     <div class="p-40">
       <div class="bg-blue-200 w-750 p-40 shadow-lg rounded-2xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700">
         <div class="flex-col justify-center">
-          <el-skeleton :loading="loading" :rows="2" animated style="height: 60px">
+          <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
             <template #default>
-          <div class="text-4xl">{{ title }}</div>
+          <span class="flex gap-20 items-center"><span class="text-2xl">问卷标题</span><input type="text" placeholder="标题" class="input input-bordered w-300" v-model="submitData.title" /></span>
           <div class="flex items-top gap-20  my-15" >
             <span>问卷内容描述</span>
             <textarea class="textarea textarea-bordered w-300" placeholder="描述问卷" v-model="submitData.desc" ></textarea>
@@ -90,7 +90,7 @@
             </template>
           </el-skeleton>
         </div>
-        <div class="divider"></div>
+        <div class="divider "></div>
         <div class="overflow-y-auto h-800 p-20" ref="questionnaireContainer" style="scroll-behavior: smooth;">
          <!-- <VueDraggable
               v-model="question"
@@ -127,7 +127,7 @@
               </el-skeleton>
             </div>
             <div v-if="q.question_type === 4">
-              <el-skeleton animated  :loading="loading">
+              <el-skeleton  :loading="loading">
                 <template #template>
                   <skeleton-card></skeleton-card>
                 </template>
@@ -150,29 +150,57 @@
           <!--</VueDraggable>-->
         </div>
         <div class="flex justify-center items-center gap-160 mt-20">
-          <button class="btn btn-success" @click="submit">保存更改</button>
-          <button class="btn btn-error" @click="dataReverse">放弃更改</button>
+          <button class="btn btn-success" @click="showModal('SaveQuestionnaireSubmit')" v-show="isNew === 'false'">保存更改</button>
+          <button class="btn btn-error" @click="showModal('reverseQuestionnaireSubmit')" v-show="isNew === 'false'">放弃更改</button>
+          <button class="btn btn-success" @click="submit(1)" v-show="isNew === 'true'">保存</button>
+          <button class="btn btn-primary" @click="showModal('NewQuestionnaireSubmit')" v-show="isNew === 'true'">发布</button>
         </div>
       </div>
     </div>
-    <modal modal-id="setting" gray >
-      <header class="text-3xl">Setting</header>
-      <body>
-      <title>默认设置</title>
-      <div class="flex justify-evenly my-20">
+    <modal modal-id="setting">
+      <template #title>设置</template>
+      <template #default>
+      <div class="flex gap-20 p-10">
         <span class="flex items-center gap-10"><span>默认唯一</span><input type="checkbox" class="checkbox" v-model="setting.isUnique"/></span>
         <span class="flex items-center gap-10"><span>默认必答</span><input type="checkbox" class="checkbox" v-model="setting.isRequired"/></span>
         <span class="flex items-center gap-10"><span>默认有"其他"选项</span><input type="checkbox" class="checkbox" v-model="setting.isOtherOptions"/></span>
       </div>
-      </body>
+      </template>
+    </modal>
+    <modal modal-id="NewQuestionnaireSubmit">
+      <template #title>确认发布</template>
+      <template #default>
+        该操作会直接发布问卷!请确认问卷无误
+      </template>
+      <template #action>
+        <button class="btn btn-success w-80" @click="submit(2)">确认</button>
+      </template>
+    </modal>
+    <modal modal-id="SaveQuestionnaireSubmit">
+      <template #title>保存更改</template>
+      <template #default>
+        确认要保存更改吗?
+      </template>
+      <template #action>
+        <button class="btn btn-success w-80" @click="submit">确认</button>
+      </template>
+    </modal>
+    <modal modal-id="reverseQuestionnaireSubmit">
+      <template #title>放弃更改</template>
+      <template #default>
+        确认要放弃更改吗?
+      </template>
+      <template #action>
+        <button class="btn btn-success w-80" @click="dataReverse">确认</button>
+      </template>
     </modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, ref, watch, nextTick, reactive} from "vue";
+import {computed, onMounted, ref, watch, nextTick, reactive, toRaw, toRef} from "vue";
 import { useRequest } from "vue-hooks-plus";
-import { getQuestionnaireDetailAPI, setQuestionnaireDetailAPI } from "@/apis";
+import {getQuestionnaireDetailAPI, setNewQuestionnaireDetailAPI, setQuestionnaireDetailAPI} from "@/apis";
 import { ElNotification } from "element-plus";
 import { modal, showModal, skeleton } from '@/components';
 import Radio from "@/pages/DetailInfo/radio.vue";
@@ -183,6 +211,8 @@ import File from "@/pages/DetailInfo/file.vue";
 import radio from "@/pages/DetailInfo/radio.vue";
 import {SortableEvent, VueDraggable} from 'vue-draggable-plus'
 import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
+import router from "@/router";
+import {closeLoading, startLoading} from "@/utilities";
 
 const selectedOption = ref(1);
 const selectedNumber = ref(1);
@@ -190,7 +220,7 @@ const formData = ref();
 const question = ref([]);
 const title = ref();
 const submitData = ref();
-const id = ref<number>(14);
+const id = ref<number>();
 const reg = ref<string>('');
 const regNum = ref("^[0-9]{1}$");
 const time = ref();
@@ -200,12 +230,33 @@ const setting = reactive({
   isOtherOptions: false,
   isRequired: false
 })
+const isNew = localStorage.getItem('isNew')
+const calculateFutureDate = (): Date => {
+  const currentDate = new Date();
+  const futureDate = new Date(currentDate);
+  futureDate.setDate(currentDate.getDate() + 7);
+  return futureDate;
+};
 
 // 用于获取问卷部分的容器元素
 const questionnaireContainer = ref<HTMLDivElement>();
 
 onMounted(() => {
-  getInfo();
+  time.value = calculateFutureDate();
+  if(isNew === 'false') {
+    id.value = Number(localStorage.getItem('id'))
+    getInfo();
+  }else{
+    submitData.value = {
+      desc: '',
+      img: '',
+      questions: [],
+      status: -1,
+      time: '',
+      title: ''
+    }
+    loading.value = false
+  }
 });
 
 // Deep copy function
@@ -225,7 +276,8 @@ const updateInputPattern = () => {
 };
 
 const getInfo = () => {
-  useRequest(() => getQuestionnaireDetailAPI({ id: id.value }), {
+  useRequest(() => getQuestionnaireDetailAPI({ id: id.value as number}), {
+    onBefore: () => startLoading(),
     onSuccess(res) {
       if (res.code === 200) {
         console.log(res.data);
@@ -237,7 +289,7 @@ const getInfo = () => {
         }
         formData.value = formDataCopy;
         submitData.value = deepCopy(formData.value); // Deep copy to avoid reference issues
-        title.value = res.data.title;
+        title.value = submitData.value.title;
         question.value = submitData.value.questions;
         time.value = submitData.value.time
         loading.value = false
@@ -248,6 +300,7 @@ const getInfo = () => {
     onError(e) {
       ElNotification.error('获取失败，请重试' + e);
     },
+    onFinally: () => closeLoading()
   });
 };
 
@@ -311,23 +364,47 @@ const dataReverse = () => {
   ElNotification.success('成功放弃修改');
 };
 
-const submit = () => {
+const submit = (state:number) => {
   submitData.value.time = time.value
   submitData.value.questions = question.value;
   console.log(question.value);
-
-  useRequest(() => setQuestionnaireDetailAPI(submitData.value), {
-    onSuccess(res) {
-      if (res.code === 200 && res.msg === 'OK') {
-        ElNotification.success('保存成功');
-      } else {
-        ElNotification.error(res.msg);
-      }
-    },
-    onError(e) {
-      ElNotification.error(e);
-    }
-  });
+  if(isNew === 'false') {
+    useRequest(() => setQuestionnaireDetailAPI(submitData.value), {
+      onBefore: () => startLoading(),
+      onSuccess(res) {
+        if (res.code === 200 && res.msg === 'OK') {
+          ElNotification.success('保存成功');
+        } else {
+          ElNotification.error(res.msg);
+        }
+      },
+      onError(e) {
+        ElNotification.error(e);
+      },
+      onFinally: () => closeLoading()
+    });
+  }else{
+    submitData.value.status = state;
+    useRequest(() => setNewQuestionnaireDetailAPI(submitData.value),{
+      onBefore: () => startLoading(),
+      onSuccess(res) {
+        if (res.code === 200 && res.msg === 'OK') {
+          if(state === 1){
+            ElNotification.success('创建并保存为草稿成功');
+          }else{
+            ElNotification.success('创建并发布成功');
+          }
+          router.push('/')
+        } else {
+          ElNotification.error(res.msg);
+        }
+      },
+      onError(e) {
+        ElNotification.error(e);
+      },
+      onFinally: () => closeLoading()
+    });
+  }
 };
 
 const onUpdate = () => {
