@@ -28,13 +28,18 @@ showModal("idName", ture) // 关闭modal
  -->
 <template>
   <dialog :id="modalId" class="modal" >
-    <div class="modal-box p-30" :class="gray ? 'bg-gray-300' : undefined">
-      <div>
+    <div class="modal-box p-30" :class="gray ? 'bg-gray-300' : 'bg-indigo-100'">
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 ">✕</button>
+      </form>
+      <span class="text-3xl font-bold">
+        <slot name="title" ></slot>
+      </span>
+      <div class="flex items-center my-20 text-lg">
         <slot></slot>
       </div>
-      <div class="modal-action flex justify-evenly" :class="[centerBtn ? 'flex justify-center' : undefined]">
+      <div class="modal-action flex justify-end gap-10" :class="[centerBtn ? 'flex justify-center' : undefined]">
         <slot name="action"></slot>
-        <button v-if="!noCloseBtn" class="btn btn-md btn-error shadow-md" @click="showModal(modalId, true)">关闭</button>
       </div>
     </div>
   </dialog>
@@ -44,7 +49,6 @@ showModal("idName", ture) // 关闭modal
 import { showModal } from './showModal';
 
 defineProps<{
-  noCloseBtn?: boolean,
   centerBtn?: boolean,
   modalId: string,
   gray?: boolean

@@ -38,6 +38,7 @@ import {loginAPI} from "@/apis";
 import {ElNotification} from "element-plus";
 import {useMainStore} from "@/stores";
 import router from "@/router";
+import {closeLoading, startLoading} from "@/utilities";
 
 const password = ref<string>('')
 const username = ref<string>('')
@@ -48,6 +49,7 @@ const send = () => {
     username:username.value,
     password:password.value
   }),{
+    onBefore: () => startLoading(),
     onSuccess(res: any){
       console.log(res)
       if(res.code === 200) {
@@ -60,7 +62,8 @@ const send = () => {
     },
     onError(e){
       ElNotification.error('登录失败，请重试' + e);
-    }
+    },
+    onFinally: () => closeLoading()
   })
 }
 
