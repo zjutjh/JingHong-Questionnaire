@@ -1,12 +1,12 @@
 <template>
 <div>
-  <div @click="() => router.push('/')" class="px-16 float-start">
+  <div @click="back" class="px-16 float-start">
     <el-icon :size="50"><Back /></el-icon>
   </div>
   <div class="px-120">
     <div class="flex flex-raw gap-10 text-lg">
       <div>
-        {{ "问卷id: " + id }}
+        {{ "问卷id: " + tempStore.checkId }}
       </div>
       <div>
         {{ "问卷标题: " + title }}
@@ -46,8 +46,10 @@ import { ref } from 'vue';
 import { useRequest } from 'vue-hooks-plus';
 import router from '@/router';
 import { ElPagination } from 'element-plus';
+import { useMainStore } from '@/stores';
 
-const id = ref(15);
+const tempStore = useMainStore().useTempStore();
+
 const title = ref("Tiele");
 const pageNum = ref(1);
 const totalPageNum = ref(2);
@@ -57,7 +59,7 @@ const time = ref();
 
 const getAnswers = () => {
   useRequest(() => getAnswersAPI({
-    id: id.value,
+    id: tempStore.checkId,
     page_num: pageNum.value,
     page_size: pageSize.value,
   }), {
@@ -76,6 +78,11 @@ getAnswers();
 const handleCurrentChange = (val: number) => {
   pageNum.value = val;
   getAnswers();
+}
+
+const back = () => {
+  tempStore.setCheckId(-1);
+  router.push('/');
 }
 
 </script>

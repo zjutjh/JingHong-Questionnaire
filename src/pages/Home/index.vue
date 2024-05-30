@@ -15,7 +15,7 @@
       @updateList="() => getQuestionnaireList()"
       />
       <el-pagination
-        :current-page="pageNum"
+        :current-page="tempStore.homePageNum"
         layout="prev, pager, next"
         :page-count="totalPageNum"
         @current-change="handleCurrentChange"
@@ -32,15 +32,18 @@ import { getQuestionnaireListAPI } from '@/apis';
 import { ref } from 'vue';
 import router from '@/router';
 import {closeLoading, startLoading} from "@/utilities";
+import { useMainStore } from '@/stores';
+
+const tempStore = useMainStore().useTempStore();
 
 const pageSize = 4;
-const pageNum = ref(1);
+// const pageNum = ref(1);
 const totalPageNum = ref(1);
 const questionnaireList = ref();
 const loading = ref(true);
 const getQuestionnaireList = (title?: string) => {
   useRequest(() => getQuestionnaireListAPI({
-    page_num: pageNum.value,
+    page_num: tempStore.homePageNum,
     page_size: pageSize,
     title: title
   }), {
@@ -58,7 +61,7 @@ const getQuestionnaireList = (title?: string) => {
 getQuestionnaireList();
 
 const handleCurrentChange = (val: number) => {
-  pageNum.value = val;
+  tempStore.setHomePageNum(val);
   getQuestionnaireList();
 }
 

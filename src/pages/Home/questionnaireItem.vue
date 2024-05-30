@@ -4,7 +4,7 @@
     <div class="relative h-30">
       <div class="absolute left-0">{{ "标题:" + title }}</div>
       <div class="absolute right-5 flex flex-row gap-5">
-        <div class="btn btn-sm btn-ghost" @click="() => router.push('/Data')">查看数据</div>
+        <div class="btn btn-sm btn-ghost" @click="checkData">查看数据</div>
         <div class="pt-4">{{ "id:" + idName }}</div>
       </div>
     </div>
@@ -47,6 +47,9 @@ import { useRequest } from 'vue-hooks-plus';
 import { ElNotification } from 'element-plus';
 import router from '@/router';
 import {closeLoading, startLoading} from "@/utilities";
+import { useMainStore } from '@/stores';
+
+const tempStore = useMainStore().useTempStore();
 
 const props = defineProps<{
   title: string,
@@ -99,4 +102,10 @@ const DetailInfo = () => {
   localStorage.setItem('id',String(props.idName))
   router.push('/DetailInfo')
 }
+
+const checkData = () => {
+  tempStore.setCheckId(props.idName);
+  router.push('/Data');
+}
+
 </script>
