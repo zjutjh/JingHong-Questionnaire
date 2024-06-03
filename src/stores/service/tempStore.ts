@@ -10,12 +10,18 @@ const useTempStore = defineStore("temporary", () => {
     const setHomePageNum = (num: number) => {
       homePageNum.value = num;
     }
+    const checkTitle = ref();
+    const setCheckTitle = (title: string) => {
+      checkTitle.value = title;
+    }
 
     return{
         checkId,
         setCheckId,
         homePageNum,
         setHomePageNum,
+        checkTitle,
+        setCheckTitle,
     };
 });
 

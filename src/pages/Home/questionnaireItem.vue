@@ -105,6 +105,7 @@ const DetailInfo = () => {
 
 const checkData = () => {
   tempStore.setCheckId(props.idName);
+  tempStore.setCheckTitle(props.title);
   router.push('/Data');
 }
 
