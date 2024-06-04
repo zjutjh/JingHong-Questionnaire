@@ -362,6 +362,7 @@ const dataReverse = () => {
   time.value = submitData.value.time
   console.log(question.value);
   ElNotification.success('成功放弃修改');
+  showModal('reverseQuestionnaireSubmit',true)
 };
 
 const submit = (state:number) => {
@@ -381,7 +382,10 @@ const submit = (state:number) => {
       onError(e) {
         ElNotification.error(e);
       },
-      onFinally: () => closeLoading()
+      onFinally: () => {
+        showModal('SaveQuestionnaireSubmit',true)
+        closeLoading()
+      }
     });
   }else{
     submitData.value.status = state;
@@ -402,7 +406,10 @@ const submit = (state:number) => {
       onError(e) {
         ElNotification.error(e);
       },
-      onFinally: () => closeLoading()
+      onFinally: () => {
+        showModal('SaveQuestionnaireSubmit',true)
+        closeLoading()
+      }
     });
   }
 };
