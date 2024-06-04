@@ -9,7 +9,7 @@
         {{ "问卷id: " + tempStore.checkId }}
       </div>
       <div>
-        {{ "问卷标题: " + title }}
+        {{ "问卷标题: " + tempStore.checkTitle }}
       </div>
     </div>
     <div class="overflow-x-auto">
@@ -50,7 +50,6 @@ import { useMainStore } from '@/stores';
 
 const tempStore = useMainStore().useTempStore();
 
-const title = ref("Tiele");
 const pageNum = ref(1);
 const totalPageNum = ref(2);
 const pageSize = ref(10);
@@ -81,7 +80,6 @@ const handleCurrentChange = (val: number) => {
 }
 
 const back = () => {
-  tempStore.setCheckId(-1);
   router.push('/');
 }
 
