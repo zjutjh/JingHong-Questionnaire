@@ -1,6 +1,6 @@
 <!-- 此组件用于展示问卷信息 -->
 <template>
-  <div class="border border-neutral-700 rounded-lg p-20">
+  <div class="border border-neutral-700 rounded-lg p-20" :class="{ 'bg-neutral-100': status===2}">
     <div class="relative h-30">
       <div class="absolute left-0">{{ "标题:" + title }}</div>
       <div class="absolute right-5 flex flex-row gap-5">
@@ -16,7 +16,7 @@
       </div>
       <div class="absolute right-5 flex flex-row gap-5">
         <div v-if="status===2" class="btn btn-sm btn-ghost" @click="() => copyShareCode()">复制分享链接</div>
-        <div class="pt-4">{{ "状态:" + (status===1 ? "草稿" : "已发布") }}</div>
+        <div class="pt-4" :class="{ 'text-blue-500': status===2, 'text-red-500': status===1}">{{ "状态:" + (status===1 ? "草稿" : "已发布") }}</div>
       </div>
     </div>
   </div>
@@ -71,10 +71,12 @@ const updateQuestionnaireStatus = (id: number, status: 1 | 2) => {
     onSuccess(res: any) {
       console.log(res);
       if(res.code === 200) {
-        ElNotification("修改成功");
+        ElNotification.success("修改成功");
         updateList();
-        showModal('statusConfirmModal'+props.idName, true);
+      } else {
+        ElNotification.error(res.msg)
       }
+      showModal('statusConfirmModal'+props.idName, true);
     }
   })
 }
