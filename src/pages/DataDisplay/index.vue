@@ -1,16 +1,17 @@
 <template>
 <div>
-  <div @click="() => router.push('/')" class="px-16 float-start">
+  <div @click="back" class="px-16 float-start">
     <el-icon :size="50"><Back /></el-icon>
   </div>
   <div class="px-120">
     <div class="flex flex-raw gap-10 text-lg">
       <div>
-        {{ "问卷id: " + id }}
+        {{ "问卷id: " + tempStore.checkId }}
       </div>
       <div>
-        {{ "问卷标题: " + title }}
+        {{ "问卷标题: " + tempStore.checkTitle }}
       </div>
+      <div class="btn btn-sm btn-accent" @click="downloadDatatable">下载数据表格</div>
     </div>
     <div class="overflow-x-auto">
       <table class="table">
@@ -41,14 +42,15 @@
 </template>
 
 <script setup lang="ts">
-import { getAnswersAPI } from '@/apis';
+import { getAnswersAPI, getDatatableAPI } from '@/apis';
 import { ref } from 'vue';
 import { useRequest } from 'vue-hooks-plus';
 import router from '@/router';
 import { ElPagination } from 'element-plus';
+import { useMainStore } from '@/stores';
 
-const id = ref(15);
-const title = ref("Tiele");
+const tempStore = useMainStore().useTempStore();
+
 const pageNum = ref(1);
 const totalPageNum = ref(2);
 const pageSize = ref(10);
@@ -57,12 +59,11 @@ const time = ref();
 
 const getAnswers = () => {
   useRequest(() => getAnswersAPI({
-    id: id.value,
+    id: tempStore.checkId,
     page_num: pageNum.value,
     page_size: pageSize.value,
   }), {
     onSuccess(res: any) {
-      console.log(res);
       if(res.code === 200) {
         totalPageNum.value = res.data.total_page_num;
         answers.value = res.data.answers_data.question_answers;
@@ -76,6 +77,22 @@ getAnswers();
 const handleCurrentChange = (val: number) => {
   pageNum.value = val;
   getAnswers();
+}
+
+const back = () => {
+  router.push('/');
+}
+
+const downloadDatatable = () => {
+  useRequest(() => getDatatableAPI({
+    id: tempStore.checkId
+  }), {
+    onSuccess(res: any) {
+      if(res.code === 200) {
+        window.location.href = res.data;
+      }
+    }
+  })
 }
 
 </script>

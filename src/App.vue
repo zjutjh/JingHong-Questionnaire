@@ -7,9 +7,7 @@
     <div class="flex-none">
       <ul class="menu menu-horizontal px-1">
         <li @click="router.push('/login')" v-show="!loginStore.loginSession"><a>登陆</a></li>
-        <li @click="router.push('/detailInfo')" v-show="loginStore.loginSession"><a>问卷详情</a></li>
         <li @click="router.push('/')" v-show="loginStore.loginSession"><a>问卷列表</a></li>
-        <li @click="router.push('/Data')" v-show="loginStore.loginSession"><a>数据信息</a></li>
         <li @click="router.push('/login');loginStore.setLogin(false);ElNotification.success('登出成功')" v-show="loginStore.loginSession"><a>登出</a></li>
       </ul>
     </div>
