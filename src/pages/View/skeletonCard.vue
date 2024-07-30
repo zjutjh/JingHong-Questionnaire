@@ -8,9 +8,8 @@
           <input type="text" placeholder="Question" class="input input-bordered shadow-md w-350" />
         </div>
         <div class="flex items-center gap-20 my-10">
-          <span class="w-80">问题描述  | </span>
-          <span v-if="localDescribe" class="w-150">{{ localDescribe }}</span>
-          <span v-if="!localDescribe" class="w-150">此问卷没有描述</span>
+          <span class="w-50">问题描述</span>
+          <textarea type="text" placeholder="Describe" class="textarea textarea-bordered shadow-md w-full h-70" />
         </div>
       </div>
       <div class="flex-col justify-center items-center">

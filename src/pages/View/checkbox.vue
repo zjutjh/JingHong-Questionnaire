@@ -2,6 +2,10 @@
   <div class="bg-sky-100 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
     <div class="flex justify-between">
       <div class="flex-col">
+        <div class="flex items-center gap-20">
+          <span>{{ serial_num }}</span>
+          <span>{{ localTitle }}</span>
+        </div>
         <div class="flex items-center gap-20 my-10">
           <span class="w-80">问题描述  | </span>
           <span v-if="localDescribe" class="w-150">{{ localDescribe }}</span>
