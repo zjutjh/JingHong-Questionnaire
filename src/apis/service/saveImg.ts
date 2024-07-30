@@ -1,7 +1,7 @@
 import { request } from "@/apis/axios";
 
 const saveImgAPI = (data: FormData | null) => {
-    return request("/api/user/upload", {
+    return request("/api/user/upload/img", {
         data: data,
         method: "POST",
         headers: {

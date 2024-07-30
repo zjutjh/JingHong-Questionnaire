@@ -363,6 +363,7 @@ const dataReverse = () => {
   console.log(question.value);
   ElNotification.success('成功放弃修改');
   showModal('reverseQuestionnaireSubmit',true)
+  router.push('/')
 };
 
 const submit = (state:number) => {
@@ -375,6 +376,7 @@ const submit = (state:number) => {
       onSuccess(res) {
         if (res.code === 200 && res.msg === 'OK') {
           ElNotification.success('保存成功');
+          router.push('/')
         } else {
           ElNotification.error(res.msg);
         }
@@ -419,6 +421,7 @@ const onUpdate = () => {
     q.serial_num = idx + 1;
   });
 };
+
 
 </script>
 
