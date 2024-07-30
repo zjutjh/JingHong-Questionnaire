@@ -27,12 +27,11 @@
     <div class="flex-col p-5 overflow-y-auto h-180 mt-10" ref="scrollContainer" style="scroll-behavior: smooth;">
       <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
         <input type="radio" :name="props.serial_num" class="radio-sm my-5" />
-        <input type="text" class="input input-bordered h-40 shadow-md" placeholder="option" v-model="item.content" />
+        <span v-if="item.content">{{ item.content }}</span>
         <div class="ml-10 flex items-center gap-20">
           <div v-if="item.img" class="mt-4">
-            <img :src="item.img" alt="Preview" style="max-width: 50px; max-height: 50px;" />
+            <img v-if="item.img" :src="item.img" alt="Preview" style="max-width: 50px; max-height: 50px;" />
           </div>
-          <input type="file" class="file-input file-input-bordered file-input-sm w-7/12" @change="handleFileChange($event, item.serial_num)" />
         </div>
       </div>
       <div class="flex gap-10">

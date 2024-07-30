@@ -23,9 +23,6 @@
     </div>
     <div class="divider"></div>
     <div class="divider mt-100"></div>
-    <div class="mt-20 flex justify-evenly items-center ">
-      <button class="btn btn-error shadow-md" >删除题目</button>
-    </div>
   </div>
 </template>
 

@@ -3,6 +3,7 @@
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
+
           <span>{{ serial_num }}</span>
           <span>{{ localTitle }}</span>
         </div>
@@ -25,7 +26,6 @@
     <textarea placeholder="Type here" class="textarea textarea-bordered shadow-md w-full h-100" />
     <div class="divider"></div>
   </div>
-
 </template>
 
 <script setup lang="ts">
