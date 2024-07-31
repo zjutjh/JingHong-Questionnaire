@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-sky-100 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
+  <div class="bg-gray-50 p-30  my-30">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
@@ -22,19 +22,19 @@
       </div>
     </div>
     <div class="divider"></div>
-    <div class="flex-col p-5 overflow-y-auto h-180 mt-10" ref="scrollContainer" style="scroll-behavior: smooth;" >
-      <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
+    <div class="flex-col p-5 h-auto mt-10" >
+      <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-20 my-15">
         <input type="checkbox" :name="item.serial_num" class="checkbox-sm my-5" />
         <span v-if="item.content">{{item.content}}</span>
         <div class="ml-10 flex items-center gap-20">
           <div v-if="item.img" class="mt-4">
-            <img v-if="item.img" :src="item.img" alt="Preview" style="max-width: 50px; max-height: 50px;" />
+            <img v-if="item.img" :src="item.img" alt="Preview" style="max-width: 150px; max-height: 150px;" />
           </div>
         </div>
       </div>
       <div class="flex gap-10">
-      <span>其他</span>
-      <input v-if="!localOtherOption" type="text" class="input input-bordered h-40 shadow-md"  placeholder="option" v-model="localOtherOption" />
+        <input type="checkbox" class="checkbox-sm my-5" />
+        <input v-if="!localOtherOption" type="text" class="input input-bordered h-40 shadow-md"  placeholder="其他" v-model="otherContent" />
       </div>
     </div>
   </div>
@@ -42,9 +42,6 @@
 
 <script setup lang="ts">
 import {ref, watch, defineProps, defineEmits, toRaw} from 'vue';
-import {useRequest} from "vue-hooks-plus";
-import {saveImgAPI} from "@/apis";
-import {ElNotification} from "element-plus";
 
 const props = defineProps<{
   serial_num: number,
@@ -60,7 +57,6 @@ const props = defineProps<{
   }[]
 }>();
 
-const scrollContainer = ref<HTMLDivElement>()
 const emits = defineEmits(['update:unique', 'on-click', 'update:otherOption', 'update:optionChoose','update:title','update:options','update:describe']);
 
 // Local copies of props to maintain reactivity
@@ -71,6 +67,7 @@ const localOtherOption = ref<boolean>(props.otherOption);
 const localDescribe = ref<string>(props.describe || '');
 const localOptions = ref(props.options );
 
+const otherContent = ref<string>();
 
 watch(() => props.title, (newTitle) => {
   localTitle.value = newTitle || '';
@@ -97,34 +94,11 @@ watch(() => props.describe, (newLocalDescribe) => {
 });
 
 // Emit updates to parent component
-watch(localTitle, (newTitle) => {
-  emits('update:title', newTitle);
-});
+watch(localOptions, (newOptions) => {
+  const multiSelectedOptions = newOptions.filter(item => item.selected);
 
-watch(localOptionChoose, (newOptionChoose) => {
-  emits('update:optionChoose', newOptionChoose);
-});
-
-watch(localUnique, (newUnique) => {
-  emits('update:unique', newUnique);
-});
-
-watch(localDescribe, (newLocalDescribe) => {
-  emits('update:describe', newLocalDescribe);
-});
-
-watch(localOtherOption, (newOtherOption) => {
-  emits('update:otherOption', newOtherOption);
-});
-
-watch(localOptions.value, (newOptions) => {
-  console.log(newOptions);
-
-  const rawOptions = newOptions.map(item => toRaw(item));
-
-  console.log(rawOptions);
-
-  emits('update:options', rawOptions);
+  // 在这里处理多选的选项，可以将选项存储到一个新的数组中或者执行其他逻辑
+  console.log('多选的选项：', multiSelectedOptions);
 });
 
 </script>

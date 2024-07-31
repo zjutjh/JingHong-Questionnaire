@@ -1,36 +1,32 @@
 <template>
-  <div class="bg-sky-100 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
+  <div class="bg-gray-50 p-30  my-30">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
-          <span>{{ serial_num }}</span>
-          <span>{{ localTitle }}</span>
+          <span class="text-2xl">{{ serial_num }}</span>
+          <span class="text-xl" >{{ localTitle }}</span>
         </div>
-        <div class="flex items-center gap-20 my-10">
-          <span class="w-80">问题描述  | </span>
-          <span v-if="localDescribe" class="w-150">{{ localDescribe }}</span>
-          <span v-if="!localDescribe" class="w-150">此问卷没有描述</span>
+        <div class="flex items-center gap-20 my-15">
+          <span class="text-lg">问题描述</span>
+          <span v-if="localDescribe" class="text-lg">{{ localDescribe }}</span>
+          <span v-if="!localDescribe" class="text-lg">此问卷没有描述</span>
         </div>
       </div>
       <div class="flex-col justify-center items-center ">
         <div class="flex gap-10">
           <span>必答</span>
-          <input type="checkbox" class="checkbox-sm" v-model="localOptionChoose"/>
-        </div>
-        <div class="flex gap-10">
-          <span>唯一</span>
-          <input type="checkbox" class="checkbox-sm" v-model="localUnique"/>
+          <input type="checkbox" class="checkbox-sm" :disabled="true" v-model="localOptionChoose"/>
         </div>
       </div>
     </div>
     <div class="divider"></div>
-    <div class="flex-col p-5 overflow-y-auto h-180 mt-10" ref="scrollContainer" style="scroll-behavior: smooth;">
+    <div class="flex-col p-5 h-auto mt-10">
       <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
         <input type="radio" :name="props.serial_num" class="radio-sm my-5" />
         <span v-if="item.content">{{ item.content }}</span>
         <div class="ml-10 flex items-center gap-20">
           <div v-if="item.img" class="mt-4">
-            <img v-if="item.img" :src="item.img" alt="Preview" style="max-width: 50px; max-height: 50px;" />
+            <img v-if="item.img" :src="item.img" alt="Preview" style="max-width: 150px; max-height: 150px;" />
           </div>
         </div>
       </div>
@@ -72,48 +68,6 @@ const localUnique = ref<boolean>(props.unique);
 const localOtherOption = ref<boolean>(props.otherOption);
 const localOptions = ref(props.options ? [...props.options] : []);
 
-const handleFileChange = async (event, serial_num: number) => {
-  const file = event.target.files[0];
-  if (!file) return;
-  const formData = new FormData();
-  formData.append('img', file);
-  useRequest(() => saveImgAPI(formData), {
-    onSuccess(res) {
-      const option = localOptions.value.find(item => item.serial_num === serial_num);
-      if (option) {
-        option.img = res.data;
-      }
-      ElNotification.success('上传图片成功')
-    },
-    onError(error) {
-      ElNotification.error("上传图片失败"+ error);
-    }
-  });
-};
-
-const addOption = () => {
-  localOptions.value.push({
-    content: '',
-    img: '',
-    serial_num: localOptions.value.length + 1
-  });
-  nextTick(() => {
-    if (scrollContainer.value) {
-      scrollContainer.value!.scrollTop = scrollContainer.value!.scrollHeight;
-    }
-  });
-  console.log(localOptions.value)
-};
-
-const deleteOption = (serial_num: number) => {
-  localOptions.value = localOptions.value.filter(item => item.serial_num !== serial_num);
-  localOptions.value.forEach((item) => {
-    if (item.serial_num > serial_num) {
-      item.serial_num -= 1;
-    }
-  });
-  emits('update:options', localOptions.value);
-};
 
 // Watchers to sync local state with props
 watch(() => props.title, (newTitle) => {
@@ -141,25 +95,6 @@ watch(() => props.describe, (newLocalDescribe) => {
 });
 
 // Emit updates to parent component
-watch(localTitle, (newTitle) => {
-  emits('update:title', newTitle);
-});
-
-watch(localOptionChoose, (newOptionChoose) => {
-  emits('update:optionChoose', newOptionChoose);
-});
-
-watch(localUnique, (newUnique) => {
-  emits('update:unique', newUnique);
-});
-
-watch(localDescribe, (newLocalDescribe) => {
-  emits('update:describe', newLocalDescribe);
-});
-
-watch(localOtherOption, (newOtherOption) => {
-  emits('update:otherOption', newOtherOption);
-});
 
 watch(localOptions.value, (newOptions) => {
   const rawOptions = newOptions.map(item => toRaw(item));

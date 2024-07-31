@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-sky-100 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
+  <div class="bg-gray-50 p-30  my-30">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
@@ -67,17 +67,6 @@ watch(localTitle, (newTitle) => {
   emits('update:title', newTitle);
 });
 
-watch(localOptionChoose, (newOptionChoose) => {
-  emits('update:optionChoose', newOptionChoose);
-});
-
-watch(localDescribe, (newLocalDescribe) => {
-  emits('update:describe', newLocalDescribe);
-});
-
-watch(localUnique, (newUnique) => {
-  emits('update:unique', newUnique);
-});
 
 const pal = computed(() => {
   if(props.reg === '^1[3456789]\\d{9}$') return `电话`
