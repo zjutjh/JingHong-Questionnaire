@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="mt-60">
   <div @click="back" class="px-16 float-start">
     <el-icon :size="50"><Back /></el-icon>
   </div>

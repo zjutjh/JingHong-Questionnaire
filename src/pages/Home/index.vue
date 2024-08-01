@@ -1,5 +1,5 @@
 <template>
-  <div class="p-40 flex">
+  <div class="p-40 flex mt-60">
     <div class="basis-1/4 p-20 pl-0 flex justify-center gap-10">
       <div class="btn btn-success" style="width: 80%;" @click="addNewQuestionnaire">
         + 新建问卷

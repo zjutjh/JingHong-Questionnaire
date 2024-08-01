@@ -4,6 +4,7 @@ login,
 home,
 detailInfo,
 datadisplay,
+view,
 } from "@/pages";
 import pinia from "@/stores/createPinia";
 import { useMainStore } from "@/stores";
@@ -31,6 +32,11 @@ const router = createRouter({
       name: "datadisplay",
       component: datadisplay
     },
+    {
+      path:"/View",
+      name:"view",
+      component:view
+    }
   ]
 });
 
