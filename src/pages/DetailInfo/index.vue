@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center items-start h-screen gap-50">
+  <div class="flex justify-center items-start h-screen gap-50 mt-60">
     <div class="bg-blue-200 p-30 rounded-2xl shadow-lg w-230 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
       <span class="flex justify-center items-center  gap-10"><el-icon @click="showModal('setting')"><Setting /></el-icon><span class="text-2xl">添加问卷题目</span></span>
       <div class="p-20">
@@ -363,6 +363,7 @@ const dataReverse = () => {
   console.log(question.value);
   ElNotification.success('成功放弃修改');
   showModal('reverseQuestionnaireSubmit',true)
+  router.push('/')
 };
 
 const submit = (state:number) => {
@@ -375,6 +376,7 @@ const submit = (state:number) => {
       onSuccess(res) {
         if (res.code === 200 && res.msg === 'OK') {
           ElNotification.success('保存成功');
+          router.push('/')
         } else {
           ElNotification.error(res.msg);
         }
@@ -419,6 +421,7 @@ const onUpdate = () => {
     q.serial_num = idx + 1;
   });
 };
+
 
 </script>
 

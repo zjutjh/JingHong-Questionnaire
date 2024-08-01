@@ -168,14 +168,8 @@ watch(localOtherOption, (newOtherOption) => {
   emits('update:otherOption', newOtherOption);
 });
 
-watch(localOptions.value, (newOptions) => {
-  console.log(newOptions);
-
-  const rawOptions = newOptions.map(item => toRaw(item));
-
-  console.log(rawOptions);
-
-  emits('update:options', rawOptions);
+watch(localOptions, (newOptions) => {
+  emits('update:options', newOptions);
 });
 
 </script>
