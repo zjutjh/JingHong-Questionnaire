@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
+    "@types/crypto-js": "^4.2.2",
     "@types/node": "^20.12.8",
     "@vitejs/plugin-vue-jsx": "^3.1.0",
     "axios": "^1.6.8",
+    "crypto-js": "^4.2.0",
     "dayjs": "^1.11.11",
     "element-plus": "^2.7.2",
     "pinia": "^2.1.7",

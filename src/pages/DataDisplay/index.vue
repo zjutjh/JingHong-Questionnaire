@@ -12,10 +12,11 @@
         {{ "问卷标题: " + tempStore.checkTitle }}
       </div>
       <div class="btn btn-sm btn-accent" @click="downloadDatatable">下载数据表格</div>
+      <div class="btn btn-sm btn-accent" @click="switchCount">统计切换</div>
     </div>
     <div class="overflow-x-auto">
       <!-- 填空数据展示 -->
-      <table class="table">
+      <table class="table" v-show="!isCount">
         <thead>
           <tr>
             <th>序号</th>
@@ -36,17 +37,16 @@
         layout="prev, pager, next"
         :page-count="totalPageNum"
         @current-change="handleCurrentChange"
+         v-show="!isCount"
       />
       <!-- 选择数据统计 -->
-      <div class="gap-8 m-8 grid grid-cols-2">
+      <div class="gap-8 m-5 grid grid-cols-2 mt-30" v-show="isCount">
         <n-card v-for="obj in staticsData">
-          <div>id: {{ obj.serial_num }}</div>
-          <div>题目描述: {{ obj.question }}</div>
-          <div v-for="opt in obj.options" class="flex gap-10 mt-6">
-            <span>{{ opt.serial_num }}</span>
-            <div class="relative w-200 border rounded">
-              <span>{{ opt.content }}</span>
-              <span class="absolute right-0">{{ opt.count/totalNum*100 }}%</span>
+          <div class="font-bold">{{ obj.serial_num }}. {{ obj.question }}</div>
+          <div v-for="opt in obj.options" class="m-6">
+            <div class="relative border rounded">
+              <span class="ml-4">{{ opt.content }}</span>
+              <span class="absolute right-4">{{ opt.count/totalNum*100 }}%</span>
               <div class="inline absolute left-0 rounded bg-cyan-400 h-full opacity-15" :style="{width: 100*opt.count/totalNum+'%'}"></div>
             </div>
           </div>
@@ -75,6 +75,7 @@ const answers = ref();
 const time = ref();
 const staticsData = ref();
 const totalNum = ref();
+const isCount = ref(false);
 
 const getAnswers = () => {
   useRequest(() => getAnswersAPI({
@@ -122,6 +123,10 @@ const downloadDatatable = () => {
       }
     }
   })
+}
+
+const switchCount = () => {
+  isCount.value = !isCount.value;
 }
 
 </script>
