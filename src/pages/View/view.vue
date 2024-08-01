@@ -1,6 +1,6 @@
 <template>
 <div class="fixed inset-0 flex items-center justify-center ">
-  <div class="flex-col overflow-auto bg-white w-full sm:w-1/2 lg:w-1/3 p-6 max-h-975">
+  <div class="flex-col overflow-auto bg-white w-full sm:w-1/2 lg:w-1/3 p-6 h-full ">
     <div class="flex-col justify-center">
       <div class="flex justify-center">
         <el-image class="w-2/3" src="/jxh_logo.jpg" />
@@ -23,7 +23,7 @@
         </template>
       </el-skeleton>
     </div>
-    <div class="flex flex-col  h-650"> 
+    <div class="flex flex-col  h-650">
         <div v-for="(q, index) in question" :key="q.serial_num">
             <!-- 根据问题类型渲染组件 -->
             <div v-if="q.question_type === 1">
@@ -90,7 +90,7 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, onMounted, ref,nextTick, reactive,} from "vue";
+import {computed, onMounted, ref, nextTick, reactive, onUnmounted,} from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { getUserAPI, setUserSubmitAPI } from "@/apis";
 import { ElNotification } from "element-plus";
@@ -108,6 +108,7 @@ import { useRoute } from "vue-router";
 import {closeLoading, startLoading} from "@/utilities";
 import dayjs from "element-plus";
 import CryptoJS from 'crypto-js';
+import {useMainStore} from "@/stores";
 
 const Key = 'JingHong';
 const formData = ref();
@@ -121,17 +122,17 @@ const loading = ref(true)
 
 const route = useRoute();
 const id = ref<Number | null>();
-
-
+const loginStore = useMainStore().useLoginStore();
 // Deep copy function
 const deepCopy = (obj) => {
   return JSON.parse(JSON.stringify(obj));
 };
 
 onMounted(() => {
+  loginStore.setShowHeader(false)
   const idParam = route.query.id;
   id.value = idParam ? String(idParam) : null;
-  console.log(id.value); 
+  console.log(id.value);
   if (id.value) {
     const encryptedId = CryptoJS.AES.encrypt(id.value, Key).toString();
     id.value = encryptedId;
@@ -166,12 +167,12 @@ const getQuestionnaireView = () => {
           console.log(time.value);
         } else {
           ElNotification.error(res.msg);
-        }    
+        }
     },
     onError(e) {
       ElNotification.error('获取失败，请重试' + e);
     },
-    onFinally:()=>closeLoading() 
+    onFinally:()=>closeLoading()
     });
   }
 }
