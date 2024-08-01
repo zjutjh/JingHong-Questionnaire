@@ -3,32 +3,31 @@
   <div class="flex-col overflow-auto bg-white w-full sm:w-1/2 lg:w-1/3 p-6 h-full ">
     <div class="flex-col justify-center">
       <div class="flex justify-center">
-        <el-image class="w-2/3" src="/jxh_logo.jpg" />
+        <el-image class="w-2/3" src="/jxh_logo.png" />
       </div>
       <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
         <template #default>
-          <div  class="flex flex-col items-center">
+          <div  class="flex flex-col ">
             <div class="divider"></div>
-              <span class="flex gap-20"><span class="text-5xl">问卷标题</span></span>
+              <div class="flex gap-20 justify-center"><span class="text-3xl">问卷标题</span></div>
              <div class="divider"></div>
-            <div class="flex items-top gap-20  my-15" >
-              <span>问卷内容描述</span>
-              <span>{{submitData.desc}}</span>
-            </div>
-            <div class="flex gap-20 items-center my-15">
-              <span >问卷截止时间</span>
+            <div class="flex gap-20 items-center my-10  ml-20">
+              <span class="text-red-400">截止时间:</span>
               <span>{{ time }}</span>
+            </div>
+            <div class="items-top my-10 items-start ml-20" >
+              <div class="text-gray-400">{{formData.desc}}</div>
             </div>
           </div>
         </template>
       </el-skeleton>
     </div>
-    <div class="flex flex-col  h-650">
+    <div class="flex flex-col  h-650 mt-30">
         <div v-for="(q, index) in question" :key="q.serial_num">
             <!-- 根据问题类型渲染组件 -->
             <div v-if="q.question_type === 1">
               <el-skeleton animated :loading="loading">
-              <radio v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num"  v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description"></radio>
+                <radio v-model:answer="q.answer" v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description"></radio>
               </el-skeleton>
             </div>
             <div v-if="q.question_type === 2">
@@ -79,10 +78,10 @@
     <modal modal-id="QuestionnaireSubmit">
       <template #title>提交</template>
       <template #default>
-        该操作会直接发布问卷!请确认问卷无误
+        你确认要提交问卷吗?
       </template>
       <template #action>
-        <button class="btn btn-success w-80" @click="submit(submitData.id)">确认</button>
+        <button class="btn btn-success w-80" @click="submit()">确认</button>
       </template>
     </modal>
   </div>
@@ -114,12 +113,14 @@ const Key = 'JingHong';
 const formData = ref();
 const question = ref<any[]>([]);
 const title = ref();
-const submitData = ref();
 const reg = ref<string>('');
 const regNum = ref("^[0-9]{1}$");
 const time = ref();
 const loading = ref(true)
-
+const submitData = ref({
+  id: null,
+  questions_list: [],
+});
 const route = useRoute();
 const id = ref<Number | null>();
 const loginStore = useMainStore().useLoginStore();
@@ -152,19 +153,14 @@ const getQuestionnaireView = () => {
       onBefore: () => startLoading(),
       onSuccess(res) {
         if (res.code === 200) {
-          console.log(res.data);
-          const formDataCopy = deepCopy(res.data); // Use deep copy here
-          if (formDataCopy.questions) {
-            formDataCopy.questions.forEach((item) => {
-              delete item.id;
-            });
-          }
-          formData.value = formDataCopy;
-          submitData.value = deepCopy(formData.value); // Deep copy to avoid reference issues
-          question.value = submitData.value.questions;
-          time.value = submitData.value.time
+          formData.value = res.data;
+          question.value = formData.value.questions;
+          time.value = formData.value.time.replace("T", " ").split("+")[0];
+          submitData.value.id = res.data.id;
+          question.value.forEach((q) => {
+            q.answer = '';
+          });
           loading.value = false
-          console.log(time.value);
         } else {
           ElNotification.error(res.msg);
         }
@@ -178,10 +174,11 @@ const getQuestionnaireView = () => {
 }
 
 const submit = (state:number) => {
-  submitData.value.time = time.value
-  submitData.value.questions = question.value;
-  console.log(question.value);
-    submitData.value.status = state;
+  submitData.value.questions_list = question.value.map((q) => ({
+    question_id: q.id,
+    serial_num: q.serial_num,
+    answer: q.answer,
+  }));
     useRequest(() => setUserSubmitAPI(submitData.value),{
       onBefore: () => startLoading(),
       onSuccess(res) {

@@ -1,4 +1,5 @@
 import { request } from "@/apis/axios";
+import {UnwrapRef} from "vue";
 
 // 定义请求数据的接口
 export interface Request {
@@ -14,7 +15,7 @@ export interface Question {
     [property: string]: any; // 允许额外的属性
 }
 
-const setUserSubmitAPI = (data: Request) => {
+const setUserSubmitAPI = (data: UnwrapRef<{ id: null; questions_list: any[] }>) => {
     return request("/api/user/submit", {
         method: "POST",
         data: data,
