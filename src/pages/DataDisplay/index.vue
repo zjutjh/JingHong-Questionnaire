@@ -14,6 +14,7 @@
       <div class="btn btn-sm btn-accent" @click="downloadDatatable">下载数据表格</div>
     </div>
     <div class="overflow-x-auto">
+      <!-- 填空数据展示 -->
       <table class="table">
         <thead>
           <tr>
@@ -36,18 +37,34 @@
         :page-count="totalPageNum"
         @current-change="handleCurrentChange"
       />
+      <!-- 选择数据统计 -->
+      <div class="gap-8 m-8 grid grid-cols-2">
+        <n-card v-for="obj in staticsData">
+          <div>id: {{ obj.serial_num }}</div>
+          <div>题目描述: {{ obj.question }}</div>
+          <div v-for="opt in obj.options" class="flex gap-10 mt-6">
+            <span>{{ opt.serial_num }}</span>
+            <div class="relative w-200 border rounded">
+              <span>{{ opt.content }}</span>
+              <span class="absolute right-0">{{ opt.count/totalNum*100 }}%</span>
+              <div class="inline absolute left-0 rounded bg-cyan-400 h-full opacity-15" :style="{width: 100*opt.count/totalNum+'%'}"></div>
+            </div>
+          </div>
+        </n-card>
+      </div>
     </div>
   </div>
 </div>
 </template>
 
 <script setup lang="ts">
-import { getAnswersAPI, getDatatableAPI } from '@/apis';
+import { getAnswersAPI, getDatatableAPI, getStaticsDataAPI } from '@/apis';
 import { ref } from 'vue';
 import { useRequest } from 'vue-hooks-plus';
 import router from '@/router';
 import { ElPagination } from 'element-plus';
 import { useMainStore } from '@/stores';
+import { NCard } from 'naive-ui';
 
 const tempStore = useMainStore().useTempStore();
 
@@ -56,6 +73,8 @@ const totalPageNum = ref(2);
 const pageSize = ref(10);
 const answers = ref();
 const time = ref();
+const staticsData = ref();
+const totalNum = ref();
 
 const getAnswers = () => {
   useRequest(() => getAnswersAPI({
@@ -68,6 +87,16 @@ const getAnswers = () => {
         totalPageNum.value = res.data.total_page_num;
         answers.value = res.data.answers_data.question_answers;
         time.value = res.data.answers_data.time;
+      }
+    }
+  })
+  useRequest(() => getStaticsDataAPI({
+    id: tempStore.checkId,
+  }), {
+    onSuccess(res: any) {
+      if(res.code === 200) {
+        staticsData.value = res.data.statistics;
+        totalNum.value = res.data.total;
       }
     }
   })

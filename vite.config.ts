@@ -16,7 +16,7 @@ export default defineConfig({
   server:{
     proxy:{
       '/api':{
-        target:"https://phlin.love",
+        target:"https://phlin.top",
         changeOrigin: true,
         rewrite:(path) => path.replace(/^\/api/,'')
       }

@@ -8,6 +8,7 @@ import getAnswersAPI from "./service/DataDisplay/getAnswersAPI";
 import saveImgAPI from "@/apis/service/saveImg.ts";
 import setNewQuestionnaireDetailAPI from '@/apis/service/DetailInfo/setNewQuestionnaireDetailAPI.ts';
 import getDatatableAPI from "./service/DataDisplay/getDatatableAPI";
+import getStaticsDataAPI from "./service/DataDisplay/getStaticsDataAPI";
 
 export {
     loginAPI,
@@ -20,4 +21,5 @@ export {
     saveImgAPI,
     setNewQuestionnaireDetailAPI,
     getDatatableAPI,
+    getStaticsDataAPI,
 }
