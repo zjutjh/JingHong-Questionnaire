@@ -41,6 +41,7 @@ const props = defineProps<{
   describe: string,
   unique:boolean
 }>()
+
 const emits = defineEmits(['update:content']);
 
 const localTitle = ref<string>(props.title || '');
@@ -52,9 +53,8 @@ watch(() => props.optionChoose, (newOptionChoose) => {
   localOptionChoose.value = newOptionChoose;
 });
 
-watch(localTitle, (newTitle) => {
-  emits('update:title', newTitle);
-});
+
+
 
 </script>
 
