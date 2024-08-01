@@ -13,9 +13,12 @@
         </div>
       </div>
       <div class="flex-col justify-center items-center ">
-        <div class="flex gap-10">
+        <div class="flex gap-10 ">
           <span>必答</span>
           <input type="checkbox" class="checkbox-sm" :disabled="true" v-model="localOptionChoose"/>
+        </div>
+        <div class="flex gap-10">
+          <span v-if="localUnique">唯一</span>
         </div>
       </div>
     </div>
@@ -69,19 +72,10 @@ const localOtherOption = ref<boolean>(props.otherOption);
 const localOptions = ref(props.options ? [...props.options] : []);
 
 
-// Watchers to sync local state with props
-watch(() => props.title, (newTitle) => {
-  localTitle.value = newTitle || '';
-});
 
 watch(() => props.optionChoose, (newOptionChoose) => {
   localOptionChoose.value = newOptionChoose;
 });
-
-watch(() => props.unique, (newUnique) => {
-  localUnique.value = newUnique;
-});
-
 watch(() => props.otherOption, (newOtherOption) => {
   localOtherOption.value = newOtherOption;
 });
@@ -90,16 +84,8 @@ watch(() => props.options, (newOptions) => {
   localOptions.value = newOptions ? newOptions : [];
 });
 
-watch(() => props.describe, (newLocalDescribe) => {
-  localDescribe.value = newLocalDescribe;
-});
-
 // Emit updates to parent component
 
-watch(localOptions.value, (newOptions) => {
-  const rawOptions = newOptions.map(item => toRaw(item));
-  emits('update:options', rawOptions);
-});
 </script>
 
 <style scoped>

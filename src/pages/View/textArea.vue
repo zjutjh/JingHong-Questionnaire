@@ -15,10 +15,11 @@
       </div>
       <div class="flex-col justify-center items-center">
         <div class="flex gap-10 ">
-          <span>选答</span><input type="checkbox" :name=-1  class="checkbox-sm" v-model="localOptionChoose"/>
+          <span>必答</span>
+          <input type="checkbox" class="checkbox-sm" :disabled="true" v-model="localOptionChoose"/>
         </div>
-        <div class="flex gap-10 ">
-          <span>唯一</span><input type="checkbox" :name=-1  class="checkbox-sm" v-model="localUnique"/>
+        <div class="flex gap-10">
+          <span v-if="localUnique">唯一</span>
         </div>
       </div>
     </div>
@@ -44,23 +45,9 @@ const localTitle = ref<string>(props.title || '');
 const localOptionChoose = ref<boolean>(props.optionChoose);
 const localUnique = ref<boolean>(props.unique);
 const localDescribe = ref<string>(props.describe || '');
-watch(() => props.title, (newTitle) => {
-  localTitle.value = newTitle || '';
-});
 
 watch(() => props.optionChoose, (newOptionChoose) => {
   localOptionChoose.value = newOptionChoose;
-});
-
-watch(() => props.unique, (newUnique) => {
-  localUnique.value = newUnique;
-});
-
-watch(() => props.describe, (newLocalDescribe) => {
-  localDescribe.value = newLocalDescribe
-});
-watch(localUnique, (newUnique) => {
-  emits('update:unique', newUnique);
 });
 
 

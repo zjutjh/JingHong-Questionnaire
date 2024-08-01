@@ -13,8 +13,9 @@
         </div>
       </div>
       <div class="flex-col justify-center items-center">
-        <div class="flex gap-10">
-          <span v-if="localOptionChoose">必答</span>
+        <div class="flex gap-10 ">
+          <span>必答</span>
+          <input type="checkbox" class="checkbox-sm" :disabled="true" v-model="localOptionChoose"/>
         </div>
         <div class="flex gap-10">
           <span v-if="localUnique">唯一</span>
@@ -24,7 +25,7 @@
     <div class="divider"></div>
     <div class="flex-col p-5 h-auto mt-10" >
       <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-20 my-15">
-        <input type="checkbox" :name="item.serial_num" class="checkbox-sm my-5" />
+        <input type="checkbox" :name="item.serial_num" class="checkbox-sm my-5" v-model="item.checked" @change="handleCheckboxChange(item)"/>
         <span v-if="item.content">{{item.content}}</span>
         <div class="ml-10 flex items-center gap-20">
           <div v-if="item.img" class="mt-4">
@@ -33,8 +34,8 @@
         </div>
       </div>
       <div class="flex gap-10">
-        <input type="checkbox" class="checkbox-sm my-5" />
-        <input v-if="!localOtherOption" type="text" class="input input-bordered h-40 shadow-md"  placeholder="其他" v-model="otherContent" />
+        <input type="checkbox" :key="serial_num" v-model="otherchecked" class="checkbox-sm my-5" />
+        <input v-if="!localOtherOption" type="text" class="input input-bordered h-40 shadow-md"  placeholder="其他" v-model="otherContent"  />
       </div>
     </div>
   </div>
@@ -54,10 +55,11 @@ const props = defineProps<{
     content: string;
     img: string;
     serial_num: number;
+    checked:boolean;
   }[]
 }>();
 
-const emits = defineEmits(['update:unique', 'on-click', 'update:otherOption', 'update:optionChoose','update:title','update:options','update:describe']);
+const emits = defineEmits(['update:selectedItems']);
 
 // Local copies of props to maintain reactivity
 const localTitle = ref<string>(props.title || '');
@@ -68,18 +70,18 @@ const localDescribe = ref<string>(props.describe || '');
 const localOptions = ref(props.options );
 
 const otherContent = ref<string>();
+const selectedItems = ref<string[]>([]);
+const otherchecked = ref(false);
 
-watch(() => props.title, (newTitle) => {
-  localTitle.value = newTitle || '';
-});
-
-watch(() => props.optionChoose, (newOptionChoose) => {
-  localOptionChoose.value = newOptionChoose;
-});
-
-watch(() => props.unique, (newUnique) => {
-  localUnique.value = newUnique;
-});
+const handleCheckboxChange = (item) => {
+  if (item.checked) {
+    selectedItems.value = selectedItems.value.concat(item.content);
+  } else {
+    selectedItems.value = selectedItems.value.filter(content => content !== item.content);
+  }
+  console.log(selectedItems.value);
+  emits('update:selectedItems', selectedItems.value);
+};
 
 watch(() => props.otherOption, (newOtherOption) => {
   localOtherOption.value = newOtherOption;
@@ -88,19 +90,6 @@ watch(() => props.otherOption, (newOtherOption) => {
 watch(() => props.options, (newOptions) => {
   localOptions.value = newOptions ? newOptions : [];
 });
-
-watch(() => props.describe, (newLocalDescribe) => {
-  localDescribe.value = newLocalDescribe
-});
-
-// Emit updates to parent component
-watch(localOptions, (newOptions) => {
-  const multiSelectedOptions = newOptions.filter(item => item.selected);
-
-  // 在这里处理多选的选项，可以将选项存储到一个新的数组中或者执行其他逻辑
-  console.log('多选的选项：', multiSelectedOptions);
-});
-
 </script>
 
 <style scoped>
