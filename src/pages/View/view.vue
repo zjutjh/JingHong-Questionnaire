@@ -1,6 +1,6 @@
 <template>
 <div class="fixed inset-0 flex items-center justify-center ">
-  <div class="flex-col overflow-auto bg-white w-full sm:w-1/2 lg:w-1/3 p-6 mt-300">
+  <div class="flex-col overflow-auto bg-white w-full sm:w-1/2 lg:w-1/3 p-6 max-h-975">
     <div class="flex-col justify-center">
       <div class="flex justify-center">
         <el-image class="w-2/3" src="/jxh_logo.jpg" />
@@ -73,7 +73,7 @@
             </div>
         </div>
         <div class="flex justify-center items-center gap-160 mt-20">
-          <button class="btn btn-success" @click="showModal('QuestionnaireSubmit')">保存更改</button>
+          <button class="btn btn-success" @click="showModal('QuestionnaireSubmit')">提交</button>
         </div>
   </div>
     <modal modal-id="QuestionnaireSubmit">
@@ -107,9 +107,9 @@ import router from "@/router";
 import { useRoute } from "vue-router";
 import {closeLoading, startLoading} from "@/utilities";
 import dayjs from "element-plus";
+import CryptoJS from 'crypto-js';
 
-const selectedOption = ref(1);
-const selectedNumber = ref(1);
+const Key = 'JingHong';
 const formData = ref();
 const question = ref<any[]>([]);
 const title = ref();
@@ -118,14 +118,9 @@ const reg = ref<string>('');
 const regNum = ref("^[0-9]{1}$");
 const time = ref();
 const loading = ref(true)
-const setting = reactive({
-  isUnique: false,
-  isOtherOptions: false,
-  isRequired: false
-})
 
 const route = useRoute();
-const id = ref<number | null>();
+const id = ref<Number | null>();
 
 
 // Deep copy function
@@ -135,7 +130,17 @@ const deepCopy = (obj) => {
 
 onMounted(() => {
   const idParam = route.query.id;
-  id.value = idParam ? Number(idParam) : null;
+  id.value = idParam ? String(idParam) : null;
+  console.log(id.value); 
+  if (id.value) {
+    const encryptedId = CryptoJS.AES.encrypt(id.value, Key).toString();
+    id.value = encryptedId;
+    console.log(id.value); //未启用链接加密时使用
+  }
+  if (id.value) {
+    const decryptedId = CryptoJS.AES.decrypt(id.value, Key).toString(CryptoJS.enc.Utf8);
+    id.value = Number(decryptedId);
+  }
   getQuestionnaireView()
 });
 
@@ -176,14 +181,14 @@ const submit = (state:number) => {
   submitData.value.questions = question.value;
   console.log(question.value);
     submitData.value.status = state;
-    useRequest(() => (submitData.value),{
+    useRequest(() => setUserSubmitAPI(submitData.value),{
       onBefore: () => startLoading(),
       onSuccess(res) {
         if (res.code === 200 && res.msg === 'OK') {
           if(state === 1){
-            ElNotification.success('创建并保存为草稿成功');
+            ElNotification.success('成功');
           }else{
-            ElNotification.success('创建并发布成功');
+            ElNotification.success('成功');
           }
           router.push('/')
         } else {
@@ -194,7 +199,7 @@ const submit = (state:number) => {
         ElNotification.error(e);
       },
       onFinally: () => {
-        showModal('SaveQuestionnaireSubmit',true)
+        showModal('QuestionnaireSubmit',true)
         closeLoading()
       }
     });
