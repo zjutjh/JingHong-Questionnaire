@@ -1,48 +1,42 @@
 <template>
-  <div class="bg-gray-50 p-30  my-30">
+  <div class="bg-blue-100 p-30">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
-          <span>{{ serial_num }}</span>
-          <span>{{ localTitle }}</span>
+          <span class="text-xl">{{ props.serial_num }}</span>
+          <span class="text-xl flex gap-5 items-center" >{{ props.title }} <el-tag type="primary" class="ml-5">多选</el-tag> <el-tag type="warning" v-if="localOptionChoose">选答</el-tag> <el-tag type="danger" v-if="localUnique">唯一</el-tag></span>
         </div>
-        <div class="flex items-center gap-20 my-10">
-          <span class="w-80">问题描述  | </span>
-          <span v-if="localDescribe" class="w-150">{{ localDescribe }}</span>
-          <span v-if="!localDescribe" class="w-150">此问题没有描述</span>
+        <div class="flex items-center mt-15 ml-10" >
+          <span class="text-md text-gray-500">{{ props.describe }}</span>
         </div>
       </div>
-      <div class="flex-col justify-center items-center">
-        <div class="flex gap-10 ">
-          <span>必答</span>
-          <input type="checkbox" class="checkbox-sm" :disabled="true" v-model="localOptionChoose"/>
-        </div>
-        <div class="flex gap-10">
-          <span v-if="localUnique">唯一</span>
-        </div>
+      <div class="flex-col justify-center items-center ">
       </div>
     </div>
-    <div class="divider"></div>
-    <div class="flex-col p-5 h-auto mt-10" >
-      <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-20 my-15">
-        <input type="checkbox" :name="item.serial_num" class="checkbox-sm my-5" v-model="item.checked" @change="handleCheckboxChange(item)"/>
-        <span v-if="item.content">{{item.content}}</span>
+    <div class="divider my-5"></div>
+    <div class="flex-col p-5 h-auto ">
+      <div v-for="(item,index) in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
+        <input type="checkbox" :name="props.serial_num" class="checkbox-sm my-5" :value="item.content"  v-model="answerArr[index]"/>
+        <span v-if="item.content">{{ item.content }}</span>
         <div class="ml-10 flex items-center gap-20">
           <div v-if="item.img" class="mt-4">
             <img v-if="item.img" :src="item.img" alt="Preview" style="max-width: 150px; max-height: 150px;" />
           </div>
         </div>
       </div>
-      <div class="flex gap-10">
-        <input type="checkbox" :key="serial_num" v-model="otherchecked" class="checkbox-sm my-5" />
-        <input v-if="!localOtherOption" type="text" class="input input-bordered h-40 shadow-md"  placeholder="其他" v-model="otherContent"  />
+      <div class="flex gap-10 mt-10" v-if="localOtherOption">
+        <input type="checkbox" :name="props.serial_num" class="checkbox-sm my-5" :value="otherAnswer"/>
+        <input type="text" class="input-sm w-100 rounded-xl" placeholder="其他" v-model="otherAnswer"/>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref, watch, defineProps, defineEmits, toRaw} from 'vue';
+import { ref, watch, defineProps, defineEmits, toRaw, nextTick } from 'vue';
+import { useRequest } from "vue-hooks-plus";
+import { saveImgAPI } from "@/apis";
+import {ElNotification} from "element-plus";
 
 const props = defineProps<{
   serial_num: number,
@@ -51,57 +45,24 @@ const props = defineProps<{
   unique: boolean,
   otherOption: boolean,
   describe: string,
+  type: string,
   options?: {
     content: string;
     img: string;
     serial_num: number;
-    checked:boolean;
   }[]
 }>();
 
-const emits = defineEmits(['update:selectedItems']);
+const emits = defineEmits();
 
-// Local copies of props to maintain reactivity
-const localTitle = ref<string>(props.title || '');
 const localOptionChoose = ref<boolean>(props.optionChoose);
 const localUnique = ref<boolean>(props.unique);
 const localOtherOption = ref<boolean>(props.otherOption);
-const localDescribe = ref<string>(props.describe || '');
-const localOptions = ref(props.options );
+const localOptions = ref(props.options ? [...props.options] : []);
+const answerArr = ref<string[]>([]);
+const otherAnswer = ref<string>('');
 
-const otherContent = ref<string>();
-const selectedItems = ref<string[]>([]);
-const otherchecked = ref(false);
 
-const handleCheckboxChange = (item) => {
-  if (item.checked) {
-    selectedItems.value = selectedItems.value.concat(item.content);
-  } else {
-    selectedItems.value = selectedItems.value.filter(content => content !== item.content);
-  }
-  console.log(selectedItems.value);
-  emits('update:selectedItems', selectedItems.value);
-};
-
-watch(() => props.title, (newTitle) => {
-  localTitle.value = newTitle || '';
-});
-
-watch(() => props.unique, (newUnique) => {
-  localUnique.value = newUnique;
-});
-
-watch(() => props.otherOption, (newOtherOption) => {
-  localOtherOption.value = newOtherOption;
-});
-
-watch(() => props.options, (newOptions) => {
-  localOptions.value = newOptions ? newOptions : [];
-});
-
-watch(() => props.describe, (newLocalDescribe) => {
-  localDescribe.value = newLocalDescribe
-});
 </script>
 
 <style scoped>
