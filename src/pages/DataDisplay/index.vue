@@ -11,6 +11,7 @@
       <div>
         {{ "问卷标题: " + tempStore.checkTitle }}
       </div>
+      <div class="btn btn-sm btn-accent" @click="downloadDatatable">下载数据表格</div>
     </div>
     <div class="overflow-x-auto">
       <table class="table">
@@ -41,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { getAnswersAPI } from '@/apis';
+import { getAnswersAPI, getDatatableAPI } from '@/apis';
 import { ref } from 'vue';
 import { useRequest } from 'vue-hooks-plus';
 import router from '@/router';
@@ -63,7 +64,6 @@ const getAnswers = () => {
     page_size: pageSize.value,
   }), {
     onSuccess(res: any) {
-      console.log(res);
       if(res.code === 200) {
         totalPageNum.value = res.data.total_page_num;
         answers.value = res.data.answers_data.question_answers;
@@ -81,6 +81,18 @@ const handleCurrentChange = (val: number) => {
 
 const back = () => {
   router.push('/');
+}
+
+const downloadDatatable = () => {
+  useRequest(() => getDatatableAPI({
+    id: tempStore.checkId
+  }), {
+    onSuccess(res: any) {
+      if(res.code === 200) {
+        window.location.href = res.data;
+      }
+    }
+  })
 }
 
 </script>
