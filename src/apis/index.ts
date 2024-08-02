@@ -25,3 +25,4 @@ export {
     getStaticsDataAPI,
     getUserAPI,
     setUserSubmitAPI,
+}
