@@ -12,9 +12,11 @@
         {{ "问卷标题: " + tempStore.checkTitle }}
       </div>
       <div class="btn btn-sm btn-accent" @click="downloadDatatable">下载数据表格</div>
+      <div class="btn btn-sm btn-accent" @click="switchCount">统计切换</div>
     </div>
     <div class="overflow-x-auto">
-      <table class="table">
+      <!-- 填空数据展示 -->
+      <table class="table" v-show="!isCount">
         <thead>
           <tr>
             <th>序号</th>
@@ -35,19 +37,34 @@
         layout="prev, pager, next"
         :page-count="totalPageNum"
         @current-change="handleCurrentChange"
+         v-show="!isCount"
       />
+      <!-- 选择数据统计 -->
+      <div class="gap-8 m-5 grid grid-cols-2 mt-30" v-show="isCount">
+        <n-card v-for="obj in staticsData">
+          <div class="font-bold">{{ obj.serial_num }}. {{ obj.question }}</div>
+          <div v-for="opt in obj.options" class="m-6">
+            <div class="relative border rounded">
+              <span class="ml-4">{{ opt.content }}</span>
+              <span class="absolute right-4">{{ opt.count/totalNum*100 }}%</span>
+              <div class="inline absolute left-0 rounded bg-cyan-400 h-full opacity-15" :style="{width: 100*opt.count/totalNum+'%'}"></div>
+            </div>
+          </div>
+        </n-card>
+      </div>
     </div>
   </div>
 </div>
 </template>
 
 <script setup lang="ts">
-import { getAnswersAPI, getDatatableAPI } from '@/apis';
+import { getAnswersAPI, getDatatableAPI, getStaticsDataAPI } from '@/apis';
 import { ref } from 'vue';
 import { useRequest } from 'vue-hooks-plus';
 import router from '@/router';
 import { ElPagination } from 'element-plus';
 import { useMainStore } from '@/stores';
+import { NCard } from 'naive-ui';
 
 const tempStore = useMainStore().useTempStore();
 
@@ -56,6 +73,9 @@ const totalPageNum = ref(2);
 const pageSize = ref(10);
 const answers = ref();
 const time = ref();
+const staticsData = ref();
+const totalNum = ref();
+const isCount = ref(false);
 
 const getAnswers = () => {
   useRequest(() => getAnswersAPI({
@@ -68,6 +88,16 @@ const getAnswers = () => {
         totalPageNum.value = res.data.total_page_num;
         answers.value = res.data.answers_data.question_answers;
         time.value = res.data.answers_data.time;
+      }
+    }
+  })
+  useRequest(() => getStaticsDataAPI({
+    id: tempStore.checkId,
+  }), {
+    onSuccess(res: any) {
+      if(res.code === 200) {
+        staticsData.value = res.data.statistics;
+        totalNum.value = res.data.total;
       }
     }
   })
@@ -93,6 +123,10 @@ const downloadDatatable = () => {
       }
     }
   })
+}
+
+const switchCount = () => {
+  isCount.value = !isCount.value;
 }
 
 </script>
