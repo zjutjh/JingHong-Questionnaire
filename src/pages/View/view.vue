@@ -109,7 +109,7 @@ import {closeLoading, startLoading} from "@/utilities";
 import dayjs from "element-plus";
 import CryptoJS from 'crypto-js';
 
-const Key = 'JingHong';
+const Key = 'JH';
 const formData = ref();
 const question = ref<any[]>([]);
 const title = ref();
@@ -131,14 +131,11 @@ const deepCopy = (obj) => {
 onMounted(() => {
   const idParam = route.query.id;
   id.value = idParam ? String(idParam) : null;
-  console.log(id.value); 
-  if (id.value) {
-    const encryptedId = CryptoJS.AES.encrypt(id.value, Key).toString();
-    id.value = encryptedId;
-    console.log(id.value); //未启用链接加密时使用
-  }
+  id.value = decodeURIComponent(route.query.id.replace(/ /g, '+'));
+  console.log(id.value);
   if (id.value) {
     const decryptedId = CryptoJS.AES.decrypt(id.value, Key).toString(CryptoJS.enc.Utf8);
+    
     id.value = Number(decryptedId);
   }
   getQuestionnaireView()
