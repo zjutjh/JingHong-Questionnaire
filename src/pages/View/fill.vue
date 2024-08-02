@@ -1,88 +1,61 @@
 <template>
-  <div class="bg-gray-50 p-30  my-30">
+  <div class="bg-blue-100 p-30 my-10">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
-          <span>{{ serial_num }}</span>
-          <span>{{ localTitle }}</span>
+          <span class="text-xl">{{ serial_num }}</span>
+          <span class="text-xl flex gap-5 items-center">
+            {{ title }}
+            <el-tag type="primary" class="ml-5">填空</el-tag>
+            <el-tag type="warning" v-if="!required">选答</el-tag>
+            <el-tag type="danger" v-if="unique">唯一</el-tag>
+          </span>
         </div>
-        <div class="flex items-center gap-20 my-10">
-          <span class="w-80">问题描述  | </span>
-          <span v-if="localDescribe" class="w-150">{{ localDescribe }}</span>
-          <span v-if="!localDescribe" class="w-150">此问卷没有描述</span>
-        </div>
-      </div>
-      <div class="flex-col justify-center items-center">
-        <div class="flex gap-10 ">
-          <span>必答</span>
-          <input type="checkbox" class="checkbox-sm" :disabled="true" v-model="localOptionChoose"/>
-        </div>
-        <div class="flex gap-10">
-          <span v-if="localUnique">唯一</span>
+        <div class="flex items-center mt-15 ml-10">
+          <span class="text-md text-gray-500">{{ describe }}</span>
         </div>
       </div>
+      <div class="flex-col justify-center items-center"></div>
     </div>
-    <div class="divider"></div>
-    <div class="flex-col p-5 overflow-y-auto h-60">
-     <input class=" input input-bordered shadow-md w-full" :placeholder=pal />
+    <div class="divider my-5"></div>
+    <div class="flex-col p-5 h-auto">
+      <input class="input input-bordered shadow-md w-full" :placeholder="pal" v-model="localAnswer" />
     </div>
-    <div class="divider"></div>
   </div>
-
 </template>
 
 <script setup lang="ts">
-import {computed, defineEmits, ref, watch} from "vue";
+import { ref, watch, defineProps, defineEmits, computed } from 'vue';
 
-const props = defineProps<{
-  serial_num: number,
-  title?: string,
-  reg?: string
-  describe: string,
-  optionChoose:boolean
-  unique:boolean
-  }>()
-const emits = defineEmits(['update:unique', 'on-click', 'update:optionChoose','update:title','update:describe']);
-
-const localTitle = ref<string>(props.title || '');
-const localOptionChoose = ref<boolean>(props.optionChoose);
-const localUnique = ref<boolean>(props.unique);
-const localDescribe = ref<string>(props.describe || '');
-watch(() => props.title, (newTitle) => {
-  localTitle.value = newTitle || '';
+const props = defineProps({
+  serial_num: Number,
+  title: String,
+  required: Boolean,
+  reg: String,
+  unique: Boolean,
+  describe: String,
+  answer: String,
 });
 
-watch(() => props.optionChoose, (newOptionChoose) => {
-  localOptionChoose.value = newOptionChoose;
-});
+const emits = defineEmits(['update:answer']);
 
-watch(() => props.unique, (newUnique) => {
-  localUnique.value = newUnique;
-});
+const localAnswer = ref(props.answer);
 
-watch(() => props.describe, (newLocalDescribe) => {
-  localDescribe.value = newLocalDescribe
+watch(localAnswer, (newAnswer) => {
+  emits('update:answer', newAnswer);
 });
-
-watch(localTitle, (newTitle) => {
-  emits('update:title', newTitle);
-});
-
 
 const pal = computed(() => {
-  if(props.reg === '^1[3456789]\\d{9}$') return `电话`
-  else if(props.reg === '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$') return `邮箱`
-  else if(props.reg === '^\\d{12}$') return `学号`
-  else if (props.reg === '') return `无限制`
+  if (props.reg === '^1[3456789]\\d{9}$') return '电话';
+  else if (props.reg === '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$') return '邮箱';
+  else if (props.reg === '^\\d{12}$') return '学号';
+  else if (props.reg === '') return '';
   else {
-    const num = props.reg[7]
-    return num + `位数`
+    const num = props.reg?.[7];
+    return num + '位数';
   }
-})
-
+});
 </script>
 
-
 <style scoped>
-
 </style>

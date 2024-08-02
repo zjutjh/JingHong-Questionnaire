@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {useRequest} from "vue-hooks-plus";
 import {loginAPI} from "@/apis";
 import {ElNotification} from "element-plus";
@@ -44,6 +44,9 @@ const password = ref<string>('')
 const username = ref<string>('')
 const loginStore = useMainStore().useLoginStore();
 
+onMounted(() =>{
+  loginStore.setShowHeader(true)
+})
 const send = () => {
   useRequest(() => loginAPI({
     username:username.value,
