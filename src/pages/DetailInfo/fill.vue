@@ -13,7 +13,7 @@
       </div>
       <div class="flex-col justify-center items-center">
         <div class="flex gap-10 ">
-          <span>选答</span><input type="checkbox" :name=-1  class="checkbox-sm" v-model="localOptionChoose"/>
+          <span>必答</span><input type="checkbox" :name=-1  class="checkbox-sm" v-model="localOptionChoose"/>
         </div>
         <div class="flex gap-10 ">
           <span>唯一</span><input type="checkbox" :name=-1  class="checkbox-sm" v-model="localUnique"/>
