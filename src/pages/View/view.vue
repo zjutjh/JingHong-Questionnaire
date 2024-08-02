@@ -74,7 +74,7 @@
             </div>
         </div>
         <div class="flex justify-center items-center p-20">
-          <button class="btn btn-success w-150" @click="showModal('QuestionnaireSubmit')">提交问卷</button>
+          <button class="btn btn-success w-full" @click="showModal('QuestionnaireSubmit')">提交问卷</button>
         </div>
   </div>
     <modal modal-id="QuestionnaireSubmit">
@@ -83,7 +83,7 @@
         你确认要提交问卷吗?
       </template>
       <template #action>
-        <button class="btn btn-success w-80" @click="submit">确认</button>
+        <button class="btn btn-success w-full" @click="submit">确认</button>
       </template>
     </modal>
   </div>
@@ -200,7 +200,7 @@ const submit = () => {
     onSuccess(res) {
       if (res.code === 200 && res.msg === 'OK') {
         ElNotification.success('提交成功');
-        router.push('/');
+        router.push('/Thank');
       } else {
         ElNotification.error(res.msg );
       }
