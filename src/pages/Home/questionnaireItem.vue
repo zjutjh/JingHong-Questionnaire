@@ -48,6 +48,7 @@ import { ElNotification } from 'element-plus';
 import router from '@/router';
 import {closeLoading, startLoading} from "@/utilities";
 import { useMainStore } from '@/stores';
+import CryptoJS from 'crypto-js';
 
 const tempStore = useMainStore().useTempStore();
 
@@ -96,7 +97,9 @@ const delQuestionnaire = (id: number) => {
 }
 
 const copyShareCode = () => {
-  navigator.clipboard.writeText("this is an url");
+  const Key = 'JingHong';
+  const encryptedId = CryptoJS.AES.encrypt(props.idName+'',Key).toString();
+  navigator.clipboard.writeText(encryptedId);
 }
 
 const DetailInfo = () => {

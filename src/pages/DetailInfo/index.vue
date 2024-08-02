@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center items-start h-screen gap-50">
+  <div class="flex justify-center items-start h-screen gap-50 mt-60">
     <div class="bg-blue-200 p-30 rounded-2xl shadow-lg w-230 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
       <span class="flex justify-center items-center  gap-10"><el-icon @click="showModal('setting')"><Setting /></el-icon><span class="text-2xl">添加问卷题目</span></span>
       <div class="p-20">

@@ -41,20 +41,31 @@ const props = defineProps<{
   describe: string,
   unique:boolean
 }>()
-
 const emits = defineEmits(['update:content']);
 
 const localTitle = ref<string>(props.title || '');
 const localOptionChoose = ref<boolean>(props.optionChoose);
 const localDescribe = ref<string>(props.describe || '');
 const localUnique = ref<boolean>(props.unique);
+watch(() => props.title, (newTitle) => {
+  localTitle.value = newTitle || '';
+});
 
 watch(() => props.optionChoose, (newOptionChoose) => {
   localOptionChoose.value = newOptionChoose;
 });
 
+watch(() => props.unique, (newUnique) => {
+  localUnique.value = newUnique;
+});
 
+watch(() => props.describe, (newLocalDescribe) => {
+  localDescribe.value = newLocalDescribe
+});
 
+watch(localTitle, (newTitle) => {
+  emits('update:title', newTitle);
+});
 
 </script>
 

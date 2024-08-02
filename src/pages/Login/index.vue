@@ -1,5 +1,5 @@
 <template>
-<div class="flex justify-evenly gap-70 h-screen ">
+<div class="flex justify-evenly gap-70 h-screen mt-60">
   <div class="flex justify-center items-center w-1/2">
     <el-image class="h-250" src='/JH_logo.svg' ></el-image>
   </div>
@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {useRequest} from "vue-hooks-plus";
 import {loginAPI} from "@/apis";
 import {ElNotification} from "element-plus";
@@ -44,6 +44,9 @@ const password = ref<string>('')
 const username = ref<string>('')
 const loginStore = useMainStore().useLoginStore();
 
+onMounted(() =>{
+  loginStore.setShowHeader(true)
+})
 const send = () => {
   useRequest(() => loginAPI({
     username:username.value,
