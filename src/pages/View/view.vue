@@ -9,25 +9,27 @@
         <template #default>
           <div  class="flex flex-col ">
             <div class="divider"></div>
-              <div class="flex gap-20 justify-center"><span class="text-3xl">问卷标题</span></div>
-             <div class="divider"></div>
-            <div class="flex gap-20 items-center my-10  ml-20">
-              <span class="text-red-400">截止时间:</span>
-              <span>{{ time }}</span>
-            </div>
-            <div class="items-top my-10 items-start ml-20" >
-              <div class="text-gray-400">{{formData.desc}}</div>
+              <div class="flex gap-20 justify-center"><span class="text-3xl break-all px-50">{{ formData.title }}</span></div>
+            <div class="items-top my-10 items-start mx-20" v-if="formData.desc !== ''">
+              <div class="items-top my-10 items-start ">
+                <div class="text-gray-400 flex break-all " >{{ formData.desc }}</div>
+              </div>
             </div>
           </div>
+          <div class="flex gap-20 items-center my-10  ml-20 mt-20">
+            <span class="text-red-400">截止时间:</span>
+            <span>{{ time }}</span>
+          </div>
+          <div class="divider"></div>
         </template>
       </el-skeleton>
     </div>
-    <div class="flex flex-col  h-650 mt-30">
+    <div class="flex flex-col h-650 mt-20">
         <div v-for="(q, index) in question" :key="q.serial_num">
             <!-- 根据问题类型渲染组件 -->
             <div v-if="q.question_type === 1">
               <el-skeleton animated :loading="loading">
-                <radio v-model:answer="q.answer" v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description"></radio>
+                <radio v-model:answer="q.answer" v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" v-model:unique="q.unique" v-model:required="q.required" v-model:other-option="q.other_option" v-model:describe="q.describe"></radio>
               </el-skeleton>
             </div>
             <div v-if="q.question_type === 2">
@@ -36,7 +38,7 @@
                   <skeleton-card></skeleton-card>
                 </template>
                 <template #default>
-              <checkbox v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num"  v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description"></checkbox>
+              <checkbox v-model:answer="q.answer" v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num"  v-model:unique="q.unique" v-model:required="q.required" v-model:other-option="q.other_option" v-model:describe="q.describe"></checkbox>
                 </template>
               </el-skeleton>
             </div>
@@ -46,7 +48,7 @@
                   <skeleton-card></skeleton-card>
                 </template>
                 <template #default>
-              <fill v-model:title="q.subject" v-model:serial_num="q.serial_num"  v-model:reg="q.reg" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:describe="q.description"></fill>
+              <fill v-model:answer="q.answer" v-model:title="q.subject" v-model:serial_num="q.serial_num"  v-model:reg="q.reg" v-model:unique="q.unique" v-model:required="q.required" v-model:describe="q.describe"></fill>
                 </template>
               </el-skeleton>
             </div>
@@ -56,7 +58,7 @@
                   <skeleton-card></skeleton-card>
                 </template>
                 <template #default>
-              <text-area v-model:title="q.subject" v-model:serial_num="q.serial_num"  v-model:unique="q.unique" v-model:option-choose="q.required" v-model:describe="q.description"></text-area>
+              <text-area v-model:answer="q.answer"  v-model:title="q.subject" v-model:serial_num="q.serial_num"  v-model:unique="q.unique" v-model:required="q.required" v-model:describe="q.describe"></text-area>
                 </template>
               </el-skeleton>
             </div>
@@ -66,22 +68,22 @@
                   <skeleton-card></skeleton-card>
                 </template>
                 <template #default>
-              <file v-model:title="q.subject" v-model:serial_num="q.serial_num"  v-model:unique="q.unique" v-model:option-choose="q.required" v-model:describe="q.description"></file>
+              <file v-model:answer="q.answer" v-model:title="q.subject" v-model:serial_num="q.serial_num"  v-model:unique="q.unique" v-model:required="q.required" v-model:describe="q.describe"></file>
                 </template>
               </el-skeleton>
             </div>
         </div>
-        <div class="flex justify-center items-center gap-160 mt-20">
-          <button class="btn btn-success" @click="showModal('QuestionnaireSubmit')">提交</button>
+        <div class="flex justify-center items-center p-20">
+          <button class="btn btn-success w-150" @click="showModal('QuestionnaireSubmit')">提交问卷</button>
         </div>
   </div>
     <modal modal-id="QuestionnaireSubmit">
-      <template #title>提交</template>
+      <template #title>提交问卷</template>
       <template #default>
         你确认要提交问卷吗?
       </template>
       <template #action>
-        <button class="btn btn-success w-80" @click="submit()">确认</button>
+        <button class="btn btn-success w-80" @click="submit">确认</button>
       </template>
     </modal>
   </div>
@@ -153,9 +155,10 @@ const getQuestionnaireView = () => {
       onBefore: () => startLoading(),
       onSuccess(res) {
         if (res.code === 200) {
+          console.log(res.data)
           formData.value = res.data;
           question.value = formData.value.questions;
-          time.value = formData.value.time.replace("T", " ").split("+")[0];
+          time.value = formData.value.time.replace("T", " ").split("+")[0].split(".")[0]
           submitData.value.id = res.data.id;
           question.value.forEach((q) => {
             q.answer = '';
@@ -173,39 +176,51 @@ const getQuestionnaireView = () => {
   }
 }
 
-const submit = (state:number) => {
+const submit = () => {
+  const hasUnansweredRequiredQuestion = question.value.some((q) => {
+    if (q.required && q.answer === "") {
+      ElNotification.error('您有题目未完成作答.')
+      return true;
+    }
+    return false;
+  });
+  if (hasUnansweredRequiredQuestion) {
+    showModal('QuestionnaireSubmit', true);
+    return;
+  }
+
   submitData.value.questions_list = question.value.map((q) => ({
     question_id: q.id,
     serial_num: q.serial_num,
     answer: q.answer,
   }));
-    useRequest(() => setUserSubmitAPI(submitData.value),{
-      onBefore: () => startLoading(),
-      onSuccess(res) {
-        if (res.code === 200 && res.msg === 'OK') {
-          if(state === 1){
-            ElNotification.success('成功');
-          }else{
-            ElNotification.success('成功');
-          }
-          router.push('/')
-        } else {
-          ElNotification.error(res.msg);
-        }
-      },
-      onError(e) {
-        ElNotification.error(e);
-      },
-      onFinally: () => {
-        showModal('QuestionnaireSubmit',true)
-        closeLoading()
+
+  useRequest(() => setUserSubmitAPI(submitData.value), {
+    onBefore: () => startLoading(),
+    onSuccess(res) {
+      if (res.code === 200 && res.msg === 'OK') {
+        ElNotification.success('提交成功');
+        router.push('/');
+      } else {
+        ElNotification.error(res.msg );
       }
-    });
+    },
+    onError(e) {
+      ElNotification.error( e.message);
+    },
+    onFinally: () => {
+      showModal('QuestionnaireSubmit', true);
+      closeLoading();
+    },
+  });
 };
+
 
 
 </script>
 
 
 <style scoped>
+
+
 </style>
