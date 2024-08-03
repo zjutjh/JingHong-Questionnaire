@@ -58,7 +58,7 @@ const send = () => {
       if(res.code === 200) {
         ElNotification.success('登陆成功');
         loginStore.setLogin(true)
-        router.push('/')
+        router.push('/admin')
       }else{
         ElNotification.error(res.msg);
       }

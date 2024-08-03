@@ -363,7 +363,7 @@ const dataReverse = () => {
   console.log(question.value);
   ElNotification.success('成功放弃修改');
   showModal('reverseQuestionnaireSubmit',true)
-  router.push('/')
+  router.push('/admin')
 };
 
 const submit = (state:number) => {
@@ -376,7 +376,7 @@ const submit = (state:number) => {
       onSuccess(res) {
         if (res.code === 200 && res.msg === 'OK') {
           ElNotification.success('保存成功');
-          router.push('/')
+          router.push('/admin')
         } else {
           ElNotification.error(res.msg);
         }
@@ -400,7 +400,7 @@ const submit = (state:number) => {
           }else{
             ElNotification.success('创建并发布成功');
           }
-          router.push('/')
+          router.push('/admin')
         } else {
           ElNotification.error(res.msg);
         }

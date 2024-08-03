@@ -122,7 +122,7 @@ const handleCurrentChange = (val: number) => {
 }
 
 const back = () => {
-  router.push('/');
+  router.push('/admin');
 }
 
 const downloadDatatable = () => {

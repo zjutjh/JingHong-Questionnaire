@@ -70,7 +70,7 @@ const handleCurrentChange = (val: number) => {
 
 const addNewQuestionnaire = () => {
   localStorage.setItem('isNew','true')
-  router.push('/DetailInfo')
+  router.push('/admin/DetailInfo')
 }
 
 </script>
