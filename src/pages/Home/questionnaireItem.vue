@@ -99,7 +99,7 @@ const delQuestionnaire = (id: number) => {
 const copyShareCode = () => {
   const Key = 'JingHong';
   const encryptedId = CryptoJS.AES.encrypt(props.idName+'',Key).toString();
-  navigator.clipboard.writeText(encryptedId);
+  navigator.clipboard.writeText( "https://phlin.top/View?id=" + encryptedId);
 }
 
 const DetailInfo = () => {
