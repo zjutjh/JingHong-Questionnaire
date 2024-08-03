@@ -3,7 +3,7 @@
   <div class="flex-col overflow-auto bg-white w-full sm:w-1/2 lg:w-1/3 p-6 h-full ">
     <div class="flex-col justify-center">
       <div class="flex justify-center">
-        <el-image class="w-2/3" src="/jxh_logo.png" />
+        <el-image class="w-2/3" src="/jxh_logo.webp" />
       </div>
       <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
         <template #default>
@@ -113,7 +113,7 @@ const Key = 'JingHong';
 const formData = ref();
 const question = ref<any[]>([]);
 const title = ref();
-const reg = ref<string>('');
+const reg = ref<string>();
 const time = ref();
 const loading = ref(true)
 const submitData = ref({
@@ -159,7 +159,11 @@ const getQuestionnaireView = () => {
           time.value = formData.value.time.replace("T", " ").split("+")[0].split(".")[0]
           submitData.value.id = res.data.id;
           question.value.forEach((q) => {
-            q.answer = '';
+            if(q.question_type === 1){
+              q.answer = ' '
+            } else {
+              q.answer = '';
+            }
           });
           loading.value = false
         } else {
@@ -212,7 +216,6 @@ const submit = () => {
     },
   });
 };
-
 
 
 </script>

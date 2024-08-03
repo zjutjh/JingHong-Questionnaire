@@ -63,7 +63,7 @@ watch([answerArr, otherAnswer], ([newAnswerArr, newOtherAnswer]) => {
     const combinedAnswers = newAnswerArr.filter(answer => answer !== newOtherAnswer).concat(newOtherAnswer).join('┋');
     emits('update:answer', combinedAnswers);
   } else {
-    const combinedAnswers = newAnswerArr.join('|');
+    const combinedAnswers = newAnswerArr.join('┋');
     emits('update:answer', combinedAnswers);
   }
 });
