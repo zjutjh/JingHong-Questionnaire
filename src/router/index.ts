@@ -46,10 +46,11 @@ const router = createRouter({
   ]
 });
 
-router.beforeEach((to, _, next) => {
+
+router.beforeEach((to, from, next) => {
   const loginStore = useMainStore(pinia).useLoginStore(pinia);
-  if(to.path !== "/login" && to.path !== "/View" && to.path !== "/Thank" && !loginStore.loginSession) {
-    next("/login");
+  if (to.path !== '/login' && to.path !== '/View' && to.path !== '/Thank' && !loginStore.loginSession) {
+    next('/login');
   } else {
     next();
   }
