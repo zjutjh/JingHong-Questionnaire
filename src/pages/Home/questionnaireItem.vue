@@ -105,13 +105,13 @@ const copyShareCode = () => {
 const DetailInfo = () => {
   localStorage.setItem('isNew','false')
   localStorage.setItem('id',String(props.idName))
-  router.push('/DetailInfo')
+  router.push('/admin/DetailInfo')
 }
 
 const checkData = () => {
   tempStore.setCheckId(props.idName);
   tempStore.setCheckTitle(props.title);
-  router.push('/Data');
+  router.push('/admin/Data');
 }
 
 </script>
