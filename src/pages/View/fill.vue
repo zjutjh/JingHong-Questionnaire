@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-blue-100 p-30 my-10">
+  <div class="bg-blue-50 rounded p-30 my-10">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
@@ -19,7 +19,13 @@
     </div>
     <div class="divider my-5"></div>
     <div class="flex-col p-5 h-auto">
-      <input class="input input-bordered shadow-md w-full" :placeholder="pal" v-model="localAnswer" />
+      <input
+          class="input input-bordered shadow-md w-full"
+          :placeholder="pal"
+          v-model="localAnswer"
+          @blur="validateInput"
+      />
+      <p v-if="errorMessage" class="text-red-400 mt-5 text-sm">{{ errorMessage }}</p>
     </div>
   </div>
 </template>
@@ -40,10 +46,19 @@ const props = defineProps({
 const emits = defineEmits(['update:answer']);
 
 const localAnswer = ref(props.answer);
+const errorMessage = ref('');
 
 watch(localAnswer, (newAnswer) => {
   emits('update:answer', newAnswer);
 });
+
+const validateInput = () => {
+  if (props.reg && !new RegExp(props.reg).test(localAnswer.value as string)) {
+    errorMessage.value = '输入不符合要求';
+  } else {
+    errorMessage.value = '';
+  }
+};
 
 const pal = computed(() => {
   if (props.reg === '^1[3456789]\\d{9}$') return '电话';

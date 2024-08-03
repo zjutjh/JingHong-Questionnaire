@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
 import {
-login,
-home,
-detailInfo,
-datadisplay,
-view,
+  login,
+  home,
+  detailInfo,
+  datadisplay,
+  view,
   thank
 } from "@/pages";
 import pinia from "@/stores/createPinia";
@@ -14,46 +14,52 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/",
+      path: "/admin",
       name: "home",
       component: home
     },
     {
-      path: "/Login",
+      path: "/admin/Login",
       name: "login",
       component: login
     },
     {
-      path: "/DetailInfo",
+      path: "/admin/DetailInfo",
       name: "detailInfo",
       component: detailInfo
     },
     {
-      path: "/Data",
+      path: "/admin/Data",
       name: "datadisplay",
       component: datadisplay
     },
     {
-      path:"/View",
-      name:"view",
-      component:view
+      path: "/View",
+      name: "view",
+      component: view
     },
     {
-      path:"/Thank",
-      name:"thank",
-      component:thank
+      path: "/Thank",
+      name: "thank",
+      component: thank
+    },
+    {
+      path: "/",
+      redirect: to => {
+        const loginStore = useMainStore(pinia).useLoginStore(pinia);
+        return loginStore.loginSession ? "/admin" : "/admin/Login";
+      }
     }
   ]
 });
 
-router.beforeEach((to, _, next) => {
+router.beforeEach((to, from, next) => {
   const loginStore = useMainStore(pinia).useLoginStore(pinia);
-  if(to.path !== "/login" && to.path !== "/View" && to.path !== "/Thank" && !loginStore.loginSession) {
-    next("/login");
+  if (to.path !== '/admin/Login' && to.path !== '/View' && to.path !== '/Thank' && !loginStore.loginSession) {
+    next('/admin/Login');
   } else {
     next();
   }
 });
-
 
 export default router;
