@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-blue-100 p-30 my-10">
+  <div class="bg-blue-50 p-30 my-10">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
