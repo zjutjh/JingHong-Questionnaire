@@ -127,9 +127,10 @@ const decryptedId = ref<string | null>()
 
 onMounted(() => {
   loginStore.setShowHeader(false);
-  const idParam = route.query.id as string | undefined;
+  let idParam = route.query.id as string | undefined;
   if (idParam) {
     // 解密 ID
+    idParam = idParam.replace(/ /g, "+");
     decryptedId.value = decryptId(idParam) as string | null;
     if (decryptedId.value === ""){
       ElNotification.error("无效的问卷id")
