@@ -188,7 +188,7 @@
     <modal modal-id="reverseQuestionnaireSubmit">
       <template #title>放弃更改</template>
       <template #default>
-        确认要放弃更改吗?
+        确认要放弃更改?
       </template>
       <template #action>
         <button class="btn btn-success w-80" @click="dataReverse">确认</button>
