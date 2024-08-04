@@ -32,7 +32,6 @@
 
 <script setup lang="ts">
 import {defineEmits, ref, watch} from "vue";
-import {modal, showModal} from "@/components";
 
 const props = defineProps<{
   serial_num: number,

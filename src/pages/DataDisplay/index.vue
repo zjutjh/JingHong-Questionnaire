@@ -41,7 +41,7 @@
       />
       <!-- 选择数据统计 -->
       <div class="gap-8 m-5 grid grid-cols-2 mt-30" v-show="isCount">
-        <n-card v-for="obj in staticsData">
+        <n-card v-for="obj in staticsData" v-bind:key='obj'>
           <div class="font-bold">{{ obj.serial_num }}. {{ obj.question }}</div>
           <div v-for="opt in obj.options" class="m-6">
             <div class="relative border rounded">
