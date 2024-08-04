@@ -38,7 +38,7 @@ const router = createRouter({
     },
     {
       path: '/',
-      redirect: (to) => {
+      redirect: () => {
         const loginStore = useMainStore(pinia).useLoginStore(pinia)
         return loginStore.loginSession ? '/admin' : '/admin/Login'
       },

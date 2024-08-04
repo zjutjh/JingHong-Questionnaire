@@ -8,6 +8,7 @@
     <div class="basis-3/4 flex flex-col gap-8">
       <el-skeleton :loading="loading" :rows="10" animated>
       <questionnaireItem
+      :key='item'
       v-for="item in questionnaireList"
       :title="item.title"
       :id-name="item.id"

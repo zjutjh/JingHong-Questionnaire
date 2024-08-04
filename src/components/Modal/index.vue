@@ -46,7 +46,6 @@ showModal("idName", ture) // 关闭modal
 </template>
 
 <script setup lang="ts">
-import { showModal } from './showModal';
 
 defineProps<{
   centerBtn?: boolean,

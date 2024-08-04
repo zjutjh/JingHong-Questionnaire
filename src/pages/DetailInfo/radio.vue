@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits, toRaw, nextTick } from 'vue';
+import { ref, watch, defineProps, defineEmits, nextTick } from 'vue';
 import { useRequest } from "vue-hooks-plus";
 import { saveImgAPI } from "@/apis";
 import {ElNotification} from "element-plus";
