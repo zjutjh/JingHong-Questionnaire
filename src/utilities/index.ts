@@ -1,6 +1,3 @@
-import { startLoading,closeLoading } from "./loading";
+import { startLoading, closeLoading } from './loading'
 
-export {
-    startLoading,
-    closeLoading,
-};
+export { startLoading, closeLoading }

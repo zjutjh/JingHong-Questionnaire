@@ -1,6 +1,6 @@
 <template>
 <div class="fixed inset-0 flex items-center justify-center ">
-  <div class="flex-col overflow-auto bg-white w-full sm:w-1/2 lg:w-1/3 p-6 h-full ">
+  <div class="flex-col overflow-auto w-full sm:w-1/2 lg:w-6/12 p-6 h-full ">
     <div class="flex-col justify-center">
       <div class="flex justify-center">
         <el-image class="w-2/3" src="/jxh_logo.webp" />
@@ -24,7 +24,7 @@
         </template>
       </el-skeleton>
     </div>
-    <div class="flex flex-col h-650 mt-20">
+    <div class="flex flex-col h-650 ">
         <div v-for="(q, index) in question" :key="q.serial_num">
             <!-- 根据问题类型渲染组件 -->
             <div v-if="q.question_type === 1">
@@ -74,7 +74,7 @@
             </div>
         </div>
         <div class="flex justify-center items-center py-20">
-          <button class="btn bg-sky-200 hover:bg-sky-300 hover:-translate-y-2 w-full" @click="showModal('QuestionnaireSubmit')" v-if="decryptedId !== ''" >提交问卷</button>
+          <button class="btn  w-full" @click="showModal('QuestionnaireSubmit')" v-if="decryptedId !== ''" >提交问卷</button>
         </div>
   </div>
     <modal modal-id="QuestionnaireSubmit">
