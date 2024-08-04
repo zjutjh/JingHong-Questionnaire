@@ -59,10 +59,10 @@
 
 <script setup lang="ts">
 import { getAnswersAPI, getDatatableAPI, getStaticsDataAPI } from '@/apis';
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import { useRequest } from 'vue-hooks-plus';
 import router from '@/router';
-import { ElPagination } from 'element-plus';
+import {ElNotification, ElPagination} from 'element-plus';
 import { useMainStore } from '@/stores';
 import { NCard } from 'naive-ui';
 
@@ -77,6 +77,9 @@ const staticsData = ref();
 const totalNum = ref();
 const isCount = ref(false);
 
+onMounted(() => {
+  getAnswers();
+})
 const getAnswers = () => {
   useRequest(() => getAnswersAPI({
     id: tempStore.checkId,
@@ -89,20 +92,29 @@ const getAnswers = () => {
         answers.value = res.data.answers_data.question_answers;
         time.value = res.data.answers_data.time;
       }
+    },
+    onError(e: any) {
+      ElNotification.error('获取失败，请重试' + e);
     }
   })
   useRequest(() => getStaticsDataAPI({
     id: tempStore.checkId,
+    page_num: pageNum.value,
+    page_size: pageSize.value,
   }), {
     onSuccess(res: any) {
       if(res.code === 200) {
+        console.log(res.data)
         staticsData.value = res.data.statistics;
         totalNum.value = res.data.total;
       }
+    },
+    onError(e: any) {
+      ElNotification.error('获取失败，请重试' + e);
     }
   })
 }
-getAnswers();
+
 
 const handleCurrentChange = (val: number) => {
   pageNum.value = val;
@@ -110,7 +122,7 @@ const handleCurrentChange = (val: number) => {
 }
 
 const back = () => {
-  router.push('/');
+  router.push('/admin');
 }
 
 const downloadDatatable = () => {

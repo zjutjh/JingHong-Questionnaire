@@ -29,18 +29,21 @@
 import questionnaireItem from './questionnaireItem.vue';
 import { useRequest } from 'vue-hooks-plus';
 import { getQuestionnaireListAPI } from '@/apis';
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import router from '@/router';
 import {closeLoading, startLoading} from "@/utilities";
 import { useMainStore } from '@/stores';
 
 const tempStore = useMainStore().useTempStore();
-
+const loginStore = useMainStore().useLoginStore();
 const pageSize = 4;
 // const pageNum = ref(1);
 const totalPageNum = ref(1);
 const questionnaireList = ref();
 const loading = ref(true);
+onMounted(() => {
+  loginStore.setShowHeader(true);
+})
 const getQuestionnaireList = (title?: string) => {
   useRequest(() => getQuestionnaireListAPI({
     page_num: tempStore.homePageNum,
@@ -67,7 +70,7 @@ const handleCurrentChange = (val: number) => {
 
 const addNewQuestionnaire = () => {
   localStorage.setItem('isNew','true')
-  router.push('/DetailInfo')
+  router.push('/admin/DetailInfo')
 }
 
 </script>

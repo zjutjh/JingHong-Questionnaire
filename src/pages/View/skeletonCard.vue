@@ -1,6 +1,5 @@
-
 <template>
-  <div class="bg-gray-50 p-30  my-30">
+  <div class="bg-base-200 p-30  my-2">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
@@ -15,7 +14,7 @@
       <div class="flex-col justify-center items-center">
         <div class="flex gap-10 ">
           <span>必答</span>
-          <input type="checkbox" class="checkbox-sm" :disabled="true" v-model="localOptionChoose"/>
+          <input type="checkbox" class="checkbox-sm" :disabled="true" />
         </div>
         </div>
         <div class="flex gap-10 ">
@@ -25,7 +24,6 @@
     </div>
     <div class="divider"></div>
     <div class="divider mt-100"></div>
-  </div>
 </template>
 
 <script setup lang="ts">

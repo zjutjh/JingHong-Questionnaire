@@ -1,9 +1,9 @@
 <template>
 <div class="fixed inset-0 flex items-center justify-center ">
-  <div class="flex-col overflow-auto bg-white w-full sm:w-1/2 lg:w-1/3 p-6 h-full ">
+  <div class="flex-col overflow-auto w-full sm:w-1/2 lg:w-6/12 p-6 h-full ">
     <div class="flex-col justify-center">
       <div class="flex justify-center">
-        <el-image class="w-2/3" src="/jxh_logo.png" />
+        <el-image class="w-2/3" src="/jxh_logo.webp" />
       </div>
       <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
         <template #default>
@@ -24,7 +24,7 @@
         </template>
       </el-skeleton>
     </div>
-    <div class="flex flex-col h-650 mt-20">
+    <div class="flex flex-col h-650 ">
         <div v-for="(q, index) in question" :key="q.serial_num">
             <!-- 根据问题类型渲染组件 -->
             <div v-if="q.question_type === 1">
@@ -73,8 +73,8 @@
               </el-skeleton>
             </div>
         </div>
-        <div class="flex justify-center items-center p-20">
-          <button class="btn btn-success w-full" @click="showModal('QuestionnaireSubmit')">提交问卷</button>
+        <div class="flex justify-center items-center py-20">
+          <button class="btn  w-full" @click="showModal('QuestionnaireSubmit')" v-if="decryptedId !== ''" >提交问卷</button>
         </div>
   </div>
     <modal modal-id="QuestionnaireSubmit">
@@ -91,23 +91,21 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, onMounted, ref, nextTick, reactive, onUnmounted,} from "vue";
-import { useRequest } from "vue-hooks-plus";
-import { getUserAPI, setUserSubmitAPI } from "@/apis";
-import { ElNotification } from "element-plus";
-import { modal, showModal, skeleton } from '@/components';
+import {onMounted, ref,} from "vue";
+import {useRequest} from "vue-hooks-plus";
+import {getUserAPI, setUserSubmitAPI} from "@/apis";
+import {ElNotification} from "element-plus";
+import {modal, showModal} from '@/components';
 import Radio from "@/pages/View/radio.vue";
+import radio from "@/pages/View/radio.vue";
 import Checkbox from "@/pages/View/checkbox.vue";
 import Fill from "@/pages/View/fill.vue";
 import TextArea from "@/pages/View/textArea.vue";
 import File from "@/pages/View/file.vue";
-import radio from "@/pages/View/radio.vue";
-import {SortableEvent, VueDraggable} from 'vue-draggable-plus'
 import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 import router from "@/router";
-import { useRoute } from "vue-router";
+import {useRoute} from "vue-router";
 import {closeLoading, startLoading} from "@/utilities";
-import dayjs from "element-plus";
 import CryptoJS from 'crypto-js';
 import {useMainStore} from "@/stores";
 
@@ -115,8 +113,7 @@ const Key = 'JingHong';
 const formData = ref();
 const question = ref<any[]>([]);
 const title = ref();
-const reg = ref<string>('');
-const regNum = ref("^[0-9]{1}$");
+const reg = ref<string>();
 const time = ref();
 const loading = ref(true)
 const submitData = ref({
@@ -124,44 +121,49 @@ const submitData = ref({
   questions_list: [],
 });
 const route = useRoute();
-const id = ref<Number | null>();
+const id = ref<Number | null >();
 const loginStore = useMainStore().useLoginStore();
-// Deep copy function
-const deepCopy = (obj) => {
-  return JSON.parse(JSON.stringify(obj));
-};
+const decryptedId = ref<string | null>()
 
 onMounted(() => {
-  loginStore.setShowHeader(false)
-  const idParam = route.query.id;
-  id.value = idParam ? String(idParam) : null;
-  console.log(id.value);
-  if (id.value) {
-    const encryptedId = CryptoJS.AES.encrypt(id.value, Key).toString();
-    id.value = encryptedId;
-    console.log(id.value); //未启用链接加密时使用
+  loginStore.setShowHeader(false);
+  let idParam = route.query.id as string | undefined;
+  if (idParam) {
+    // 解密 ID
+    idParam = idParam.replace(/ /g, "+");
+    decryptedId.value = decryptId(idParam) as string | null;
+    if (decryptedId.value === ""){
+      ElNotification.error("无效的问卷id")
+    }
   }
-  if (id.value) {
-    const decryptedId = CryptoJS.AES.decrypt(id.value, Key).toString(CryptoJS.enc.Utf8);
-    id.value = Number(decryptedId);
-  }
-  getQuestionnaireView()
+  getQuestionnaireView();
 });
 
+const decryptId = (encryptedId) => {
+  try {
+    const bytes = CryptoJS.AES.decrypt(encryptedId, Key);
+    return bytes.toString(CryptoJS.enc.Utf8);
+  } catch (error) {
+    ElNotification.error("无效的问卷id")
+  }
+};
+
 const getQuestionnaireView = () => {
-  if(id.value){
-    console.log(id.value);
-    useRequest(() => getUserAPI({id:id.value as number}),{
+  if(decryptedId.value){
+    useRequest(() => getUserAPI({id: decryptedId.value as number}),{
       onBefore: () => startLoading(),
       onSuccess(res) {
         if (res.code === 200) {
-          console.log(res.data)
           formData.value = res.data;
           question.value = formData.value.questions;
           time.value = formData.value.time.replace("T", " ").split("+")[0].split(".")[0]
           submitData.value.id = res.data.id;
           question.value.forEach((q) => {
-            q.answer = '';
+            if(q.question_type === 1){
+              q.answer = ' '
+            } else {
+              q.answer = '';
+            }
           });
           loading.value = false
         } else {
@@ -214,7 +216,6 @@ const submit = () => {
     },
   });
 };
-
 
 
 </script>

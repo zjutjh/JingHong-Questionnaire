@@ -99,19 +99,19 @@ const delQuestionnaire = (id: number) => {
 const copyShareCode = () => {
   const Key = 'JingHong';
   const encryptedId = CryptoJS.AES.encrypt(props.idName+'',Key).toString();
-  navigator.clipboard.writeText(encryptedId);
+  navigator.clipboard.writeText( "https://phlin.top/View?id=" + encryptedId);
 }
 
 const DetailInfo = () => {
   localStorage.setItem('isNew','false')
   localStorage.setItem('id',String(props.idName))
-  router.push('/DetailInfo')
+  router.push('/admin/DetailInfo')
 }
 
 const checkData = () => {
   tempStore.setCheckId(props.idName);
   tempStore.setCheckTitle(props.title);
-  router.push('/Data');
+  router.push('/admin/Data');
 }
 
 </script>

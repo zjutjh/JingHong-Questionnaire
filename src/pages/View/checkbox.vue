@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-blue-100 p-30 my-10">
+  <div class="bg-base-200 p-30 my-2">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
@@ -26,7 +26,7 @@
       </div>
       <div class="flex gap-10 mt-10" v-if="localOtherOption">
         <input type="checkbox" :name="props.serial_num" class="checkbox-sm my-5" :value="otherAnswer" v-model="answerArr"/>
-        <input type="text" class="input-sm w-100 rounded-xl" placeholder="其他" v-model="otherAnswer"/>
+        <input type="text" class="input-sm w-150 rounded-xl" placeholder="其他" v-model="otherAnswer"/>
       </div>
     </div>
   </div>
@@ -63,7 +63,7 @@ watch([answerArr, otherAnswer], ([newAnswerArr, newOtherAnswer]) => {
     const combinedAnswers = newAnswerArr.filter(answer => answer !== newOtherAnswer).concat(newOtherAnswer).join('┋');
     emits('update:answer', combinedAnswers);
   } else {
-    const combinedAnswers = newAnswerArr.join('|');
+    const combinedAnswers = newAnswerArr.join('┋');
     emits('update:answer', combinedAnswers);
   }
 });

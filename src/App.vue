@@ -1,5 +1,5 @@
 <template>
-  <div class=" overflow-y-scroll h-screen bg-sky-100">
+  <div class=" overflow-y-scroll h-screen bg-base-100">
     <div class="navbar bg-base-100 shadow-lg" v-if="loginStore.showHeader">
       <div class="flex-1">
         <a class="btn btn-ghost text-xl">JH Questionnaire Survey System</a>

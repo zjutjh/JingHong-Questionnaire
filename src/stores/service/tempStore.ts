@@ -23,6 +23,6 @@ const useTempStore = defineStore("temporary", () => {
         checkTitle,
         setCheckTitle,
     };
-});
+},{ persist: true });
 
 export default useTempStore;

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-blue-100 p-30  my-10">
+  <div class="bg-base-200 p-30 my-2" >
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
@@ -26,7 +26,7 @@
       </div>
       <div class="flex gap-10 mt-10" v-if="localOtherOption">
         <input type="radio" :name="props.serial_num" class="radio-sm my-5" :value="otherAnswer" v-model="localAnswer" />
-        <input type="text" class="input-sm w-100 rounded-xl" placeholder="其他" v-model="otherAnswer"/>
+        <input type="text" class="input-sm w-150 rounded-xl" placeholder="其他" v-model="otherAnswer" @keyup="localAnswer = otherAnswer " />
       </div>
     </div>
   </div>
@@ -53,18 +53,20 @@ const props = defineProps<{
 const localUnique = ref<boolean>(props.unique);
 const localOtherOption = ref<boolean>(props.otherOption);
 const localOptions = ref(props.options ? [...props.options] : []);
-const otherAnswer = ref<string>();
+const otherAnswer = ref<string>('');
 const emits = defineEmits(['update:answer']);
-
 const localAnswer = ref(props.answer);
 
-watch([localAnswer, otherAnswer], ([newAnswer, newOtherAnswer]) => {
-  if (localOtherOption.value && newAnswer === newOtherAnswer) {
+
+watch([localAnswer, otherAnswer], ([newLocalAnswer, newOtherAnswer]) => {
+  if (localOtherOption.value && newLocalAnswer === newOtherAnswer) {
     emits('update:answer', newOtherAnswer);
   } else {
-    emits('update:answer', newAnswer);
+    emits('update:answer', newLocalAnswer);
   }
 });
+
+
 </script>
 
 <style scoped>
