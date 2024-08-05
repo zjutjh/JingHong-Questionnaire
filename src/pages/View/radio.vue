@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-200 p-30 my-2" >
+  <div class="rounded mx-30 mt-30" >
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
@@ -26,7 +26,7 @@
       </div>
       <div class="flex gap-10 mt-10" v-if="localOtherOption">
         <input type="radio" :name="props.serial_num" class="radio-sm my-5" :value="otherAnswer" v-model="localAnswer" />
-        <input type="text" class="input-sm w-150 rounded-xl" placeholder="其他" v-model="otherAnswer" @keyup="localAnswer = otherAnswer " />
+        <input type="text" class="input-sm w-150" placeholder="其他" v-model="otherAnswer" @keyup="localAnswer = otherAnswer " />
       </div>
     </div>
   </div>
