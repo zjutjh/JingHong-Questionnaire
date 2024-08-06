@@ -34,7 +34,6 @@
 
 <script setup lang="ts">
 import {computed, defineEmits, ref, watch} from "vue";
-import {modal, showModal} from "@/components";
 
 const props = defineProps<{
   serial_num: number,
@@ -45,7 +44,6 @@ const props = defineProps<{
   unique:boolean
   }>()
 const emits = defineEmits(['update:unique', 'on-click', 'update:optionChoose','update:title','update:describe']);
-
 const localTitle = ref<string>(props.title || '');
 const localOptionChoose = ref<boolean>(props.optionChoose);
 const localUnique = ref<boolean>(props.unique);

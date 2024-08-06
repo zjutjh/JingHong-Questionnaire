@@ -99,7 +99,7 @@
               group="people"
               @update="onUpdate"
           >-->
-          <div v-for="(q, index) in question" :key="q.serial_num" >
+          <div v-for="q in question" :key="q.serial_num" >
             <!-- 根据问题类型渲染组件 -->
             <div v-if="q.question_type === 1">
               <el-skeleton animated :loading="loading">
@@ -188,7 +188,7 @@
     <modal modal-id="reverseQuestionnaireSubmit">
       <template #title>放弃更改</template>
       <template #default>
-        确认要放弃更改吗?
+        确认要放弃更改?
       </template>
       <template #action>
         <button class="btn btn-success w-80" @click="dataReverse">确认</button>
@@ -198,18 +198,17 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, ref, watch, nextTick, reactive, toRaw, toRef} from "vue";
+import {computed, onMounted, ref, watch, nextTick, reactive} from "vue";
 import { useRequest } from "vue-hooks-plus";
 import {getQuestionnaireDetailAPI, setNewQuestionnaireDetailAPI, setQuestionnaireDetailAPI} from "@/apis";
 import { ElNotification } from "element-plus";
-import { modal, showModal, skeleton } from '@/components';
-import Radio from "@/pages/DetailInfo/radio.vue";
+import { modal, showModal } from '@/components';
 import Checkbox from "@/pages/DetailInfo/checkbox.vue";
 import Fill from "@/pages/DetailInfo/fill.vue";
 import TextArea from "@/pages/DetailInfo/textArea.vue";
 import File from "@/pages/DetailInfo/file.vue";
 import radio from "@/pages/DetailInfo/radio.vue";
-import {SortableEvent, VueDraggable} from 'vue-draggable-plus'
+//import {SortableEvent, VueDraggable} from 'vue-draggable-plus'
 import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 import router from "@/router";
 import {closeLoading, startLoading} from "@/utilities";
@@ -416,11 +415,11 @@ const submit = (state:number) => {
   }
 };
 
-const onUpdate = () => {
+/**const onUpdate = () => {
   question.value.forEach((q, idx) => {
     q.serial_num = idx + 1;
   });
-};
+};**/
 
 
 </script>
