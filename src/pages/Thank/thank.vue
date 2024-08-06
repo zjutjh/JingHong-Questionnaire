@@ -1,12 +1,12 @@
 <template>
-  <div class="fixed inset-0 flex items-center justify-center ">
-    <div class="flex flex-col bg-white w-full sm:w-1/2 lg:w-1/3 p-6 h-full justify-between">
+  <div class="fixed inset-0 flex items-center justify-center bg-red-300">
+    <div class="flex flex-col bg-white w-full sm:w-1/2 lg:w-1/3 p-6 h-full justify-between shadow-lg">
       <div>
         <div class="flex justify-center mt-50">
           <el-image class="h-250" src='/thank.webp' ></el-image>
         </div>
         <div class="flex items-center justify-center">
-          <div class=" text-lg ">
+          <div class=" text-3xl text-red-950">
             提交成功
           </div>
         </div>

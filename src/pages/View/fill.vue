@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-200 rounded p-30 my-2">
+  <div class="rounded mx-30 mt-30">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
@@ -20,7 +20,7 @@
     <div class="divider my-5"></div>
     <div class="flex-col p-5 h-auto">
       <input
-          class="input input-bordered shadow-md w-full"
+          class="input input-bordered w-full"
           :placeholder="pal"
           v-model="localAnswer"
           @blur="validateInput"
