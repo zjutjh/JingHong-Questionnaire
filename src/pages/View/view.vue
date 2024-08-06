@@ -25,7 +25,7 @@
         </el-skeleton>
       </div>
       <div class="flex flex-col h-650 ">
-          <div v-for="(q, index) in question" :key="q.serial_num">
+          <div v-for="q in question" :key="q.serial_num">
               <!-- 根据问题类型渲染组件 -->
               <div v-if="q.question_type === 1">
                 <el-skeleton animated :loading="loading">
@@ -78,7 +78,7 @@
           </div>
     </div>
       <modal modal-id="QuestionnaireSubmit">
-        <template #title class="bg-red-200">提交问卷</template>
+        <template #title><span class="text-red-950">提交问卷</span></template>
         <template #default>
           你确认要提交问卷吗?
         </template>
@@ -96,7 +96,6 @@
   import {getUserAPI, setUserSubmitAPI} from "@/apis";
   import {ElNotification} from "element-plus";
   import {modal, showModal} from '@/components';
-  import Radio from "@/pages/View/radio.vue";
   import radio from "@/pages/View/radio.vue";
   import Checkbox from "@/pages/View/checkbox.vue";
   import Fill from "@/pages/View/fill.vue";
@@ -112,8 +111,6 @@
   const Key = 'JingHong';
   const formData = ref();
   const question = ref<any[]>([]);
-  const title = ref();
-  const reg = ref<string>();
   const time = ref();
   const loading = ref(true)
   const submitData = ref({
@@ -121,7 +118,6 @@
     questions_list: [],
   });
   const route = useRoute();
-  const id = ref<Number | null >();
   const loginStore = useMainStore().useLoginStore();
   const decryptedId = ref<string | null>()
   
