@@ -25,15 +25,15 @@
         </div>
       </div>
       <div class="flex gap-10 mt-10" v-if="localOtherOption">
-        <input type="checkbox" :name="props.serial_num" class="checkbox-sm my-5" :value="otherAnswer" v-model="answerArr"/>
-        <input type="text" class="input-sm w-150" placeholder="其他" v-model="otherAnswer"/>
+        <input type="checkbox" :name="props.serial_num" class="checkbox-sm my-5" :value="otherAnswer" id='other'  @click='otherAnswerChecked = !otherAnswerChecked'/>
+        <input type="text" class="input-sm w-150" placeholder="其他" v-model="otherAnswer" @input="updateOtherAnswer"  />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits } from 'vue';
+import { ref, watch, defineProps, defineEmits, computed } from 'vue'
 
 const props = defineProps<{
   serial_num: number,
@@ -55,18 +55,60 @@ const localOtherOption = ref<boolean>(props.otherOption);
 const localOptions = ref(props.options ? [...props.options] : []);
 const otherAnswer = ref<string>('');
 const answerArr = ref<string[]>([]);
-
 const emits = defineEmits(['update:answer']);
+const otherAnswerChecked = ref(false)
 
-watch([answerArr, otherAnswer], ([newAnswerArr, newOtherAnswer]) => {
-  if (localOtherOption.value && newOtherAnswer && newAnswerArr.includes(newOtherAnswer)) {
-    const combinedAnswers = newAnswerArr.filter(answer => answer !== newOtherAnswer).concat(newOtherAnswer).join('┋');
-    emits('update:answer', combinedAnswers);
-  } else {
-    const combinedAnswers = newAnswerArr.join('┋');
-    emits('update:answer', combinedAnswers);
+const deleteOldAnswer = () => {
+  const otherIndex = answerArr.value.indexOf(otherAnswer.value);
+  if (otherIndex !== -1) {
+    answerArr.value.splice(otherIndex, 1);
   }
+}
+const updateOtherAnswer = (event: Event) => {
+  if(document.getElementById("other").checked === true) {
+    const value = (event.target as HTMLInputElement).value;
+    deleteOldAnswer();
+    otherAnswer.value = value;
+    answerArr.value.push(otherAnswer.value);
+  }
+};
+
+const filteredAnswerArr = computed(() => {
+  return answerArr.value.filter(answer => answer !== '');
+})
+
+watch(filteredAnswerArr, () => {
+  if(document.getElementById("other").checked === true && !answerArr.value.includes(otherAnswer.value)) {
+    answerArr.value.push(otherAnswer.value)
+  }
+  console.log(filteredAnswerArr.value)
+  console.log(otherAnswerChecked.value)
+  const combinedAnswers = filteredAnswerArr.value.join('┋');
+  emits('update:answer', combinedAnswers);
 });
+
+watch(otherAnswer, (newOtherAnswer, oldOtherAnswer) => {
+  if (newOtherAnswer !== oldOtherAnswer && document.getElementById("other").checked === true) {
+    const otherIndex = answerArr.value.indexOf(oldOtherAnswer);
+    if (otherIndex !== -1) {
+      answerArr.value.splice(otherIndex, 1);
+    }
+    answerArr.value.push(newOtherAnswer);
+  }
+})
+
+watch(otherAnswerChecked,() => {
+  if(otherAnswerChecked.value) {
+    if (!answerArr.value.includes(otherAnswer.value)) {
+      answerArr.value.push(otherAnswer.value);
+    }
+  }
+  if (!otherAnswerChecked.value) {
+    if (answerArr.value.includes(otherAnswer.value)) {
+      deleteOldAnswer()
+    }
+  }
+})
 </script>
 
 <style scoped>

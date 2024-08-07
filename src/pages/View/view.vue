@@ -89,7 +89,7 @@
     </div>
   </div>
   </template>
-  
+
   <script lang="ts" setup>
   import {onMounted, ref,} from "vue";
   import {useRequest} from "vue-hooks-plus";
@@ -107,7 +107,7 @@
   import {closeLoading, startLoading} from "@/utilities";
   import CryptoJS from 'crypto-js';
   import {useMainStore} from "@/stores";
-  
+
   const Key = 'JingHong';
   const formData = ref();
   const question = ref<any[]>([]);
@@ -120,7 +120,8 @@
   const route = useRoute();
   const loginStore = useMainStore().useLoginStore();
   const decryptedId = ref<string | null>()
-  
+  const allowSend = ref(true)
+
   onMounted(() => {
     loginStore.setShowHeader(false);
     let idParam = route.query.id as string | undefined;
@@ -134,7 +135,7 @@
     }
     getQuestionnaireView();
   });
-  
+
   const decryptId = (encryptedId) => {
     try {
       const bytes = CryptoJS.AES.decrypt(encryptedId, Key);
@@ -143,7 +144,7 @@
       ElNotification.error("无效的问卷id")
     }
   };
-  
+
   const getQuestionnaireView = () => {
     if(decryptedId.value){
       useRequest(() => getUserAPI({id: decryptedId.value as number}),{
@@ -173,26 +174,40 @@
       });
     }
   }
-  
-  const submit = () => {
+
+  const checkAnswer = () =>{
     const hasUnansweredRequiredQuestion = question.value.some((q) => {
       if (q.required && q.answer === "") {
         ElNotification.error('您有题目未完成作答.')
         return true;
       }
-      return false;
+      if(q.question_type === 1 && q.answer === " "){
+        ElNotification.error('您有单选题未完成作答.')
+        return true;
+      }
+      if (q.question_type === 2 && (q.answer.endsWith('┋') || q.answer.startsWith('┋'))){
+        ElNotification.error('您有多选题未完成作答.')
+        return true;
+      }
     });
     if (hasUnansweredRequiredQuestion) {
       showModal('QuestionnaireSubmit', true);
-      return;
+      allowSend.value = false
+      return
     }
-  
+    allowSend.value = true
+  }
+
+  const submit = () => {
+    checkAnswer();
+    if(allowSend.value === false) {
+      return
+    }
     submitData.value.questions_list = question.value.map((q) => ({
       question_id: q.id,
       serial_num: q.serial_num,
       answer: q.answer,
     }));
-  
     useRequest(() => setUserSubmitAPI(submitData.value), {
       onBefore: () => startLoading(),
       onSuccess(res) {
@@ -212,12 +227,12 @@
       },
     });
   };
-  
-  
+
+
   </script>
-  
-  
+
+
   <style scoped>
-  
-  
+
+
   </style>
