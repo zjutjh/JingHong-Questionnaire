@@ -96,7 +96,6 @@ watch(otherAnswer, (newOtherAnswer, oldOtherAnswer) => {
     answerArr.value.push(newOtherAnswer);
   }
 })
-
 watch(otherAnswerChecked,() => {
   if(otherAnswerChecked.value) {
     if (!answerArr.value.includes(otherAnswer.value)) {
