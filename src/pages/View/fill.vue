@@ -47,7 +47,6 @@ const emits = defineEmits(['update:answer']);
 
 const localAnswer = ref(props.answer);
 const errorMessage = ref('');
-
 watch(localAnswer, (newAnswer) => {
   emits('update:answer', newAnswer);
 });
