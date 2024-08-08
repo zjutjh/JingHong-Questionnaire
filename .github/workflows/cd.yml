@@ -55,7 +55,7 @@ jobs:
         uses: actions/create-release@v1
         env:
           # GITHUB_TOKEN 是准备工作步骤三申请的 Personal Access Token
-          GITHUB_TOKEN: ${{ secrets.PROJECT_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         with:
           tag_name: v${{ steps.version.outputs.value }}
           release_name: v${{ steps.version.outputs.value }}
