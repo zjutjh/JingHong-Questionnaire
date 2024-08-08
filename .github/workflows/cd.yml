@@ -74,7 +74,7 @@ jobs:
           asset_name: assets.zip
           asset_content_type: application/zip
 
-      # 把制品上传到部署机器
+
       - name: Upload to Deploy Server
         uses: easingthemes/ssh-deploy@v2.0.7
         env:
