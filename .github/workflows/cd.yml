@@ -45,7 +45,7 @@ jobs:
       # 打包生成制品，且把制品压缩到 assets.zip 压缩包里
       - name: Building
         run: |
-          pnpm build
+          pnpm build-only
           zip -r assets ./dist/**
 
       # 基于当前 commit 进行版本发布 (Create a release)，tag_name 是 v 前缀加上 package.json 的 version 值
