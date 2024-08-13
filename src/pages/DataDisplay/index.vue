@@ -13,6 +13,8 @@
       </div>
       <div class="btn btn-sm btn-accent" @click="downloadDatatable">下载数据表格</div>
       <div class="btn btn-sm btn-accent" @click="switchCount">统计切换</div>
+      <div class="btn btn-sm" :class="isUnique ? 'btn-neutral' : 'btn-accent'" @click="changeUnique">展示近期</div>
+      <span>搜索</span><input class="input input-sm input-bordered" type="text" v-model="keyText">
     </div>
     <div class="overflow-x-auto">
       <!-- 填空数据展示 -->
@@ -37,7 +39,7 @@
         layout="prev, pager, next"
         :page-count="totalPageNum"
         @current-change="handleCurrentChange"
-         v-show="!isCount"
+        v-show="!isCount"
       />
       <div class="gap-8 m-5 grid grid-cols-2 mt-30" v-show="isCount">
         <n-card v-for="obj in staticsData" v-bind:key='obj'>
@@ -58,7 +60,7 @@
 
 <script setup lang="ts">
 import { getAnswersAPI, getDatatableAPI, getStaticsDataAPI } from '@/apis';
-import {onMounted, ref} from 'vue';
+import {onMounted, ref, watch} from 'vue';
 import { useRequest } from 'vue-hooks-plus';
 import router from '@/router';
 import {ElNotification, ElPagination} from 'element-plus';
@@ -75,6 +77,8 @@ const time = ref();
 const staticsData = ref();
 const totalNum = ref();
 const isCount = ref(false);
+const isUnique = ref(false);
+const keyText = ref("");
 
 onMounted(() => {
   getAnswers();
@@ -84,8 +88,12 @@ const getAnswers = () => {
     id: tempStore.checkId,
     page_num: pageNum.value,
     page_size: pageSize.value,
+    text: keyText.value === "" ? undefined : keyText.value,
+    unique: isUnique.value,
   }), {
+    debounceWait: 500,
     onSuccess(res: any) {
+      console.log(res);
       if(res.code === 200) {
         totalPageNum.value = res.data.total_page_num;
         answers.value = res.data.answers_data.question_answers;
@@ -94,7 +102,7 @@ const getAnswers = () => {
     },
     onError(e: any) {
       ElNotification.error('获取失败，请重试' + e);
-    }
+    },
   })
   useRequest(() => getStaticsDataAPI({
     id: tempStore.checkId,
@@ -103,7 +111,6 @@ const getAnswers = () => {
   }), {
     onSuccess(res: any) {
       if(res.code === 200) {
-        console.log(res.data)
         staticsData.value = res.data.statistics;
         totalNum.value = res.data.total;
       }
@@ -114,6 +121,11 @@ const getAnswers = () => {
   })
 }
 
+watch(keyText, getAnswers);
+
+watch(isUnique, getAnswers);
+
+const changeUnique = () => { isUnique.value = !isUnique.value; }
 
 const handleCurrentChange = (val: number) => {
   pageNum.value = val;

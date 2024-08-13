@@ -1,0 +1,92 @@
+name: CD
+on:
+  # 以主干的push事件作为触发条件
+  push:
+    branches: main
+
+jobs:
+  CD:
+    runs-on: ubuntu-latest
+    steps:
+ 
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Cache
+        id: cache-dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.OS }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      - name: Installing Dependencies
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
+        run: pnpm install
+
+      # 从 package.json 里获取 version 属性的值
+      # 在 CD Workflow 中会给每个生成的制品打上标签，而标签取值于 version 值
+      - name: Read Version
+        # 读取出来的值会放在 steps.[id].outputs.value 供其他步骤 step 读取
+        id: version
+        uses: ashley-taylor/read-json-property-action@v1.0
+        with:
+          path: ./package.json
+          property: version
+
+      # 打包生成制品，且把制品压缩到 assets.zip 压缩包里
+      - name: Building
+        run: |
+          pnpm build-only
+          zip -r assets ./dist/**
+
+      # 基于当前 commit 进行版本发布 (Create a release)，tag_name 是 v 前缀加上 package.json 的 version 值
+      - name: Create GitHub Release
+        # 此步骤中，版本发布后会返回对应的 url，以供下面上传制品的步骤中读取使用
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          # GITHUB_TOKEN 是准备工作步骤三申请的 Personal Access Token
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.value }}
+          release_name: v${{ steps.version.outputs.value }}
+          draft: false
+          prerelease: false
+
+      # 把 assets.zip 上传到仓库对应的发布版本 Release 上
+      - name: Update Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./assets.zip
+          asset_name: assets.zip
+          asset_content_type: application/zip
+
+
+      - name: Upload to Deploy Server
+        uses: easingthemes/ssh-deploy@v2.0.7
+        env:
+          # SSH_PRIVATE_KEY 为准备工作步骤三中生成密钥对里的私钥
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_TOKEN }}
+          # 指定当前目录中要上传的内容
+          SOURCE: "dist/"
+          # 指定上传到部署机器的目录
+          TARGET: "/var/www/dist"
+          # 上传前指令，此处用c于清空 TARGET 下的文件
+          ARGS: "-avzr --delete"
+          # REMOTE_HOST 为机器的公网IP
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          # REMOTE_USER 为登录机器时用到的账号名
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
