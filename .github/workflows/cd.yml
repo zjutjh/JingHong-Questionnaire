@@ -55,7 +55,7 @@ jobs:
         uses: actions/create-release@v1
         env:
           # GITHUB_TOKEN 是准备工作步骤三申请的 Personal Access Token
-          GITHUB_TOKEN: ${{ secrets.PROJECT_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         with:
           tag_name: v${{ steps.version.outputs.value }}
           release_name: v${{ steps.version.outputs.value }}
@@ -74,7 +74,7 @@ jobs:
           asset_name: assets.zip
           asset_content_type: application/zip
 
-      # 把制品上传到部署机器
+
       - name: Upload to Deploy Server
         uses: easingthemes/ssh-deploy@v2.0.7
         env:
@@ -83,8 +83,8 @@ jobs:
           # 指定当前目录中要上传的内容
           SOURCE: "dist/"
           # 指定上传到部署机器的目录
-          TARGET: "/var/www"
-          # 上传前指令，此处用于清空 TARGET 下的文件
+          TARGET: "/var/www/dist"
+          # 上传前指令，此处用c于清空 TARGET 下的文件
           ARGS: "-avzr --delete"
           # REMOTE_HOST 为机器的公网IP
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
