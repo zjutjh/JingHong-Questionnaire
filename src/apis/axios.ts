@@ -4,7 +4,7 @@ import axios, { type AxiosRequestConfig } from 'axios'
 //自动存储cookie
 
 const axiosInstance = axios.create({
-  baseURL: "/api",
+  baseURL: "https://phlin.top",
   timeout: 10000,
   withCredentials: true
 })
