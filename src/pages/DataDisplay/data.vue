@@ -5,7 +5,10 @@
         <tr>
           <th>序号</th>
           <th>时间</th>
-          <th v-for="ans in answers">{{ ans.title }}</th>
+          <th v-for="ans in answers">
+            {{ ans.title }}
+            <el-tag type="primary" size="small" class="ml-3">{{ answersType.get(ans.question_type) }}</el-tag>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -38,6 +41,14 @@ const props = defineProps<{
   keyText: string,
   isUnique: boolean,
 }>();
+
+const answersType = new Map([
+  [1, '单选'],
+  [2, '多选'],
+  [3, '填空'],
+  [4, '简答'],
+  [5, '图片'],
+]);
 
 const handleCurrentChange = (val: number) => {
   pageNum.value = val;
