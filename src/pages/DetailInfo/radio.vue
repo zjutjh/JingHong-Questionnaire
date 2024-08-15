@@ -167,7 +167,8 @@ watch(localOtherOption, (newOtherOption) => {
   emits('update:otherOption', newOtherOption);
 });
 
-watch(localOptions, (newOptions) => {
+watch(localOptions.value, (newOptions) => {
+  console.log(localOptions.value)
   emits('update:options', newOptions);
 });
 </script>
