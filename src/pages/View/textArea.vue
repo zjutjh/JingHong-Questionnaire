@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded mx-30 mt-30">
+  <div class="rounded mx-5 mt-30">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
