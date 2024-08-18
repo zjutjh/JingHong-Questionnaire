@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded mx-30 mt-30" >
+  <div class="rounded mx-5 mt-30" >
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
@@ -16,7 +16,7 @@
     <div class="divider my-5"></div>
     <div class="flex-col p-5 h-auto">
       <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
-        <input type="radio" :name="props.serial_num" class="radio-sm my-5" :value="item.content" v-model="localAnswer" />
+        <input type="radio" :name="props.serial_num" class="my-5" style="zoom: 140%"  :value="item.content" v-model="localAnswer" />
         <span v-if="item.content">{{ item.content }}</span>
         <div class="ml-10 flex items-center gap-20">
           <div v-if="item.img" class="mt-4">
