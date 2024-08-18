@@ -13,124 +13,31 @@
       </div>
       <div class="btn btn-sm btn-accent" @click="downloadDatatable">下载数据表格</div>
       <div class="btn btn-sm btn-accent" @click="switchCount">统计切换</div>
-      <div class="btn btn-sm" :class="isUnique ? 'btn-neutral' : 'btn-accent'" @click="changeUnique">展示近期</div>
-      <span>搜索</span><input class="input input-sm input-bordered" type="text" v-model="keyText">
+      <div v-show="!isCount" class="btn btn-sm" :class="isUnique ? 'btn-neutral' : 'btn-accent'" @click="changeUnique">展示近期</div>
+      <span v-show="!isCount">搜索</span><input v-show="!isCount" class="input input-sm input-bordered" type="text" v-model="keyText">
     </div>
     <div class="overflow-x-auto">
-      <!-- 填空数据展示 -->
-      <table class="table" v-show="!isCount">
-        <thead>
-          <tr>
-            <th>序号</th>
-            <th>时间</th>
-            <th v-for="ans in answers">{{ ans.title }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(t, index) in time">
-            <th>{{ index+1 }}</th>
-            <th>{{ t }}</th>
-            <th v-for="ans in answers">{{ ans.answers[index] }}</th>
-          </tr>
-        </tbody>
-      </table>
-      <el-pagination
-        :current-page="pageNum"
-        layout="prev, pager, next"
-        :page-count="totalPageNum"
-        @current-change="handleCurrentChange"
-        v-show="!isCount"
-      />
-      <div class="gap-8 m-5 grid grid-cols-2 mt-30" v-show="isCount">
-        <n-card v-for="obj in staticsData" v-bind:key='obj'>
-          <div class="font-bold">{{ obj.serial_num }}. {{ obj.question }}</div>
-          <div v-for="opt in obj.options" class="m-6">
-            <div class="relative border rounded">
-              <span class="ml-4">{{ opt.content }}</span>
-              <span class="absolute right-4">{{ opt.count/totalNum*100 }}%</span>
-              <div class="inline absolute left-0 rounded bg-cyan-400 h-full opacity-15" :style="{width: 100*opt.count/totalNum+'%'}"></div>
-            </div>
-          </div>
-        </n-card>
-      </div>
+      <data-table :key-text="keyText" :is-unique="isUnique" v-show="!isCount"></data-table>
+      <statics v-show="isCount"></statics>
     </div>
   </div>
 </div>
 </template>
 
 <script setup lang="ts">
-import { getAnswersAPI, getDatatableAPI, getStaticsDataAPI } from '@/apis';
-import {onMounted, ref, watch} from 'vue';
+import { getDatatableAPI } from '@/apis';
+import { ref } from 'vue';
 import { useRequest } from 'vue-hooks-plus';
 import router from '@/router';
-import {ElNotification, ElPagination} from 'element-plus';
 import { useMainStore } from '@/stores';
-import { NCard } from 'naive-ui';
+import statics from './statics.vue';
+import dataTable from './data.vue';
 
 const tempStore = useMainStore().useTempStore();
 
-const pageNum = ref(1);
-const totalPageNum = ref(2);
-const pageSize = ref(10);
-const answers = ref();
-const time = ref();
-const staticsData = ref();
-const totalNum = ref();
 const isCount = ref(false);
 const isUnique = ref(false);
 const keyText = ref("");
-
-onMounted(() => {
-  getAnswers();
-})
-const getAnswers = () => {
-  useRequest(() => getAnswersAPI({
-    id: tempStore.checkId,
-    page_num: pageNum.value,
-    page_size: pageSize.value,
-    text: keyText.value === "" ? undefined : keyText.value,
-    unique: isUnique.value,
-  }), {
-    debounceWait: 500,
-    onSuccess(res: any) {
-      console.log(res);
-      if(res.code === 200) {
-        totalPageNum.value = res.data.total_page_num;
-        answers.value = res.data.answers_data.question_answers;
-        time.value = res.data.answers_data.time;
-      }
-    },
-    onError(e: any) {
-      ElNotification.error('获取失败，请重试' + e);
-    },
-  })
-  useRequest(() => getStaticsDataAPI({
-    id: tempStore.checkId,
-    page_num: pageNum.value,
-    page_size: pageSize.value,
-  }), {
-    onSuccess(res: any) {
-      if(res.code === 200) {
-        staticsData.value = res.data.statistics;
-        totalNum.value = res.data.total;
-      }
-    },
-    onError(e: any) {
-      ElNotification.error('获取失败，请重试' + e);
-    }
-  })
-}
-
-watch(keyText, getAnswers);
-
-watch(isUnique, getAnswers);
-
-const changeUnique = () => { isUnique.value = !isUnique.value; }
-
-const handleCurrentChange = (val: number) => {
-  pageNum.value = val;
-  getAnswers();
-}
 
 const back = () => {
   router.push('/admin');
@@ -151,5 +58,7 @@ const downloadDatatable = () => {
 const switchCount = () => {
   isCount.value = !isCount.value;
 }
+
+const changeUnique = () => { isUnique.value = !isUnique.value; }
 
 </script>
