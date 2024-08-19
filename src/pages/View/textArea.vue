@@ -3,8 +3,8 @@
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
-          <span class="text-xl">{{ serial_num }}</span>
-          <span class="text-xl flex gap-5 items-center">
+          <span class="lg:text-xl md:text-md">{{ serial_num }}</span>
+          <span class="lg:text-xl md:text-md flex gap-5 items-center">
             {{ title }}
             <el-tag type="primary" class="ml-5">论述</el-tag>
             <el-tag type="warning" v-if="!required">选答</el-tag>
@@ -12,7 +12,7 @@
           </span>
         </div>
         <div class="flex items-center mt-15 ml-10">
-          <span class="text-md text-gray-500">{{ describe }}</span>
+          <span class="text-sm text-gray-500">{{ describe }}</span>
         </div>
       </div>
       <div class="flex-col justify-center items-center"></div>
