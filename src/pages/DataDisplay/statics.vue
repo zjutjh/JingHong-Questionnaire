@@ -5,9 +5,9 @@
         <div class="font-bold">{{ obj.serial_num }}. {{ obj.question }}</div>
         <div v-for="opt in obj.options" class="m-6">
           <div class="relative border rounded">
+            <div class="inline absolute left-0 rounded bg-cyan-400 h-full opacity-15" :style="{width: 100*opt.count/totalNum+'%'}"></div>
             <span class="ml-4">{{ opt.content }}</span>
             <span class="absolute right-4">{{ (opt.count/totalNum*100).toFixed(2) }}%</span>
-            <div class="inline absolute left-0 rounded bg-cyan-400 h-full opacity-15" :style="{width: 100*opt.count/totalNum+'%'}"></div>
           </div>
         </div>
       </n-card>
