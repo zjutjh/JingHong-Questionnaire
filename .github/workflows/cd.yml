@@ -53,6 +53,7 @@ jobs:
       - name: Upload to Deploy Server (Main)
         uses: easingthemes/ssh-deploy@v2.0.7
         env:
+          SSH_COMMAND_ARGS: "-o StrictHostKeyChecking=no -vvv"
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_TOKEN_MAIN }}
           SOURCE: "dist/"
           TARGET: "/www/jh-questionnaire"
@@ -60,6 +61,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST_MAIN }}
           REMOTE_USER: ${{ secrets.REMOTE_USER_MAIN }}
           PORT: ${{ secrets.PORT }}
+          
 
   deploy-dev:
     if: github.ref == 'refs/heads/dev'
