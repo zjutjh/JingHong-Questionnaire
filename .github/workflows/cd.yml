@@ -81,6 +81,7 @@ jobs:
           ARGS: "-avzr --delete"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST_MAIN }}
           REMOTE_USER: ${{ secrets.REMOTE_USER_MAIN }}
+          SSH_EXTRA_ARGS: "-p 10022"
 
   deploy-dev:
     if: github.ref == 'refs/heads/dev'
