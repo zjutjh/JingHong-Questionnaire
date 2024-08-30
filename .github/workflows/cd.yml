@@ -116,7 +116,7 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_TOKEN_DEV }}
           SOURCE: "dist/"
-          TARGET: "/front"
+          TARGET: "/home/github-action-xsx/front"
           ARGS: "-avzr --delete"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST_DEV }}
           REMOTE_USER: ${{ secrets.REMOTE_USER_DEV }}
