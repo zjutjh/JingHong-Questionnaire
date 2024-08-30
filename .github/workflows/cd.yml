@@ -50,6 +50,17 @@ jobs:
           pnpm build-only
           zip -r assets ./dist/**
 
+      - name: Test SSH Connection
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.REMOTE_HOST_MAIN }}
+          username: ${{ secrets.REMOTE_USER_MAIN }}
+          key: ${{ secrets.DEPLOY_TOKEN_MAIN }}
+          port: ${{ secrets.PORT }}
+          script: |
+               echo "SSH connection successful"
+
+
       - name: Upload to Deploy Server (Main)
         uses: easingthemes/ssh-deploy@v2.0.7
         env:
