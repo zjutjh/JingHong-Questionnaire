@@ -49,17 +49,21 @@ jobs:
         run: |
           pnpm build-only
           zip -r assets ./dist/**
+          
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_TOKEN_MAIN }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.PORT }} ${{ secrets.REMOTE_HOST_MAIN }} >> ~/.ssh/known_hosts
 
-      - name: Upload to Deploy Server (Main)
-        uses: easingthemes/ssh-deploy@v2.0.7
+      - name: Deploy via Rsync
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_TOKEN_MAIN }}
-          SOURCE: "dist/"
-          TARGET: "/www/jh-questionnaire"
-          ARGS: "-avzr --delete"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST_MAIN }}
           REMOTE_USER: ${{ secrets.REMOTE_USER_MAIN }}
           PORT: ${{ secrets.PORT }}
+        run: |
+          rsync -avzr --delete -e "ssh -p $PORT -i ~/.ssh/id_rsa" dist/ $REMOTE_USER@$REMOTE_HOST:/www/jh-questionnaire
           
 
   deploy-dev:
