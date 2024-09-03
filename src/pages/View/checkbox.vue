@@ -7,7 +7,7 @@
           <span class="lg:text-xl md:text-md flex gap-5 items-center" >{{ props.title }} <el-tag type="primary" class="ml-5">多选</el-tag> <el-tag type="warning" v-if="!required">选答</el-tag> <el-tag type="danger" v-if="localUnique">唯一</el-tag></span>
         </div>
         <div class="flex items-center mt-15 ml-10">
-          <pre  class="text-sm text-gray-500 " style="overflow-wrap: break-word;">{{ props.describe }}</pre>
+          <pre  class="text-sm text-gray-500 " >{{ props.describe }}</pre>
         </div>
       </div>
       <div class="flex-col justify-center items-center">
@@ -111,4 +111,10 @@ watch(otherAnswerChecked,() => {
 </script>
 
 <style scoped>
+pre {
+  white-space: pre-wrap; /* css-3 */
+  word-wrap: break-word; /* InternetExplorer5.5+ */
+  white-space: -moz-pre-wrap; /* Mozilla,since1999 */
+  white-space: -o-pre-wrap; /* Opera7 */
+}
 </style>
