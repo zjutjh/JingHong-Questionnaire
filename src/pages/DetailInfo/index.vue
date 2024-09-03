@@ -70,7 +70,7 @@
       </div>
     </div>
     <div class="p-40">
-      <div class="bg-base-200 w-750 p-40 shadow-lg rounded-xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700">
+      <div class="bg-base-200 w-750 p-40 shadow-lg rounded-xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700 ">
         <div class="flex-col justify-center">
           <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
             <template #default>
@@ -321,7 +321,7 @@ const addQuestion = () => {
         content: '',
         img: '',
         serial_num: 3
-      },
+      }
     ],
     other_option: setting.isOtherOptions,
     question_type: selectedOption.value,

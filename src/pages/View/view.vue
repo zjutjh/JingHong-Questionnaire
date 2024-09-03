@@ -12,7 +12,7 @@
                 <div class="flex gap-20 my-10 justify-center"><span class="text-4xl break-all px-50">{{ formData.title }}</span></div>
               <div class="items-top my-10 items-start mx-20" v-if="formData.desc !== ''">
                 <div class="items-top my-10 items-start ">
-                  <div class="text-gray-500 flex break-all text-xl" >{{ formData.desc }}</div>
+                  <pre class="text-gray-500 flex break-all text-xl" >{{ formData.desc }}</pre>
                 </div>
               </div>
             </div>
