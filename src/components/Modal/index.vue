@@ -1,6 +1,6 @@
 <template>
   <dialog :id="modalId" class="modal" >
-    <div class="modal-box p-30" :class="gray ? 'bg-gray-300' : 'bg-indigo-100'">
+    <div class="modal-box p-30" :class="gray ? 'bg-gray-300' : 'bg-red-50'" >
       <form method="dialog">
         <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 ">✕</button>
       </form>
@@ -22,7 +22,7 @@
 defineProps<{
   centerBtn?: boolean,
   modalId: string,
-  gray?: boolean
+  gray?: boolean,
 }>();
 
 </script>
