@@ -7,7 +7,7 @@
           <span class="lg:text-xl md:text-md flex gap-5 items-center" >{{ props.title }} <el-tag type="primary" class="ml-5">多选</el-tag> <el-tag type="warning" v-if="!required">选答</el-tag> <el-tag type="danger" v-if="localUnique">唯一</el-tag></span>
         </div>
         <div class="flex items-center mt-15 ml-10">
-          <pre  class="text-sm text-gray-500">{{ props.describe }}</pre>
+          <pre  class="text-sm text-gray-500 break-all">{{ props.describe }}</pre>
         </div>
       </div>
       <div class="flex-col justify-center items-center">
