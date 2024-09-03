@@ -52,5 +52,10 @@ watch(localAnswer, (newAnswer) => {
 
 
 <style scoped>
-
+pre {
+  white-space: pre-wrap; /* css-3 */
+  word-wrap: break-word; /* InternetExplorer5.5+ */
+  white-space: -moz-pre-wrap; /* Mozilla,since1999 */
+  white-space: -o-pre-wrap; /* Opera7 */
+}
 </style>
