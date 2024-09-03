@@ -12,7 +12,7 @@
           </span>
         </div>
         <div class="flex items-center mt-15 ml-10">
-          <pre class="text-sm text-gray-500 break-all">{{ describe }}</pre>
+          <pre class="text-sm text-gray-500 break-all" style="overflow-wrap: break-word;">{{ describe }}</pre>
         </div>
       </div>
       <div class="flex-col justify-center items-center"></div>

@@ -8,7 +8,7 @@
         </div>
         <div class="flex items-center gap-20 my-10">
           <span class="w-50">问题描述</span>
-          <textarea type="text" placeholder="Describe" class="textarea textarea-bordered shadow-md w-full h-70" v-model="localDescribe"/>
+          <textarea type="text" placeholder="Describe" class="textarea textarea-bordered shadow-md w-full h-70" style="overflow-wrap: break-word;" v-model="localDescribe"/>
         </div>
       </div>
       <div class="flex-col justify-center items-center ">
