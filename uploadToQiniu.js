@@ -14,9 +14,7 @@ const mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
 const options = {
     scope: bucket,
 };
-const putPolicy = new qiniu.rs.PutPolicy(options);
-const uploadToken = putPolicy.uploadToken(mac);
-
+new qiniu.rs.PutPolicy(options);
 // 配置上传机房区域
 const config = new qiniu.conf.Config();
 config.zone = qiniu.zone.Zone_z0;  // 华东区域
