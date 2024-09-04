@@ -26,6 +26,12 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
+      - name: Debug Information
+        run: |
+          pnpm --version
+          node -v
+          npm -v
+          
       - name: Cache
         id: cache-dependencies
         uses: actions/cache@v3
