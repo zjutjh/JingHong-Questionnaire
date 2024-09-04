@@ -3,11 +3,7 @@ import path from 'path';
 import fs from 'fs';
 
 // 七牛云的 Access Key 和 Secret Key
-const accessKey = 'eLmAKSMd1xAsFxU-UjMGxU094R7jPThWGaCiLi0W';
-const secretKey = '7zRSD0y_Lpi_ujucN0FCmPWhJLwNvaOk4TmsWW_t';
-const bucket = 'lonesome';  // 存储空间名
-const baseDir = path.resolve('dist');  // Vue 3 构建后的文件目录
-const uploadPathPrefix = 'project/JH-Questionnaire/';  // 上传到七牛云的路径前缀
+
 
 // 生成上传凭证
 const mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
