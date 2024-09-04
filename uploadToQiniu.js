@@ -2,13 +2,12 @@ import qiniu from 'qiniu';
 import path from 'path';
 import fs from 'fs';
 
-
-const accessKey = ${{ secrets.AK }};
-const secretKey = ${{ secrets.SK }};
-const bucket = ${{ secrets.BUCKET }};  
-const baseDir = path.resolve('dist');  
-const uploadPathPrefix = ${{ secrets.PATH }};  
-
+// 从环境变量中读取 Access Key 和 Secret Key
+const accessKey = process.env.AK;
+const secretKey = process.env.SK;
+const bucket = process.env.BUCKET;
+const baseDir = path.resolve('dist');
+const uploadPathPrefix =  process.env.PATH;
 
 const mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
 const config = new qiniu.conf.Config();
