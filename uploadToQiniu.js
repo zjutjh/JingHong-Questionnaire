@@ -2,27 +2,31 @@ import qiniu from 'qiniu';
 import path from 'path';
 import fs from 'fs';
 
-// 七牛云的 Access Key 和 Secret Key
+
+const accessKey = ${{ secrets.AK }};
+const secretKey = ${{ secrets.SK }};
+const bucket = ${{ secrets.BUCKET }};  
+const baseDir = path.resolve('dist');  
+const uploadPathPrefix = ${{ secrets.PATH }};  
 
 
-// 生成上传凭证
 const mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
 const options = {
     scope: bucket,
 };
 new qiniu.rs.PutPolicy(options);
-// 配置上传机房区域
+
 const config = new qiniu.conf.Config();
-config.zone = qiniu.zone.Zone_z0;  // 华东区域
+config.zone = qiniu.zone.Zone_z0;  
 
 const formUploader = new qiniu.form_up.FormUploader(config);
 const putExtra = new qiniu.form_up.PutExtra();
 
 function uploadFile(localFile, key) {
     return new Promise((resolve, reject) => {
-        // 设置 force 为 true 以覆盖同名文件
+
         const options = {
-            scope: bucket + ':' + key, // 指定要覆盖的文件路径
+            scope: bucket + ':' + key, 
             force: true
         };
         const putPolicy = new qiniu.rs.PutPolicy(options);
