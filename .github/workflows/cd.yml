@@ -26,11 +26,6 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
-      - name: Clean Install
-        run: |
-          rm -rf node_modules pnpm-lock.yaml
-          pnpm install
-  
       - name: Cache
         id: cache-dependencies
         uses: actions/cache@v3
@@ -54,14 +49,6 @@ jobs:
         run: |
           pnpm build-only
           zip -r assets ./dist/**
-
-      - name: Upload to Qiniu
-        run: node uploadToQiniu.js
-        env:
-          AK: ${{ secrets.AK }}
-          SK: ${{ secrets.SK }}
-          BUCKET: ${{ secrets.BUCKET }}
-          PATH: ${{ secrets.PATH }}
 
 
       - name: Create GitHub Release
