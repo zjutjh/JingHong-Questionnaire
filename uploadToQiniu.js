@@ -26,6 +26,14 @@ const putExtra = new qiniu.form_up.PutExtra();
 
 function uploadFile(localFile, key) {
     return new Promise((resolve, reject) => {
+        // 设置 force 为 true 以覆盖同名文件
+        const options = {
+            scope: bucket + ':' + key, // 指定要覆盖的文件路径
+            force: true
+        };
+        const putPolicy = new qiniu.rs.PutPolicy(options);
+        const uploadToken = putPolicy.uploadToken(mac);
+
         formUploader.putFile(uploadToken, key, localFile, putExtra, function(respErr, respBody, respInfo) {
             if (respErr) {
                 reject(respErr);
@@ -39,6 +47,7 @@ function uploadFile(localFile, key) {
         });
     });
 }
+
 
 // 遍历 dist 目录并上传所有文件
 async function uploadDirectory(directory) {
