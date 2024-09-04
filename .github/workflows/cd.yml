@@ -50,9 +50,6 @@ jobs:
           pnpm build-only
           zip -r assets ./dist/**
 
-      - name: Upload to Qiniu
-        run: node uploadToQiniu.js
-
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
