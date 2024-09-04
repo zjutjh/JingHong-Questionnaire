@@ -50,14 +50,6 @@ jobs:
           pnpm build-only
           zip -r assets ./dist/**
 
-      - name: Upload to Qiniu
-        run: node uploadToQiniu.js
-        env:
-          AK: ${{ secrets.AK }}
-          SK: ${{ secrets.SK }}
-          BUCKET: ${{ secrets.BUCKET }}
-          PATH: ${{ secrets.PATH }}
-
 
       - name: Create GitHub Release
         id: create_release
