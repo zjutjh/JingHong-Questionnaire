@@ -16,68 +16,46 @@ jobs:
         run: echo "This action is running on a forked repository and will not deploy." && exit 0
 
       - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18.x"
+        uses: actions/checkout@v4
 
       - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Cache
-        id: cache-dependencies
-        uses: actions/cache@v3
+        uses: pnpm/action-setup@v4
         with:
-          path: |
-            **/node_modules
-          key: ${{ runner.OS }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          version: 9
 
-      - name: Installing Dependencies
-        if: steps.cache-dependencies.outputs.cache-hit != 'true'
-        run: pnpm install
-
-      - name: Read Version
-        id: version
-        uses: ashley-taylor/read-json-property-action@v1.0
+      - name: Use Node.js
+        uses: actions/setup-node@v4
         with:
-          path: ./package.json
-          property: version
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: |
+           pnpm install
 
       - name: Building
         run: |
           pnpm build-only
           zip -r assets ./dist/**
-          
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        with:
-          tag_name: v${{ steps.version.outputs.value }}
-          release_name: v${{ steps.version.outputs.value }}
-          draft: false
-          prerelease: false
 
-      - name: Update Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
+      - name: Upload to Qiniu
+        run: node uploadToQiniu.js
         env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./assets.zip
-          asset_name: assets.zip
-          asset_content_type: application/zip
-          
+          AK: ${{ secrets.AK }}
+          SK: ${{ secrets.SK }}
+          BUCKET: ${{ secrets.BUCKET }}
+          CDN_PATH: ${{ secrets.CDN_PATH }}
+
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.DEPLOY_TOKEN_MAIN }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p ${{ secrets.PORT }} ${{ secrets.REMOTE_HOST_MAIN }} >> ~/.ssh/known_hosts
+
+      - name: Reset path
+        run: |
+          sed -i "s|assets|https://img.lonesome.cn/jhwl/project/questionnaire/assets|g" dist/index.html
 
       - name: Deploy via Rsync
         env:
@@ -95,7 +73,7 @@ jobs:
       - name: Check if forked
         if: github.event.repository.fork == true
         run: echo "This action is running on a forked repository and will not deploy." && exit 0
-        
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -117,13 +95,13 @@ jobs:
 
       - name: Installing Dependencies
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
-        run: pnpm install
+        run: pnpm install --ignore-scripts
 
       - name: Building
         run: |
           pnpm build-only
           zip -r assets ./dist/**
-          
+
       - name: Upload to Deploy Server (Dev)
         uses: easingthemes/ssh-deploy@v2.0.7
         env:
