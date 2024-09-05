@@ -15,9 +15,7 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()],
     }),
   ],
-  base: process.env.NODE_ENV === 'production'
-      ? 'https://img.lonesome.cn/jhwl/project/questionnaire/'
-      : '/',
+  base: process.env.NODE_ENV ==='https://img.lonesome.cn/jhwl/project/questionnaire/',
   server: {
     proxy: {
       '/api': {
