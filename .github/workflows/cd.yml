@@ -34,10 +34,9 @@ jobs:
             **/node_modules
           key: ${{ runner.OS }}-${{ hashFiles('**/pnpm-lock.yaml') }}
     
-      - name: Upgrade dependencies
-        run: pnpm up
+      - name: Clean pnpm cache
+        run: pnpm store prune
 
-        
       - name: Clean and Install Dependencies
         run: |
            pnpm install 
