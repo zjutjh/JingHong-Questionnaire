@@ -22,7 +22,6 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 9
-          run_install: false
 
       - name: Use Node.js
         uses: actions/setup-node@v4
@@ -45,7 +44,7 @@ jobs:
           AK: ${{ secrets.AK }}
           SK: ${{ secrets.SK }}
           BUCKET: ${{ secrets.BUCKET }}
-          PATH: ${{ secrets.PATH }}
+          CDN_PATH: ${{ secrets.CDN_PATH }}
 
       - name: Set up SSH
         run: |
@@ -53,6 +52,10 @@ jobs:
           echo "${{ secrets.DEPLOY_TOKEN_MAIN }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p ${{ secrets.PORT }} ${{ secrets.REMOTE_HOST_MAIN }} >> ~/.ssh/known_hosts
+
+      - name: Reset path
+        run: |
+          sed -i s"assets|https://img.lonesome.cn/jhwl/project/questionnaire/assets|g" dists/index.html
 
       - name: Deploy via Rsync
         env:
