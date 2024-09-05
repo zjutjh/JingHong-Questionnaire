@@ -34,14 +34,10 @@ jobs:
             **/node_modules
           key: ${{ runner.OS }}-${{ hashFiles('**/pnpm-lock.yaml') }}
 
-      - name: Clean Node Modules and Lock File
-        run: |
-          /bin/bash -c "rm -rf node_modules pnpm-lock.yaml"
-
 
       - name: Clean and Install Dependencies
         run: |
-          pnpm install --ignore-scripts
+          pnpm install 
 
 
       - name: Building
