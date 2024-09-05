@@ -36,7 +36,7 @@ jobs:
 
       - name: Installing Dependencies
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
-        run: pnpm install
+        run: pnpm install --loglevel debug
 
 
       - name: Building
