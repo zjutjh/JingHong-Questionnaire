@@ -2,35 +2,46 @@ import qiniu from 'qiniu';
 import path from 'path';
 import fs from 'fs';
 
-
-const accessKey = ${{ secrets.AK }};
-const secretKey = ${{ secrets.SK }};
-const bucket = ${{ secrets.BUCKET }};  
-const baseDir = path.resolve('dist');  
-const uploadPathPrefix = ${{ secrets.PATH }};  
-
+// 从环境变量中读取 Access Key 和 Secret Key
+const accessKey = process.env.AK;
+const secretKey = process.env.SK;
+const bucket = process.env.BUCKET;
+const baseDir = path.resolve('dist');
+const uploadPathPrefix =  process.env.PATH;
 
 const mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
-const options = {
-    scope: bucket,
-};
-new qiniu.rs.PutPolicy(options);
-
 const config = new qiniu.conf.Config();
-config.zone = qiniu.zone.Zone_z0;  
+config.zone = qiniu.zone.Zone_z0;
 
 const formUploader = new qiniu.form_up.FormUploader(config);
-const putExtra = new qiniu.form_up.PutExtra();
+
+function getMimeType(filePath) {
+    const ext = path.extname(filePath).toLowerCase();
+    switch (ext) {
+        case '.webp': return 'image/webp';
+        case '.jpg':
+        case '.jpeg': return 'image/jpeg';
+        case '.png': return 'image/png';
+        case '.css': return 'text/css';
+        case '.js': return 'application/javascript';
+        case '.html': return 'text/html';
+        default: return 'application/octet-stream';
+    }
+}
 
 function uploadFile(localFile, key) {
     return new Promise((resolve, reject) => {
-
         const options = {
-            scope: bucket + ':' + key, 
+            scope: bucket + ':' + key,
             force: true
         };
         const putPolicy = new qiniu.rs.PutPolicy(options);
         const uploadToken = putPolicy.uploadToken(mac);
+
+        // 动态设置 MIME 类型
+        const mimeType = getMimeType(localFile);
+        const putExtra = new qiniu.form_up.PutExtra();
+        putExtra.mimeType = mimeType;
 
         formUploader.putFile(uploadToken, key, localFile, putExtra, function(respErr, respBody, respInfo) {
             if (respErr) {
@@ -45,7 +56,6 @@ function uploadFile(localFile, key) {
         });
     });
 }
-
 
 // 遍历 dist 目录并上传所有文件
 async function uploadDirectory(directory) {
