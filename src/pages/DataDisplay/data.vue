@@ -15,7 +15,9 @@
         <tr v-for="(t, index) in time">
           <th>{{ index+1 }}</th>
           <th>{{ t }}</th>
-          <th v-for="ans in answers">{{ ans.answers[index] }}</th>
+          <th v-for="ans in answers">
+            <overflow-panel :text="ans.answers[index]"/>
+          </th>
         </tr>
       </tbody>
     </table>
@@ -34,6 +36,7 @@ import { getAnswersAPI } from '@/apis';
 import { ref, watch } from 'vue';
 import { useMainStore } from '@/stores';
 import { useRequest } from 'vue-hooks-plus';
+import overflowPanel from './overflowPanel.vue';
 
 const tempStore = useMainStore().useTempStore();
 
