@@ -35,7 +35,7 @@ jobs:
 
       - name: Building
         run: |
-          pnpm build-only --base https://img.lonesome.cn/jhwl/project/questionnaire/
+          pnpm build-only
           zip -r assets ./dist/**
 
       - name: Upload to Qiniu
