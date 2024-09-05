@@ -34,9 +34,10 @@ jobs:
             **/node_modules
           key: ${{ runner.OS }}-${{ hashFiles('**/pnpm-lock.yaml') }}
 
-      - name: Installing Dependencies
-        if: steps.cache-dependencies.outputs.cache-hit != 'true'
-        run: pnpm install --ignore-scripts 
+      - name: Clean and Install Dependencies
+        run: |
+          rm -rf node_modules pnpm-lock.yaml
+          pnpm install --ignore-scripts
 
 
       - name: Building
