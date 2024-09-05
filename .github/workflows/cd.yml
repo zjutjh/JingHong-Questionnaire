@@ -16,32 +16,26 @@ jobs:
         run: echo "This action is running on a forked repository and will not deploy." && exit 0
 
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "18.x"
+          node-version: 20
+          cache: 'pnpm'
 
-      - name: Cache
-        id: cache-dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            **/node_modules
-          key: ${{ runner.OS }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-    
-      - name: Clean pnpm cache
-        run: pnpm store prune
-
-      - name: Clean and Install Dependencies
+      - name: Install Dependencies
         run: |
-           pnpm install 
-
+           pnpm install
 
       - name: Building
         run: |
-          pnpm build-only
+          pnpm build-only --base https://img.lonesome.cn/jhwl/project/questionnaire/
           zip -r assets ./dist/**
 
       - name: Upload to Qiniu
