@@ -35,11 +35,9 @@ jobs:
           key: ${{ runner.OS }}-${{ hashFiles('**/pnpm-lock.yaml') }}
 
       - name: Clean Node Modules and Lock File
-        uses: maxim-lobanov/actions-rm-files@v1
-        with:
-          path: |
-            node_modules
-            pnpm-lock.yaml
+        run: |
+          /bin/bash -c "rm -rf node_modules pnpm-lock.yaml"
+
 
       - name: Clean and Install Dependencies
         run: |
