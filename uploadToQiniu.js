@@ -7,7 +7,7 @@ const accessKey = process.env.AK;
 const secretKey = process.env.SK;
 const bucket = process.env.BUCKET;
 const baseDir = path.resolve('dist');
-const uploadPathPrefix =  process.env.PATH;
+const uploadPathPrefix =  process.env.CDN_PATH;
 
 const mac = new qiniu.auth.digest.Mac(accessKey, secretKey);
 const config = new qiniu.conf.Config();
