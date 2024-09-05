@@ -38,40 +38,19 @@ jobs:
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
         run: pnpm install
 
-      - name: Read Version
-        id: version
-        uses: ashley-taylor/read-json-property-action@v1.0
-        with:
-          path: ./package.json
-          property: version
 
       - name: Building
         run: |
           pnpm build-only
           zip -r assets ./dist/**
 
-
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Upload to Qiniu
+        run: node uploadToQiniu.js
         env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        with:
-          tag_name: v${{ steps.version.outputs.value }}
-          release_name: v${{ steps.version.outputs.value }}
-          draft: false
-          prerelease: false
-
-      - name: Update Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./assets.zip
-          asset_name: assets.zip
-          asset_content_type: application/zip
+          AK: ${{ secrets.AK }}
+          SK: ${{ secrets.SK }}
+          BUCKET: ${{ secrets.BUCKET }}
+          PATH: ${{ secrets.PATH }}
 
       - name: Set up SSH
         run: |
