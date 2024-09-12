@@ -12,7 +12,7 @@
           </span>
         </div>
         <div class="flex items-center mt-15 ml-10">
-          <span class="text-sm text-gray-500">{{ describe }}</span>
+          <pre class="text-sm text-gray-500 " style="overflow-wrap: break-word;">{{ describe }}</pre>
         </div>
       </div>
       <div class="flex-col justify-center items-center"></div>
@@ -52,5 +52,10 @@ watch(localAnswer, (newAnswer) => {
 
 
 <style scoped>
-
+pre {
+  white-space: pre-wrap; /* css-3 */
+  word-wrap: break-word; /* InternetExplorer5.5+ */
+  white-space: -moz-pre-wrap; /* Mozilla,since1999 */
+  white-space: -o-pre-wrap; /* Opera7 */
+}
 </style>

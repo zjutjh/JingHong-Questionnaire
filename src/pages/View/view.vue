@@ -3,7 +3,7 @@
     <div class="bg-red-50 flex-col overflow-auto w-full sm:w-1/2 lg:w-6/12 p-30 h-full  shadow-lg">
       <div class="flex-col justify-center">
         <div class="flex justify-center">
-          <el-image class="w-2/3" src="/jxh_logo.webp" />
+          <el-image class="w-2/3" src="https://img.lonesome.cn/jhwl/project/questionnaire/jxh_logo.webp" />
         </div>
         <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
           <template #default>
@@ -12,7 +12,7 @@
                 <div class="flex gap-20 my-10 justify-center"><span class="text-4xl break-all px-50">{{ formData.title }}</span></div>
               <div class="items-top my-10 items-start mx-20" v-if="formData.desc !== ''">
                 <div class="items-top my-10 items-start ">
-                  <div class="text-gray-500 flex break-all text-xl" >{{ formData.desc }}</div>
+                  <pre class="text-gray-500 flex break-all text-xl " >{{ formData.desc }}</pre>
                 </div>
               </div>
             </div>
@@ -233,6 +233,11 @@
 
 
   <style scoped>
-
+  pre {
+    white-space: pre-wrap; /* css-3 */
+    word-wrap: break-word; /* InternetExplorer5.5+ */
+    white-space: -moz-pre-wrap; /* Mozilla,since1999 */
+    white-space: -o-pre-wrap; /* Opera7 */
+  }
 
   </style>

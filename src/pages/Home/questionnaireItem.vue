@@ -49,6 +49,7 @@ import router from '@/router';
 import {closeLoading, startLoading} from "@/utilities";
 import { useMainStore } from '@/stores';
 import CryptoJS from 'crypto-js';
+import { ElMessage } from 'element-plus';
 
 const tempStore = useMainStore().useTempStore();
 
@@ -99,7 +100,11 @@ const delQuestionnaire = (id: number) => {
 const copyShareCode = () => {
   const Key = 'JingHong';
   const encryptedId = CryptoJS.AES.encrypt(props.idName+'',Key).toString();
-  navigator.clipboard.writeText( "https://phlin.top/View?id=" + encryptedId);
+  navigator.clipboard.writeText( "https://qa.lonesome.cn/View?id=" + encryptedId);
+  ElMessage({
+    message: '链接复制成功',
+    type: 'success',
+  })
 }
 
 const DetailInfo = () => {

@@ -7,82 +7,6 @@ on:
       - dev
 
 jobs:
-  deploy-main:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check if forked
-        if: github.event.repository.fork == true
-        run: echo "This action is running on a forked repository and will not deploy." && exit 0
-
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18.x"
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Cache
-        id: cache-dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            **/node_modules
-          key: ${{ runner.OS }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-
-      - name: Installing Dependencies
-        if: steps.cache-dependencies.outputs.cache-hit != 'true'
-        run: pnpm install
-
-      - name: Read Version
-        id: version
-        uses: ashley-taylor/read-json-property-action@v1.0
-        with:
-          path: ./package.json
-          property: version
-
-      - name: Building
-        run: |
-          pnpm build-only
-          zip -r assets ./dist/**
-
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        with:
-          tag_name: v${{ steps.version.outputs.value }}
-          release_name: v${{ steps.version.outputs.value }}
-          draft: false
-          prerelease: false
-
-      - name: Update Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./assets.zip
-          asset_name: assets.zip
-          asset_content_type: application/zip
-
-      - name: Upload to Deploy Server (Main)
-        uses: easingthemes/ssh-deploy@v2.0.7
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_TOKEN_MAIN }}
-          SOURCE: "dist/"
-          TARGET: "/www/jh-questionnaire"
-          ARGS: "-avzr --delete"
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST_MAIN }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER_MAIN }}
-          PORT: "10022"
-
   deploy-dev:
     if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
@@ -90,7 +14,7 @@ jobs:
       - name: Check if forked
         if: github.event.repository.fork == true
         run: echo "This action is running on a forked repository and will not deploy." && exit 0
-        
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -112,13 +36,13 @@ jobs:
 
       - name: Installing Dependencies
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
-        run: pnpm install
+        run: pnpm install --ignore-scripts
 
       - name: Building
         run: |
           pnpm build-only
           zip -r assets ./dist/**
-          
+
       - name: Upload to Deploy Server (Dev)
         uses: easingthemes/ssh-deploy@v2.0.7
         env:

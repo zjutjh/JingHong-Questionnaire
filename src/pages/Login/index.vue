@@ -1,7 +1,7 @@
 <template>
 <div class="flex justify-evenly gap-70 h-screen mt-60">
   <div class="flex justify-center items-center w-1/2">
-    <el-image class="h-250" src='/JH_logo.svg' ></el-image>
+    <el-image class="h-250" src='https://img.lonesome.cn/jhwl/project/questionnaire/JH_logo.svg' ></el-image>
   </div>
   <div class="flex justify-center items-center">
   <el-divider direction="vertical" ></el-divider>
