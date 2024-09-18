@@ -11,9 +11,7 @@ jobs:
     if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     steps:
-      - name: Check if forked
-        if: github.event.repository.fork == true
-        run: echo "This action is running on a forked repository and will not deploy." && exit 0
+
 
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -48,7 +46,7 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_TOKEN_DEV }}
           SOURCE: "dist/"
-          TARGET: "/home/github-action-xsx/var/www/dist"
+          TARGET: "/var/www/dist"
           ARGS: "-avzr --delete"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST_DEV }}
           REMOTE_USER: ${{ secrets.REMOTE_USER_DEV }}
