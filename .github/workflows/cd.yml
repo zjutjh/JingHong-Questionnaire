@@ -12,7 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-
+      - name: Check if forked
+        if: github.event.repository.fork == true
+        run: echo "This action is running on a forked repository and will not deploy." && exit 0
+        
       - name: Checkout repository
         uses: actions/checkout@v2
 
