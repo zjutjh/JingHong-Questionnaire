@@ -12,7 +12,7 @@
           </span>
         </div>
         <div class="flex items-center mt-15 ml-10">
-          <pre class="text-sm text-gray-500 ">{{ describe }}</pre>
+          <pre class="text-sm text-gray-500 break-all">{{ describe }}</pre>
         </div>
       </div>
       <div class="flex-col justify-center items-center"></div>
@@ -72,10 +72,4 @@ const pal = computed(() => {
 </script>
 
 <style scoped>
-pre {
-  white-space: pre-wrap; /* css-3 */
-  word-wrap: break-word; /* InternetExplorer5.5+ */
-  white-space: -moz-pre-wrap; /* Mozilla,since1999 */
-  white-space: -o-pre-wrap; /* Opera7 */
-}
 </style>

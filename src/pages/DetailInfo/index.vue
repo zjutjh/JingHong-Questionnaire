@@ -18,7 +18,7 @@
           </div>
           <div class="flex gap-10 my-5">
             <input type="radio" name="radio-1" class="radio-sm" :value="5" v-model="selectedOption"/>
-            <span>文件</span>
+            <span>图片</span>
           </div>
           <div class="flex gap-10 my-5">
             <input type="radio" name="radio-1" class="radio-sm" :value="3" v-model="selectedOption"/>

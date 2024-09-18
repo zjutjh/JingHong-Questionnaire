@@ -10,6 +10,7 @@ eslintrc.cjs
 node_modules
 dist
 dist-ssr
+uploadToQiniu.js
 *.local
 
 # Editor directories and files
