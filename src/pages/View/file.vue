@@ -36,7 +36,7 @@
 
         <template #file="{ file }">
           <div>
-            <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+            <img class="el-upload-list__item-thumbnail" :src="file.url"  />
             <span class="el-upload-list__item-actions">
           <span
               class="el-upload-list__item-preview"
