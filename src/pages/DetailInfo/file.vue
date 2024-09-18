@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-200 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
+  <div class="bg-base-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
@@ -21,8 +21,10 @@
       </div>
     </div>
     <div class="divider"></div>
-    <div class="flex-col p-5 overflow-y-auto h-60">
-      <input type="file" class="file-input file-input-bordered w-full max-w-xs shadow-md" />
+    <div class="flex-col p-5 overflow-y-auto h-160">
+      <el-upload action="#" list-type="picture-card" :auto-upload="false">
+        <el-icon><Plus /></el-icon>
+      </el-upload>
     </div>
     <div class="divider"></div>
     <div class="mt-20 flex justify-evenly items-center ">

@@ -1,73 +1,140 @@
 <template>
-  <div class="rounded mx-30 mt-30">
+  <div class="rounded mx-5 mt-30">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
-          <span>{{ serial_num }}</span>
-          <span>{{ localTitle }}</span>
+          <span class="lg:text-xl md:text-md">{{ serial_num }}</span>
+          <span class="lg:text-xl md:text-md flex gap-5 items-center">
+            {{ title }}
+            <el-tag type="primary" class="ml-5">图片</el-tag>
+            <el-tag type="warning" v-if="!required">选答</el-tag>
+            <el-tag type="danger" v-if="unique">唯一</el-tag>
+          </span>
         </div>
-        <div class="flex items-center gap-20 my-10">
-          <span class="w-80">问题描述  | </span>
-          <span v-if="localDescribe" class="w-150">{{ localDescribe }}</span>
-          <span v-if="!localDescribe" class="w-150">此问卷没有描述</span>
-        </div>
-      </div>
-      <div class="flex-col justify-center items-center">
-        <div class="flex gap-10 ">
-          <span>必答</span>
-          <input type="checkbox" class="checkbox-sm" :disabled="true" v-model="localOptionChoose"/>
-        </div>
-        <div class="flex gap-10">
-          <span v-if="localUnique">唯一</span>
+        <div class="flex items-center mt-15 ml-10">
+          <pre class="text-sm text-gray-500 break-all">{{ describe }}</pre>
         </div>
       </div>
+      <div class="flex-col justify-center items-center"></div>
     </div>
-    <div class="divider"></div>
-    <div class="flex-col p-5 overflow-y-auto h-60">
-      <input type="file" class="file-input file-input-bordered w-full max-w-xs shadow-md" />
-    </div>
-    <div class="divider"></div>
-  </div>
+    <div class="divider my-5"></div>
+    <div class="flex-col p-5 h-auto">
+      <!-- 开发环境下 action 前面加/api-->
+      <el-upload
+          action='/api/user/upload/img'
+          list-type="picture-card"
+          :auto-upload="true"
+          :on-success="handleUploadSuccess"
+          :on-remove="handleRemove"
+          :file-list="fileList"
+          :limit="1"
+          :on-exceed="handleExceed"
+          :before-upload="beforeUpload"
+          name="img"
+      >
+        <el-icon ><Plus /></el-icon>
 
+        <template #file="{ file }">
+          <div>
+            <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+            <span class="el-upload-list__item-actions">
+          <span
+              class="el-upload-list__item-preview"
+              @click="handlePictureCardPreview(<UploadFile>file)"
+          >
+            <el-icon><ZoomIn /></el-icon>
+          </span>
+          <span
+              v-if="!disabled"
+              class="el-upload-list__item-delete"
+              @click="handleRemove(<UploadFile>file)"
+          >
+            <el-icon><Delete /></el-icon>
+          </span>
+        </span>
+          </div>
+        </template>
+      </el-upload>
+
+      <el-dialog v-model="dialogVisible">
+        <img w-full :src="dialogImageUrl" alt="Preview Image" />
+      </el-dialog>
+
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import {defineEmits, ref, watch} from "vue";
+import { ref, watch, defineProps, defineEmits } from 'vue';
+import type { UploadFile, UploadRequestOptions } from 'element-plus'
+import {ElMessage} from "element-plus";
+import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue'
 
-const props = defineProps<{
-  serial_num: number,
-  title?: string,
-  optionChoose:boolean
-  describe: string,
-  unique:boolean
-}>()
-const emits = defineEmits(['update:content']);
+const dialogImageUrl = ref('')
+const dialogVisible = ref(false)
+const disabled = ref(false)
+const fileList = ref<UploadFile[]>([])
 
-const localTitle = ref<string>(props.title || '');
-const localOptionChoose = ref<boolean>(props.optionChoose);
-const localDescribe = ref<string>(props.describe || '');
-const localUnique = ref<boolean>(props.unique);
-watch(() => props.title, (newTitle) => {
-  localTitle.value = newTitle || '';
+const handlePictureCardPreview = (file: UploadFile) => {
+  dialogImageUrl.value = file.url!
+  dialogVisible.value = true
+}
+
+// 处理删除
+const handleRemove = (file: UploadFile) => {
+  fileList.value = [] // 清空列表，确保只显示一张图片
+}
+
+
+
+// 上传成功回调
+const handleUploadSuccess = (response: any, file: UploadFile) => {
+  if(response.code == 200) {
+    ElMessage.success('上传成功！')
+    fileList.value = [{ ...file, url: response.data }]
+    localAnswer.value = response.data
+  } else {
+    ElMessage.error(response.msg)
+  }
+
+}
+
+
+const props = defineProps({
+  serial_num: Number,
+  title: String,
+  required: Boolean,
+  unique: Boolean,
+  describe: String,
+  answer: String,
 });
 
-watch(() => props.optionChoose, (newOptionChoose) => {
-  localOptionChoose.value = newOptionChoose;
-});
+const handleExceed = () => {
+  ElMessage.warning('最多只能上传一张图片！');
+}
 
-watch(() => props.unique, (newUnique) => {
-  localUnique.value = newUnique;
-});
+  const beforeUpload = (file: UploadFile) => {
+    const isImage = file.type.startsWith('image/');
+    if (!isImage) {
+      ElMessage.error('上传的文件必须是图片!');
+    }
+    return isImage; // 如果返回 false，则会取消上传
+  };
 
-watch(() => props.describe, (newLocalDescribe) => {
-  localDescribe.value = newLocalDescribe
-});
+const emits = defineEmits(['update:answer']);
 
-watch(localTitle, (newTitle) => {
-  emits('update:title', newTitle);
+const localAnswer = ref(props.answer);
+
+watch(localAnswer, (newAnswer) => {
+  console.log(newAnswer)
+  emits('update:answer', newAnswer);
 });
 
 </script>
+
+<style scoped>
+</style>
+
 
 
 <style scoped>
