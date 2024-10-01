@@ -40,14 +40,14 @@
             <span class="el-upload-list__item-actions">
           <span
               class="el-upload-list__item-preview"
-              @click="handlePictureCardPreview(<UploadFile>file)"
+              @click="handlePictureCardPreview(file as UploadFile)"
           >
             <el-icon><ZoomIn /></el-icon>
           </span>
           <span
               v-if="!disabled"
               class="el-upload-list__item-delete"
-              @click="handleRemove(<UploadFile>file)"
+              @click="handleRemove(file as UploadFile)"
           >
             <el-icon><Delete /></el-icon>
           </span>
@@ -66,9 +66,9 @@
 
 <script setup lang="ts">
 import { ref, watch, defineProps, defineEmits } from 'vue';
-import type { UploadFile, UploadRequestOptions } from 'element-plus'
+import type { UploadFile } from 'element-plus'
 import {ElMessage} from "element-plus";
-import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue'
+import { Delete,  Plus, ZoomIn } from '@element-plus/icons-vue'
 
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
@@ -81,7 +81,7 @@ const handlePictureCardPreview = (file: UploadFile) => {
 }
 
 // 处理删除
-const handleRemove = (file: UploadFile) => {
+const handleRemove = (uploadFile: UploadFile) => {
   fileList.value = [] // 清空列表，确保只显示一张图片
 }
 
