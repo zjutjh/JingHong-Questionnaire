@@ -12,6 +12,7 @@ dist
 dist-ssr
 uploadToQiniu.js
 *.local
+.env
 
 # Editor directories and files
 .vscode/*
