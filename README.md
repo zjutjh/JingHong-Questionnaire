@@ -46,7 +46,7 @@
 
 ## 更多资料
 
-- tailwindcss 中文文档: [https://tailwind.docs.73zls.com/docs](https://tailwind.docs.73zls.com/docs)
+- tailwindcss 官方文档: [https://tailwindcss.com/](https://tailwindcss.com/)
 
 ## 开发者
 
