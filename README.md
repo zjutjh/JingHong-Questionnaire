@@ -40,8 +40,7 @@
 ## 打包部署
 
 - `pnpm run build` 生成dist文件夹
-- `node uploadToQiniu.js` 运行上传cdn脚本
-- 修改dist文件夹`index.html`的引用路径为cdn路径
+- `pnpm run uploadCDN` 运行上传cdn脚本
 - 压缩dist文件夹发给后端小伙伴
 
 ## 更多资料
