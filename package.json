@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
+    "uploadCDN": "node uploadToQiniu.js",
     "preview": "vite preview",
     "test:unit": "vitest",
     "build-only": "vite build",
@@ -22,6 +23,7 @@
     "naive-ui": "^2.39.0",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
+    "qiniu": "^7.13.0",
     "unplugin-auto-import": "^0.18.3",
     "unplugin-vue-components": "^0.27.4",
     "vue": "^3.4.26",
