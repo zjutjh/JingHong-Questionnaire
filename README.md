@@ -39,11 +39,13 @@
 
 ## 打包部署
 
-- `pnpm run build` 后将生成在根目录的dist压缩为压缩包发给后端小伙伴
+- `pnpm run build` 生成dist文件夹
+- `pnpm run uploadCDN` 运行上传cdn脚本
+- 压缩dist文件夹发给后端小伙伴
 
 ## 更多资料
 
-- tailwindcss 中文文档: [https://tailwind.docs.73zls.com/docs](https://tailwind.docs.73zls.com/docs)
+- tailwindcss 官方文档: [https://tailwindcss.com/](https://tailwindcss.com/)
 
 ## 开发者
 
