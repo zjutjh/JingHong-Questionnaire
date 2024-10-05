@@ -51,8 +51,8 @@ import { useMainStore } from '@/stores';
 import CryptoJS from 'crypto-js';
 import { ElMessage } from 'element-plus';
 
+const baseURL = import.meta.env.VITE_COPY_LINK;
 const tempStore = useMainStore().useTempStore();
-
 const props = defineProps<{
   title: string,
   idName: number,
@@ -100,7 +100,7 @@ const delQuestionnaire = (id: number) => {
 const copyShareCode = () => {
   const Key = 'JingHong';
   const encryptedId = CryptoJS.AES.encrypt(props.idName+'',Key).toString();
-  navigator.clipboard.writeText( "https://qa.lonesome.cn/View?id=" + encryptedId);
+  navigator.clipboard.writeText( baseURL + "/View?id=" + encryptedId);
   ElMessage({
     message: '链接复制成功',
     type: 'success',
