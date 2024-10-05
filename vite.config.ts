@@ -20,7 +20,7 @@ export default defineConfig(({mode}) => {
     ],
     server: {
       proxy: {
-        "/api": env.HOST
+        "/api": env.VITE_HOST
       }
     },
     resolve: {
