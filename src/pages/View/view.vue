@@ -74,7 +74,7 @@
               </div>
           </div>
           <div class="flex justify-center items-center py-50">
-            <button class="btn  w-1/3 bg-red-800 text-red-50" @click="showModal('QuestionnaireSubmit')" v-if="decryptedId !== ''" >提交问卷</button>
+            <button class="btn  w-1/3 bg-red-800 text-red-50" @click="showModal('QuestionnaireSubmit')" v-if="decryptedId !== '' && !isOutDate"  >提交问卷</button>
           </div>
     </div>
       <modal modal-id="QuestionnaireSubmit">
@@ -121,6 +121,7 @@
   const loginStore = useMainStore().useLoginStore();
   const decryptedId = ref<string | null>()
   const allowSend = ref(true)
+  const isOutDate = ref(false)
 
   onMounted(() => {
     loginStore.setShowHeader(false);
@@ -163,7 +164,10 @@
               }
             });
             loading.value = false
-          } else {
+          } else if (res.code === 200509){
+            isOutDate.value = true
+            ElNotification.error(res.msg);
+          }else {
             ElNotification.error(res.msg);
           }
       },
