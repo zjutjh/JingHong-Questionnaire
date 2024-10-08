@@ -1,19 +1,18 @@
 <template>
-  <div :class="[{'bg-base-300':darkmode_store.status===false},{'bg-customGray_shallow':darkmode_store.status===true}]" 
-  class="p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
+  <div class="bg-base-300 dark:bg-customGray_shallow p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
           <span>{{ serial_num }}</span>
-          <input type="text" placeholder="Question" class="input input-bordered shadow-md w-350" v-model="localTitle"/>
+          <input type="text" placeholder="Question" class="dark:bg-customGray_more_shallow input input-bordered shadow-md w-350" v-model="localTitle"/>
         </div>
         <div class="flex items-center gap-20 my-10">
           <span class="w-50">问题描述</span>
-          <textarea type="text" placeholder="Describe" class="textarea textarea-bordered shadow-md w-full h-70" v-model="localDescribe"/>
+          <textarea type="text" placeholder="Describe" class="dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70" v-model="localDescribe"/>
         </div>
       </div>
       <div class="flex-col justify-center items-center">
-        <div class="flex gap-10 ">
+        <div class=" flex gap-10 ">
           <span>必答</span><input type="checkbox" :name=-1  class="checkbox-sm" v-model="localOptionChoose"/>
         </div>
         <div class="flex gap-10 ">
@@ -23,12 +22,11 @@
     </div>
     <div class="divider"></div>
     <div class="flex-col p-5 overflow-y-auto h-60">
-     <input class=" input input-bordered shadow-md w-full text-black" :placeholder=pal />
+     <input class="dark:bg-customGray_more_shallow input input-bordered shadow-md w-full" :placeholder=pal />
     </div>
     <div class="divider"></div>
     <div class="mt-20 flex justify-evenly items-center ">
-      <button :class="[{'btn bg-white':darkmode_store.status},{'btn btn-error ':!darkmode_store.status}]"
-      class="shadow-md" @click="$emit('on-click')">删除题目</button>
+      <button class="btn btn-error dark:opacity-75 shadow-md dark:text-white" @click="$emit('on-click')">删除题目</button>
     </div>
   </div>
 
@@ -93,19 +91,9 @@ const pal = computed(() => {
   }
 })
 
-//深色模式
-import { useMainStore } from "@/stores";
-const darkmode_store = useMainStore().use_darkmode_store()
 
 </script>
 
 
 <style scoped>
-input[type='text']{
-  color: black;
-}
-
-textarea{
-  color: black;
-}
 </style>

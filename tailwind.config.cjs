@@ -19,6 +19,9 @@ export default {
         customGray_shallow: {
           DEFAULT: '#313131',
         },
+        customGray_more_shallow: {
+          DEFAULT: '#4A4A4A'
+        }
       },
     },
   },

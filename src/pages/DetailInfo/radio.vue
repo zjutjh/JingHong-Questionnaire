@@ -1,15 +1,14 @@
 <template>
-  <div :class="[{'bg-base-300':darkmode_store.status===false},{'bg-customGray_shallow':darkmode_store.status===true}]"  
-  class="p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
+  <div class="bg-base-300 dark:bg-customGray_shallow p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
           <span>{{ serial_num }}</span>
-          <input type="text" placeholder="Question" class="input input-bordered shadow-md w-350" v-model="localTitle"/>
+          <input type="text" placeholder="Question" class="input dark:bg-customGray_more_shallow input-bordered shadow-md w-350" v-model="localTitle"/>
         </div>
         <div class="flex items-center gap-20 my-10">
           <span class="w-50">问题描述</span>
-          <textarea type="text" placeholder="Describe" class="textarea textarea-bordered shadow-md w-full h-70" style="overflow-wrap: break-word;" v-model="localDescribe"/>
+          <textarea type="text" placeholder="Describe" class="dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70" style="overflow-wrap: break-word;" v-model="localDescribe"/>
         </div>
       </div>
       <div class="flex-col justify-center items-center ">
@@ -31,23 +30,20 @@
     <div class="flex-col p-5 overflow-y-auto h-180 mt-10" ref="scrollContainer" style="scroll-behavior: smooth;">
       <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
         <input type="radio" :name="props.serial_num" class="radio-sm my-5" />
-        <input type="text" class=" input input-bordered h-40 shadow-md" placeholder="option" v-model="item.content"  />
+        <input type="text" class="dark:bg-customGray_more_shallow input input-bordered h-40 shadow-md" placeholder="option" v-model="item.content"  />
         <div class="ml-10 flex items-center gap-20">
           <div v-if="item.img" class="mt-4">
             <img :src="item.img" alt="Preview" style="max-width: 50px; max-height: 50px;" />
           </div>
-          <input type="file" class="file-input file-input-bordered file-input-sm w-7/12" @change="handleFileChange($event, item.serial_num)" />
+          <input type="file" class="dark:bg-customGray_more_shallow file-input file-input-bordered file-input-sm w-7/12" @change="handleFileChange($event, item.serial_num)" />
         </div>
-        <button :class="[{'btn bg-white':darkmode_store.status},{'btn btn-sm':!darkmode_store.status}]"
-        class="btn-sm shadow-md" @click="deleteOption(item.serial_num);">删除</button>
+        <button class="btn btn-sm dark:bg-customGray_more_shallow dark:text-white shadow-md" @click="deleteOption(item.serial_num);">删除</button>
       </div>
     </div>
     <div class="divider"></div>
     <div class="mt-20 flex justify-evenly items-center">
-      <button :class="[{'btn bg-white':darkmode_store.status},{'btn btn-accent':!darkmode_store.status}]"
-      class="shadow-md" @click="addOption">新增选项</button>
-      <button :class="[{'btn bg-white':darkmode_store.status},{'btn btn-error':!darkmode_store.status}]"
-      class="shadow-md" @click="$emit('on-click')">删除题目</button>
+      <button class="btn btn-accent shadow-md dark:opacity-75 dark:text-white" @click="addOption">新增选项</button>
+      <button class="btn btn-error dark:opacity-75 shadow-md dark:text-white " @click="$emit('on-click')">删除题目</button>
     </div>
   </div>
 </template>
@@ -177,17 +173,7 @@ watch(localOptions, (newOptions) => {
   emits('update:options', newOptions);
 });
 
-//导入暗黑模式store
-import use_darkmode_store from '@/stores/service/dark_store';
-const darkmode_store = use_darkmode_store()
 </script>
 
 <style scoped>
-input[type='text']{
-  color: black;
-}
-
-textarea{
-  color: black;
-}
 </style>

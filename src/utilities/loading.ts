@@ -1,16 +1,26 @@
-import { ElLoading,ElNotification } from "element-plus";
+import { ElLoading, ElNotification } from "element-plus";
+import { useMainStore } from "@/stores";
+import { ref } from "vue";
 
-let loadingInstance:any = null;
+
+
+
+
+
+let loadingInstance: any = null;
 let isSuccess = false;
 const startLoading = () => {
+  const darkmode_store = useMainStore().use_darkmode_store()
+  const darkmode_status = ref(darkmode_store.status)
+  console.log(darkmode_status.value)
   loadingInstance = ElLoading.service({
     lock: true,
     text: "Loading",
-    background: "rgba(255, 255, 255, 0.7)"
+    background: darkmode_status.value ? "rgba(32, 32, 32, 0.7)" : "rgba(255, 255, 255, 0.7)"
   });
   setTimeout(() => {
     loadingInstance.close();
-    if(!isSuccess){
+    if (!isSuccess) {
       ElNotification({
         title: "Error",
         message: "失败,网络错误",
