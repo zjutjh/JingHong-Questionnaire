@@ -8,8 +8,8 @@
     </div>
     <div class="flex justify-start items-center w-1/2">
       <div :class="[
-      { 'bg-base-200': !darkmode_status }, // 使用现有的 Tailwind CSS 颜色类
-      { 'bg-customGray': darkmode_status },
+      { 'bg-base-200': !darkmode_store.status }, // 使用现有的 Tailwind CSS 颜色类
+      { 'bg-customGray': darkmode_store.status },
       'shadow-lg h-auto p-20 rounded-3xl w-10/12 items-center justify-center hover:shadow-2xl hover:-translate-y-2 transform duration-700'
       ]">
         <div class="flex justify-center items-center mt-15">
@@ -26,8 +26,8 @@
         </div>
         </div>
         <div class="flex justify-evenly items-center mb-20 ">
-          <el-button :style="darkmode_status ? { backgroundColor: 'white', color: 'black' } : {}" class="shadow-lg  hover:-translate-y-1 transform duration-800" size="large" type="success" @click="send" >登陆</el-button>
-          <el-button :style="darkmode_status ? { backgroundColor: 'white', color: 'black' } : {}" class="shadow-lg hover:-translate-y-1 transform duration-800" size="large" type="danger" @click="clear" >清空</el-button>
+          <el-button :style="darkmode_store.status ? { backgroundColor: 'white', color: 'black' } : {}" class="shadow-lg  hover:-translate-y-1 transform duration-800" size="large" type="success" @click="send" >登陆</el-button>
+          <el-button :style="darkmode_store.status ? { backgroundColor: 'white', color: 'black' } : {}" class="shadow-lg hover:-translate-y-1 transform duration-800" size="large" type="danger" @click="clear" >清空</el-button>
         </div>
       </div>
     </div>
@@ -80,17 +80,11 @@ const clear = () => {
   username.value = ''
 }
 
+
+
 //深色模式
 const darkmode_store = useMainStore().use_darkmode_store()
-const darkmode_status = ref(false)
 
-onBeforeMount(()=>{
-  darkmode_status.value = darkmode_store.status
-})
-watch(()=>darkmode_store.status,(new_value,old_value)=>{
-  darkmode_status.value = new_value
-  console.log(new_value)
-})
 </script>
 
 <style scoped>
