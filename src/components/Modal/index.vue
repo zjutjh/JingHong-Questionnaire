@@ -1,6 +1,7 @@
 <template>
   <dialog :id="modalId" class="modal" >
-    <div class="modal-box p-30" :class="gray ? 'bg-gray-300' : 'bg-red-50'" >
+    <div class="modal-box p-30" 
+    :class=" gray ? (darkmode_store.status ? 'bg-customGray_shallow' : 'bg-gray-300') : (darkmode_store.status ? 'bg-customGray_shallow' : 'bg-red-50')" >
       <form method="dialog">
         <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 ">✕</button>
       </form>
@@ -24,5 +25,10 @@ defineProps<{
   modalId: string,
   gray?: boolean,
 }>();
+
+
+//深色模式
+import { useMainStore } from "@/stores";
+const darkmode_store = useMainStore().use_darkmode_store()
 
 </script>

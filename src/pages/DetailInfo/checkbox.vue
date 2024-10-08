@@ -1,5 +1,6 @@
 <template>
-  <div class="bg-base-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
+  <div :class="[{'bg-base-300': darkmode_store.status === false}, {'bg-customGray_shallow': darkmode_store.status === true}]"
+  class="p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
@@ -8,7 +9,7 @@
         </div>
         <div class="flex items-center gap-20 my-10">
           <span class="w-50">问题描述</span>
-          <textarea type="text" placeholder="Describe" class="textarea textarea-bordered shadow-md w-full h-70" v-model="localDescribe"/>
+          <textarea type="text" placeholder="Describe" class="textarea textarea-bordered shadow-md w-full h-70 text-black" v-model="localDescribe"/>
         </div>
       </div>
       <div class="flex-col justify-center items-center">
@@ -37,13 +38,16 @@
           </div>
           <input type="file" class="file-input file-input-bordered file-input-sm w-7/12" @change="handleFileChange($event, item.serial_num)" />
         </div>
-        <button class="btn btn-error btn-sm shadow-md" @click="deleteOption(item.serial_num)">删除</button>
+        <button :class="[{'btn bg-white':darkmode_store.status},{'btn btn-error':!darkmode_store.status}]"
+        class="btn-sm shadow-md" @click="deleteOption(item.serial_num)">删除</button>
       </div>
     </div>
     <div class="divider"></div>
     <div class="mt-20 flex justify-evenly items-center">
-      <button class="btn btn-accent shadow-md" @click="addOption">新增选项</button>
-      <button class="btn btn-error shadow-md" @click="$emit('on-click')">删除题目</button>
+      <button :class="[{'btn bg-white':darkmode_store.status},{'btn btn-accent':!darkmode_store.status}]"
+      class="shadow-md" @click="addOption">新增选项</button>
+      <button :class="[{'btn bg-white':darkmode_store.status},{'btn btn-error':!darkmode_store.status}]"
+      class="shadow-md" @click="$emit('on-click')">删除题目</button>
     </div>
   </div>
 </template>
@@ -172,7 +176,13 @@ watch(localOptions, (newOptions) => {
   emits('update:options', newOptions);
 });
 
+//导入暗黑模式store
+import use_darkmode_store from '@/stores/service/dark_store';
+const darkmode_store = use_darkmode_store()
 </script>
 
 <style scoped>
+input[type='text']{
+  color: black !important; 
+}
 </style>

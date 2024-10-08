@@ -1,5 +1,6 @@
 <template>
-  <div class="bg-base-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
+  <div :class="[{'bg-base-300':darkmode_store.status===false},{'bg-customGray_shallow':darkmode_store.status===true}]" 
+  class="p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
@@ -24,7 +25,8 @@
     <textarea placeholder="Type here" class="textarea textarea-bordered shadow-md w-full h-100" />
     <div class="divider"></div>
     <div class="mt-20 flex justify-evenly items-center ">
-      <button class="btn btn-error shadow-md" @click="$emit('on-click')">删除题目</button>
+      <button :class="[{'btn bg-white':darkmode_store.status},{'btn btn-error ':!darkmode_store.status}]"
+      class="shadow-md" @click="$emit('on-click')">删除题目</button>
     </div>
   </div>
 
@@ -79,10 +81,19 @@ watch(localUnique, (newUnique) => {
   emits('update:unique', newUnique);
 });
 
+//深色模式
+import { useMainStore } from "@/stores";
+const darkmode_store = useMainStore().use_darkmode_store()
 
 </script>
 
 
 <style scoped>
+input[type='text']{
+  color: black;
+}
 
+textarea{
+  color: black;
+}
 </style>

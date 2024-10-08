@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-center items-start h-screen gap-50 mt-60">
-    <div class="bg-base-200 p-30 rounded-xl shadow-lg w-230 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
+    <div :class="[{'bg-base-200':darkmode_store.status===false},{'bg-customGray':darkmode_store.status===true}]" class=" p-30 rounded-xl shadow-lg w-230 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
       <span class="flex justify-center items-center  gap-10"><el-icon @click="showModal('setting')"><Setting /></el-icon><span class="text-2xl">添加问卷题目</span></span>
       <div class="p-20">
         <div class="flex-col justify-center items-center">
@@ -66,11 +66,12 @@
         </div>
       </div>
       <div class="flex justify-center items-center">
-        <button class="btn btn-accent" @click="addQuestion">添加题目</button>
+        <button :class="[{'btn bg-white':darkmode_store.status},{'btn btn-accent':!darkmode_store.status}]" @click="addQuestion">添加题目</button>
       </div>
     </div>
     <div class="p-40">
-      <div class="bg-base-200 w-750 p-40 shadow-lg rounded-xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700 ">
+      <div :class="[{'bg-base-200':darkmode_store.status===false},{'bg-customGray':darkmode_store.status===true}]" 
+      class="w-750 p-40 shadow-lg rounded-xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700 ">
         <div class="flex-col justify-center">
           <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
             <template #default>
@@ -150,10 +151,13 @@
           <!--</VueDraggable>-->
         </div>
         <div class="flex justify-center items-center gap-160 mt-20">
-          <button class="btn btn-success" @click="showModal('SaveQuestionnaireSubmit')" v-show="isNew === 'false'">保存更改</button>
-          <button class="btn btn-error" @click="showModal('reverseQuestionnaireSubmit')" v-show="isNew === 'false'">放弃更改</button>
-          <button class="btn btn-success" @click="submit(1)" v-show="isNew === 'true'">保存</button>
-          <button class="btn btn-primary" @click="showModal('NewQuestionnaireSubmit')" v-show="isNew === 'true'">发布</button>
+          <button :class="[{'btn bg-white':darkmode_store.status},{'btn btn-success ':!darkmode_store.status}]"
+          @click="showModal('SaveQuestionnaireSubmit')" v-show="isNew === 'false'">保存更改</button>
+          <button :class="[{'btn bg-white':darkmode_store.status},{'btn btn-error ':!darkmode_store.status}]"
+          @click="showModal('reverseQuestionnaireSubmit')" v-show="isNew === 'false'">放弃更改</button>
+          <button :class="[{'btn bg-white':darkmode_store.status},{'btn btn-success':!darkmode_store.status}]" @click="submit(1)" v-show="isNew === 'true'">保存</button>
+          <button :class="[{'btn bg-white':darkmode_store.status},{'btn btn-primary':!darkmode_store.status}]"
+          @click="showModal('NewQuestionnaireSubmit')" v-show="isNew === 'true'">发布</button>
         </div>
       </div>
     </div>
@@ -182,7 +186,7 @@
         确认要保存更改吗?
       </template>
       <template #action>
-        <button class="btn btn-success w-80" @click="submit">确认</button>
+        <button :class="[{'btn bg-white':darkmode_store.status},{'btn btn-success ':!darkmode_store.status}]" class="w-80" @click="submit">确认</button>
       </template>
     </modal>
     <modal modal-id="reverseQuestionnaireSubmit">
@@ -191,7 +195,8 @@
         确认要放弃更改?
       </template>
       <template #action>
-        <button class="btn btn-success w-80" @click="dataReverse">确认</button>
+        <button :class="[{'btn bg-white':darkmode_store.status},{'btn btn-success ':!darkmode_store.status}]" 
+        class=" w-80" @click="dataReverse">确认</button>
       </template>
     </modal>
   </div>
@@ -421,8 +426,17 @@ const submit = (state:number) => {
   });
 };**/
 
-
+//深色模式
+import { useMainStore } from "@/stores";
+const darkmode_store = useMainStore().use_darkmode_store()
 </script>
 
 <style scoped>
+input[type='text']{
+  color: black;
+}
+
+textarea{
+  color: black;
+}
 </style>
