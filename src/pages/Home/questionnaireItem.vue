@@ -1,7 +1,6 @@
 <!-- 此组件用于展示问卷信息 -->
 <template>
-  <div class="border border-neutral-700 rounded-lg p-20" 
-  :class="[{ 'bg-neutral-100': status===2&&darkmode_store.status===false},{'bg-customGray':darkmode_store.status===true}]">
+  <div class="bg-neutral-100 dark:bg-customGray border border-neutral-700 rounded-lg p-20">
     <div class="relative h-30">
       <div class="absolute left-0">{{ "标题:" + title }}</div>
       <div class="absolute right-5 flex flex-row gap-5">
@@ -29,15 +28,14 @@
       {{ status===1 ? "确认发布问卷: " : "确认下架问卷: " }} {{ title }}
     </template>
     <template #action>
-      <div class="btn btn-success w-80" @click="() => updateQuestionnaireStatus(idName, status===1?2:1)">确认</div>
+      <div class="btn btn-error dark:opacity-70 dark:text-white w-80" @click="() => updateQuestionnaireStatus(idName, status===1?2:1)">确认</div>
     </template>
   </modal>
   <modal :modal-id="'delConfirmModal'+idName">
     <template #title>删除问卷</template>
     <template #default>将删除标题为<span class="text-red-500">{{ title }}</span>的问卷</template>
     <template #action>
-      <div :class="[{'btn bg-white':darkmode_store.status},{'btn btn-success':!darkmode_store.status}]"
-      class="w-80" @click="() => delQuestionnaire(idName)">确认</div>
+      <div class="btn btn-error dark:opacity-70 dark:text-white w-80" @click="() => delQuestionnaire(idName)">确认</div>
     </template>
   </modal>
 </template>
@@ -52,7 +50,6 @@ import {closeLoading, startLoading} from "@/utilities";
 import { useMainStore } from '@/stores';
 import CryptoJS from 'crypto-js';
 import { ElMessage } from 'element-plus';
-import {ref,watch,onBeforeMount} from 'vue'
 
 const baseURL = import.meta.env.VITE_COPY_LINK;
 const tempStore = useMainStore().useTempStore();
@@ -122,7 +119,5 @@ const checkData = () => {
   router.push('/admin/Data');
 }
 
-//深色模式
-const darkmode_store = useMainStore().use_darkmode_store()
 
 </script>

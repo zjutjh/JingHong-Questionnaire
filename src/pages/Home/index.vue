@@ -1,7 +1,7 @@
 <template>
   <div class="p-40 flex mt-60">
     <div class="basis-1/4 p-20 pl-0 flex justify-center gap-10">
-      <div :class="[{'btn bg-white':darkmode_store.status},{'btn btn-success':!darkmode_store.status}]" style="width: 80%;" @click="addNewQuestionnaire">
+      <div class="btn btn-success dark:opacity-75 dark:text-white" style="width: 80%;" @click="addNewQuestionnaire">
         + 新建问卷
       </div>
     </div>
@@ -74,6 +74,4 @@ const addNewQuestionnaire = () => {
   router.push('/admin/DetailInfo')
 }
 
-//深色模式
-const darkmode_store = useMainStore().use_darkmode_store()
 </script>
