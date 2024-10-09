@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div class="gap-8 m-5 grid grid-cols-2 mt-30">
-      <n-card v-for="obj in staticsData" v-bind:key='obj'>
-        <div class="font-bold">{{ obj.serial_num }}. {{ obj.question }}</div>
+    <div class=" gap-8 m-5 grid grid-cols-2 mt-30">
+      <n-card class="dark:bg-customGray_shallow" v-for="obj in staticsData" v-bind:key='obj'>
+        <div class="font-bold dark:text-white">{{ obj.serial_num }}. {{ obj.question }}</div>
         <div v-for="opt in obj.options" class="m-6">
           <div class="relative border rounded">
             <div class="inline absolute left-0 rounded bg-cyan-400 h-full opacity-15" :style="{width: 100*opt.count/totalNum+'%'}"></div>
-            <span class="ml-4">{{ opt.content }}</span>
-            <span class="absolute right-4">{{ (opt.count/totalNum*100).toFixed(2) }}%</span>
+            <span class="ml-4  dark:text-white">{{ opt.content }}</span>
+            <span class="absolute right-4 dark:text-white">{{ (opt.count/totalNum*100).toFixed(2) }}%</span>
           </div>
         </div>
       </n-card>

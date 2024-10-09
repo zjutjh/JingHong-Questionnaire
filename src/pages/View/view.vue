@@ -1,8 +1,28 @@
 <template>
-  <div class="fixed inset-0 flex items-center justify-center bg-red-300 text-red-950">
-    <div class="bg-red-50 flex-col overflow-auto w-full sm:w-1/2 lg:w-6/12 p-30 h-full  shadow-lg">
-      <div class="flex-col justify-center">
+  <div class="fixed inset-0 flex items-center justify-center bg-red-300 text-red-950 dark:text-white dark:bg-black">
+    <div class="bg-red-50 dark:bg-customGray flex-col overflow-auto w-full sm:w-1/2 lg:w-6/12 p-30 h-full  shadow-lg">
+      <div class="flex-col justify-center relative">
         <div class="flex justify-center">
+          <div class="absolute top-0 right-4 z-10">
+            <button
+              @click="switchDarkMode"
+              class="flex items-center justify-center w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-800 transition-colors duration-300"
+            >
+              <span v-if="!darkModeStatus">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-50 w-50 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1m-16 0H3m15.364-7.364l-.707.707M6.636 17.364l-.707.707m12.728-12.728l-.707.707M6.636 6.636l-.707-.707M12 15.5A3.5 3.5 0 1 0 12 8.5A3.5 3.5 0 0 0 12 15.5z" />
+                </svg>
+              </span>
+              <span v-else>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-60 w-60 text-customGray_more_shallow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path d="M12 3c0 6.627 0 12 0 12a6 6 0 1 1 0-12z" />
+                </svg>
+              </span>
+            </button>
+
+          </div>
+
+          
           <el-image class="w-2/3" src="https://img.lonesome.cn/jhwl/project/questionnaire/jxh_logo.webp" />
         </div>
         <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
@@ -12,12 +32,12 @@
                 <div class="flex gap-20 my-10 justify-center"><span class="text-4xl break-all px-50">{{ formData.title }}</span></div>
               <div class="items-top my-10 items-start mx-20" v-if="formData.desc !== ''">
                 <div class="items-top my-10 items-start ">
-                  <pre class="text-gray-500 flex break-all text-xl " >{{ formData.desc }}</pre>
+                  <pre class="text-gray-500 flex break-all text-xl dark:text-white dark:opacity-50" >{{ formData.desc }}</pre>
                 </div>
               </div>
             </div>
             <div class="flex gap-20 items-center my-10  ml-20 mt-20">
-              <span class="text-red-950">截止时间:</span>
+              <span class="text-red-950 dark:text-red-400 dark:opacity-80">截止时间:</span>
               <span>{{ time }}</span>
             </div>
             <div class="divider my-10"></div>
@@ -74,11 +94,11 @@
               </div>
           </div>
           <div class="flex justify-center items-center py-50">
-            <button class="btn  w-1/3 bg-red-800 text-red-50" @click="showModal('QuestionnaireSubmit')" v-if="decryptedId !== '' && !isOutDate"  >提交问卷</button>
+            <button class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75" @click="showModal('QuestionnaireSubmit')" v-if="decryptedId !== '' && !isOutDate"  >提交问卷</button>
           </div>
     </div>
       <modal modal-id="QuestionnaireSubmit">
-        <template #title><span class="text-red-950">提交问卷</span></template>
+        <template #title><span class="text-red-950 dark:text-red-500">提交问卷</span></template>
         <template #default>
           你确认要提交问卷吗?
         </template>
@@ -232,6 +252,11 @@
     });
   };
 
+  //暗黑模式hook
+  import { useDarkModeSwitch } from "@/utilities/darkModeSwitch";
+  const {darkModeStatus,switchDarkMode} = useDarkModeSwitch()
+
+  
 
   </script>
 

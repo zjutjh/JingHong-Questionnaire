@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-center items-start h-screen gap-50 mt-60">
-    <div class="bg-base-200 p-30 rounded-xl shadow-lg w-230 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
+    <div class="bg-base-200 dark:bg-customGray p-30 rounded-xl shadow-lg w-230 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
       <span class="flex justify-center items-center  gap-10"><el-icon @click="showModal('setting')"><Setting /></el-icon><span class="text-2xl">添加问卷题目</span></span>
       <div class="p-20">
         <div class="flex-col justify-center items-center">
@@ -66,18 +66,19 @@
         </div>
       </div>
       <div class="flex justify-center items-center">
-        <button class="btn btn-accent" @click="addQuestion">添加题目</button>
+        <button class="btn btn-accent dark:opacity-75 dark:text-white" @click="addQuestion">添加题目</button>
       </div>
     </div>
     <div class="p-40">
-      <div class="bg-base-200 w-750 p-40 shadow-lg rounded-xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700 ">
+      <div class="bg-base-200 dark:bg-customGray w-750 p-40 shadow-lg rounded-xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700 ">
         <div class="flex-col justify-center">
           <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
             <template #default>
-          <span class="flex gap-20 items-center"><span class="text-2xl">问卷标题</span><input type="text" placeholder="标题" class="input input-bordered w-300" v-model="submitData.title" /></span>
+          <span class="flex gap-20 items-center"><span class="text-2xl">问卷标题</span><input type="text" placeholder="标题" 
+          class="input input-bordered dark:bg-customGray_shallow w-300" v-model="submitData.title" /></span>
           <div class="flex items-top gap-20  my-15" >
             <span>问卷内容描述</span>
-            <textarea class="textarea textarea-bordered w-300" placeholder="描述问卷" v-model="submitData.desc" ></textarea>
+            <textarea class="dark:bg-customGray_shallow textarea textarea-bordered w-300" placeholder="描述问卷" v-model="submitData.desc" ></textarea>
           </div>
           <div class="flex gap-20 items-center my-15">
           <span >问卷截止时间</span>
@@ -150,10 +151,13 @@
           <!--</VueDraggable>-->
         </div>
         <div class="flex justify-center items-center gap-160 mt-20">
-          <button class="btn btn-success" @click="showModal('SaveQuestionnaireSubmit')" v-show="isNew === 'false'">保存更改</button>
-          <button class="btn btn-error" @click="showModal('reverseQuestionnaireSubmit')" v-show="isNew === 'false'">放弃更改</button>
-          <button class="btn btn-success" @click="submit(1)" v-show="isNew === 'true'">保存</button>
-          <button class="btn btn-primary" @click="showModal('NewQuestionnaireSubmit')" v-show="isNew === 'true'">发布</button>
+          <button class="btn btn-success dark:opacity-75 dark:text-white"
+          @click="showModal('SaveQuestionnaireSubmit')" v-show="isNew === 'false'">保存更改</button>
+          <button class="btn btn-error dark:opacity-75 dark:text-white"
+          @click="showModal('reverseQuestionnaireSubmit')" v-show="isNew === 'false'">放弃更改</button>
+          <button class="btn btn-success dark:opacity-75 dark:text-white" @click="submit(1)" v-show="isNew === 'true'">保存</button>
+          <button class="btn btn-primary dark:opacity-75 dark:text-white"
+          @click="showModal('NewQuestionnaireSubmit')" v-show="isNew === 'true'">发布</button>
         </div>
       </div>
     </div>
@@ -161,9 +165,9 @@
       <template #title>设置</template>
       <template #default>
       <div class="flex gap-20 p-10">
-        <span class="flex items-center gap-10"><span>默认唯一</span><input type="checkbox" class="checkbox" v-model="setting.isUnique"/></span>
-        <span class="flex items-center gap-10"><span>默认必答</span><input type="checkbox" class="checkbox" v-model="setting.isRequired"/></span>
-        <span class="flex items-center gap-10"><span>默认有"其他"选项</span><input type="checkbox" class="checkbox" v-model="setting.isOtherOptions"/></span>
+        <span class="flex items-center gap-10"><span>默认唯一</span><input type="checkbox" class="checkbox  dark:bg-customGray_more_shallow" v-model="setting.isUnique"/></span>
+        <span class="flex items-center gap-10"><span>默认必答</span><input type="checkbox" class="checkbox  dark:bg-customGray_more_shallow" v-model="setting.isRequired"/></span>
+        <span class="flex items-center gap-10"><span>默认有"其他"选项</span><input type="checkbox" class="checkbox  dark:bg-customGray_more_shallow" v-model="setting.isOtherOptions"/></span>
       </div>
       </template>
     </modal>
@@ -182,7 +186,7 @@
         确认要保存更改吗?
       </template>
       <template #action>
-        <button class="btn btn-success w-80" @click="submit">确认</button>
+        <button class="btn btn-success dark:opacity-75 w-80" @click="submit">确认</button>
       </template>
     </modal>
     <modal modal-id="reverseQuestionnaireSubmit">
@@ -191,7 +195,7 @@
         确认要放弃更改?
       </template>
       <template #action>
-        <button class="btn btn-success w-80" @click="dataReverse">确认</button>
+        <button class="btn btn-error dark:opacity-75 w-80" @click="dataReverse">确认</button>
       </template>
     </modal>
   </div>
@@ -421,8 +425,8 @@ const submit = (state:number) => {
   });
 };**/
 
-
 </script>
 
 <style scoped>
+
 </style>

@@ -11,10 +11,10 @@
       <div>
         {{ "问卷标题: " + tempStore.checkTitle }}
       </div>
-      <div class="btn btn-sm btn-accent" @click="downloadDatatable">下载数据表格</div>
-      <div class="btn btn-sm btn-accent" @click="switchCount">统计切换</div>
-      <div v-show="!isCount" class="btn btn-sm" :class="isUnique ? 'btn-neutral' : 'btn-accent'" @click="changeUnique">展示近期</div>
-      <span v-show="!isCount">搜索</span><input v-show="!isCount" class="input input-sm input-bordered" type="text" v-model="keyText">
+      <div class="btn btn-sm btn-accent dark:opacity-75" @click="downloadDatatable">下载数据表格</div>
+      <div class="btn btn-sm btn-accent dark:opacity-75" @click="switchCount">统计切换</div>
+      <div v-show="!isCount" class="btn btn-sm dark:opacity-75" :class="isUnique ? 'btn-neutral' : 'btn-accent'" @click="changeUnique">展示近期</div>
+      <span v-show="!isCount">搜索</span><input v-show="!isCount" class="input input-sm input-bordered dark:bg-customGray_more_shallow" type="text" v-model="keyText">
     </div>
     <div style="margin-bottom: 30vh;">
       <data-table :key-text="keyText" :is-unique="isUnique" v-show="!isCount"></data-table>

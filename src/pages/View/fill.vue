@@ -20,7 +20,7 @@
     <div class="divider my-5"></div>
     <div class="flex-col p-5 h-auto">
       <input
-          class="input input-bordered w-full"
+          class="input input-bordered w-full dark:bg-customGray_more_shallow"
           :placeholder="pal"
           v-model="localAnswer"
           @blur="validateInput"

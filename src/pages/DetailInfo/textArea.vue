@@ -1,14 +1,14 @@
 <template>
-  <div class="bg-base-300 p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
+  <div class="bg-base-300 dark:bg-customGray_shallow p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
           <span>{{ serial_num }}</span>
-          <input type="text" placeholder="Question" class="input input-bordered shadow-md w-350" v-model="localTitle"/>
+          <input type="text" placeholder="Question" class="dark:bg-customGray_more_shallow input input-bordered shadow-md w-350" v-model="localTitle"/>
         </div>
         <div class="flex items-center gap-20 my-10">
           <span class="w-50">问题描述</span>
-          <textarea type="text" placeholder="Describe" class="textarea textarea-bordered shadow-md w-full h-70" v-model="localDescribe"/>
+          <textarea type="text" placeholder="Describe" class="dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70" v-model="localDescribe"/>
         </div>
       </div>
       <div class="flex-col justify-center items-center">
@@ -21,10 +21,10 @@
       </div>
     </div>
     <div class="divider"></div>
-    <textarea placeholder="Type here" class="textarea textarea-bordered shadow-md w-full h-100" />
+    <textarea placeholder="Type here" class="dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-100" />
     <div class="divider"></div>
     <div class="mt-20 flex justify-evenly items-center ">
-      <button class="btn btn-error shadow-md" @click="$emit('on-click')">删除题目</button>
+      <button class="btn btn-error dark:opacity-75 shadow-md dark:text-white" @click="$emit('on-click')">删除题目</button>
     </div>
   </div>
 
@@ -79,10 +79,8 @@ watch(localUnique, (newUnique) => {
   emits('update:unique', newUnique);
 });
 
-
 </script>
 
 
 <style scoped>
-
 </style>
