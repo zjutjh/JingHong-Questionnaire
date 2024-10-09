@@ -11,9 +11,14 @@ export function useDarkModeSwitch() {
         }
     )
     watch(darkModeStatus, (new_value, old_value) => { //修改status时 上传到store 保存状态
+        // console.log("watched")
         darkModeStore.setStatus(new_value)
         darkModeSwitch(new_value)
     })
 
-    return darkModeStatus
+    const switchDarkMode = () => {
+        darkModeStatus.value = !darkModeStatus.value
+    }
+
+    return { darkModeStatus, switchDarkMode }
 }

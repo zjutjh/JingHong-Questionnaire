@@ -19,7 +19,7 @@
     </div>
     <div class="divider my-5"></div>
     <div class="flex-col p-5 h-auto">
-      <textarea placeholder="请输入答案" class="textarea textarea-bordered shadow-md w-full h-100" v-model="localAnswer" />
+      <textarea placeholder="请输入答案" class="textarea textarea-bordered shadow-md w-full h-100 dark:bg-customGray_more_shallow" v-model="localAnswer" />
     </div>
   </div>
 </template>
