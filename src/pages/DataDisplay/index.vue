@@ -14,10 +14,11 @@
       <div class="btn btn-sm btn-accent" @click="downloadDatatable">下载数据表格</div>
       <div class="btn btn-sm btn-accent" @click="switchCount">统计切换</div>
       <div v-show="!isCount" class="btn btn-sm" :class="isUnique ? 'btn-neutral' : 'btn-accent'" @click="changeUnique">展示近期</div>
+      <div class="btn btn-sm btn-accent" :class="isDeleting ? 'btn-neutral' : 'btn-accent'" @click="switchDeleting">删除答卷</div>
       <span v-show="!isCount">搜索</span><input v-show="!isCount" class="input input-sm input-bordered" type="text" v-model="keyText">
     </div>
     <div style="margin-bottom: 30vh;">
-      <data-table :key-text="keyText" :is-unique="isUnique" v-show="!isCount"></data-table>
+      <data-table :key-text="keyText" :is-unique="isUnique" :is-deleting="isDeleting" v-show="!isCount"></data-table>
       <statics v-show="isCount"></statics>
     </div>
   </div>
@@ -37,6 +38,7 @@ const tempStore = useMainStore().useTempStore();
 
 const isCount = ref(false);
 const isUnique = ref(false);
+const isDeleting = ref(false);
 const keyText = ref("");
 
 const back = () => {
@@ -57,6 +59,10 @@ const downloadDatatable = () => {
 
 const switchCount = () => {
   isCount.value = !isCount.value;
+}
+
+const switchDeleting = () => {
+  isDeleting.value = !isDeleting.value;
 }
 
 const changeUnique = () => { isUnique.value = !isUnique.value; }

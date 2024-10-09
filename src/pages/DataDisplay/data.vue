@@ -12,12 +12,22 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(t, index) in time">
+        <tr class="relative" v-for="(t, index) in time">
           <th>{{ index+1 }}</th>
           <th>{{ t }}</th>
           <th v-for="ans in answers">
             <overflow-panel :text="ans.answers[index]"/>
           </th>
+          <th v-show="isDeleting" class="flex items-center absolute h-full py-0">
+            <div class="btn h-32 min-h-32 w-50 text-nowrap bg-red-400" @click="showModal('delConfirmModal'+String(index))">删除</div>
+          </th>
+          <modal :modal-id="'delConfirmModal'+String(index)">
+            <template #title>删除答卷</template>
+            <template #default>将删除序号为{{index+1}}的答卷</template>
+            <template #action>
+              <div class="btn btn-success w-80" @click="() => delAnswer(index)">确认</div>
+            </template>
+          </modal>
         </tr>
       </tbody>
     </table>
@@ -31,9 +41,12 @@
 </template>
 
 <script setup lang="ts">
+import { modal, showModal } from '@/components';
+import { delAnswerAPI } from '@/apis';
 import {ElNotification, ElPagination} from 'element-plus';
 import { getAnswersAPI } from '@/apis';
 import { ref, watch } from 'vue';
+import { closeLoading, startLoading } from "@/utilities";
 import { useMainStore } from '@/stores';
 import { useRequest } from 'vue-hooks-plus';
 import overflowPanel from './overflowPanel.vue';
@@ -43,6 +56,7 @@ const tempStore = useMainStore().useTempStore();
 const props = defineProps<{
   keyText: string,
   isUnique: boolean,
+  isDeleting: boolean
 }>();
 
 const answersType = new Map([
@@ -89,5 +103,20 @@ const getAnswers = () => {
 getAnswers();
 
 watch(props, getAnswers);
+
+//仅为骨架，不代表实际数据结构或实现逻辑。实际根据后端实际情况另行调整
+const delAnswer = (index: number) => {
+  useRequest(() => delAnswerAPI({index: index}), {
+    onBefore: () => startLoading(),
+    onSuccess(res: any) {
+      if(res.code === 200) {
+        ElNotification("删除成功");
+        getAnswers();
+        showModal('delConfirmModal'+String(index), true);
+      }
+    },
+    onFinally: () => closeLoading()
+  })
+}
 
 </script>
