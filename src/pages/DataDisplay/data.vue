@@ -3,11 +3,11 @@
     <table class="table">
       <thead>
         <tr>
-          <th>序号</th>
-          <th>时间</th>
-          <th v-for="ans in answers">
+          <th class="dark:text-white">序号</th>
+          <th class="dark:text-white">时间</th>
+          <th v-for="ans in answers" class="dark:text-white">
             {{ ans.title }}
-            <el-tag type="primary" size="small" class="ml-3">{{ answersType.get(ans.question_type) }}</el-tag>
+            <el-tag type="primary" size="small" class="ml-3" >{{ answersType.get(ans.question_type) }}</el-tag>
           </th>
         </tr>
       </thead>
@@ -15,7 +15,7 @@
         <tr v-for="(t, index) in time">
           <th>{{ index+1 }}</th>
           <th>{{ t }}</th>
-          <th v-for="ans in answers">
+          <th   v-for="ans in answers">
             <overflow-panel :text="ans.answers[index]"/>
           </th>
         </tr>
