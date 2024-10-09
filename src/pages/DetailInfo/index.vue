@@ -165,9 +165,9 @@
       <template #title>设置</template>
       <template #default>
       <div class="flex gap-20 p-10">
-        <span class="flex items-center gap-10"><span>默认唯一</span><input type="checkbox" class="checkbox" v-model="setting.isUnique"/></span>
-        <span class="flex items-center gap-10"><span>默认必答</span><input type="checkbox" class="checkbox" v-model="setting.isRequired"/></span>
-        <span class="flex items-center gap-10"><span>默认有"其他"选项</span><input type="checkbox" class="checkbox" v-model="setting.isOtherOptions"/></span>
+        <span class="flex items-center gap-10"><span>默认唯一</span><input type="checkbox" class="checkbox  dark:bg-customGray_more_shallow" v-model="setting.isUnique"/></span>
+        <span class="flex items-center gap-10"><span>默认必答</span><input type="checkbox" class="checkbox  dark:bg-customGray_more_shallow" v-model="setting.isRequired"/></span>
+        <span class="flex items-center gap-10"><span>默认有"其他"选项</span><input type="checkbox" class="checkbox  dark:bg-customGray_more_shallow" v-model="setting.isOtherOptions"/></span>
       </div>
       </template>
     </modal>
