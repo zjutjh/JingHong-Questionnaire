@@ -1,4 +1,4 @@
-const darkmode_switch = (is_dark: boolean) => {
+const darkModeSwitch = (is_dark: boolean) => {
     if (is_dark) {
         document.documentElement.classList.add('dark');
     } else {
@@ -6,4 +6,4 @@ const darkmode_switch = (is_dark: boolean) => {
     }
 }
 
-export default darkmode_switch
+export default darkModeSwitch

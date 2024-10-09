@@ -6,7 +6,7 @@
       </div>
       <div class="absolute right-180">
         <el-switch
-          v-model="darkmode_status"
+          v-model="darkModStatus"
           size="large"
           active-text="Dark"
           inactive-text="Light"
@@ -43,8 +43,8 @@ const loginStore = useMainStore().useLoginStore();
 
 
 //暗黑模式功能
-  import { use_darkmode_switch } from './utilities/darkmode_switch';
-  const darkmode_status = use_darkmode_switch() //暗黑模式 状态
+  import { useDarkModeSwitch } from './utilities/darkModeSwitch';
+  const darkModStatus = useDarkModeSwitch() //暗黑模式 状态
 
 
 
