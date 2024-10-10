@@ -111,7 +111,7 @@
   </template>
 
   <script lang="ts" setup>
-  import {onMounted, ref,} from "vue";
+  import {onMounted, ref, watch } from "vue";
   import {useRequest} from "vue-hooks-plus";
   import {getUserAPI, setUserSubmitAPI} from "@/apis";
   import {ElNotification} from "element-plus";
@@ -143,6 +143,8 @@
   const allowSend = ref(true)
   const isOutDate = ref(false)
 
+  const questionnaireStore = useMainStore().useQuetionnaireStore(); 
+
   onMounted(() => {
     loginStore.setShowHeader(false);
     let idParam = route.query.id as string | undefined;
@@ -150,12 +152,22 @@
       // 解密 ID
       idParam = idParam.replace(/ /g, "+");
       decryptedId.value = decryptId(idParam) as string | null;
+      // console.log(decryptedId.value)
       if (decryptedId.value === ""){
         ElNotification.error("无效的问卷id")
       }
     }
     getQuestionnaireView();
   });
+
+  watch(question, (newQuestions) => {
+      newQuestions.forEach(q => {
+          if (q.answer) {
+              questionnaireStore.updateAnswer(q.id, q.serial_num, q.answer);
+              // console.log(questionnaireStore.userAnswer)
+          }
+      });
+  }, { deep: true });
 
   const decryptId = (encryptedId) => {
     try {
@@ -176,13 +188,19 @@
             question.value = formData.value.questions;
             time.value = formData.value.time.replace("T", " ").split("+")[0].split(".")[0]
             submitData.value.id = res.data.id;
-            question.value.forEach((q) => {
-              if(q.question_type === 1){
-                q.answer = ' '
-              } else {
-                q.answer = '';
+            //获取已存储的答案
+            question.value.forEach(q => {
+              const storedAnswer = questionnaireStore.searchAnswer(q.id,q.serial_num)
+              console.log("222")
+              if (storedAnswer) {
+                  console.log("111")
+                  q.answer = storedAnswer.answer;
+              }else if (q.question_type===1){
+                q.answer = " ";
+              }else {
+                  q.answer = "";
               }
-            });
+            })
             loading.value = false
           } else if (res.code === 200509){
             isOutDate.value = true
@@ -236,10 +254,13 @@
       onBefore: () => startLoading(),
       onSuccess(res) {
         if (res.code === 200 && res.msg === 'OK') {
+          const imageStore = useMainStore().useImageStore()
           ElNotification.success('提交成功');
+          questionnaireStore.deleteAnswer()
+          imageStore.clearFiles()
           router.push('/Thank');
         } else {
-          ElNotification.error(res.msg );
+          ElNotification.error(res.msg);
         }
       },
       onError(e) {

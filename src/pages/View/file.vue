@@ -36,7 +36,7 @@
 
         <template #file="{ file }">
           <div>
-            <img class="el-upload-list__item-thumbnail" :src="file.url"  />
+            <img class="el-upload-list__item-thumbnail" :src="props.answer"  />
             <span class="el-upload-list__item-actions">
           <span
               class="el-upload-list__item-preview"
@@ -57,7 +57,7 @@
       </el-upload>
 
       <el-dialog v-model="dialogVisible">
-        <img w-full :src="dialogImageUrl" alt="Preview Image" />
+        <img w-full :src="props.answer" alt="Preview Image" />
       </el-dialog>
 
     </div>
@@ -65,26 +65,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits } from 'vue';
+import { ref, watch, defineProps, defineEmits, onMounted } from 'vue';
 import type { UploadFile } from 'element-plus'
 import {ElMessage} from "element-plus";
 import { Delete,  Plus, ZoomIn } from '@element-plus/icons-vue'
+import { useMainStore } from '@/stores';
+
+const imageStore = useMainStore().useImageStore();
 
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
 const disabled = ref(false)
 const fileList = ref<UploadFile[]>([])
+fileList.value = imageStore.fileList;
 
 const handlePictureCardPreview = (file: UploadFile) => {
   dialogImageUrl.value = file.url!
   dialogVisible.value = true
 }
 
-// 处理删除
 const handleRemove = (uploadFile: UploadFile) => {
-  fileList.value = [] // 清空列表，确保只显示一张图片
-}
-
+  imageStore.clearFiles(); // 清空 Pinia 文件列表
+  fileList.value = []; // 清空本地列表
+};
 
 
 // 上传成功回调
@@ -92,6 +95,8 @@ const handleUploadSuccess = (response: any, file: UploadFile) => {
   if(response.code == 200) {
     ElMessage.success('上传成功！')
     fileList.value = [{ ...file, url: response.data }]
+    const uploadedFile: UploadFile = { ...file, url: response.data };
+    imageStore.addFile(uploadedFile); // 将文件推入 Pinia 存储
     localAnswer.value = response.data
   } else {
     ElMessage.error(response.msg)
@@ -108,6 +113,10 @@ const props = defineProps({
   describe: String,
   answer: String,
 });
+
+onMounted(()=>{
+  console.log(props.answer)
+})
 
 const handleExceed = () => {
   ElMessage.warning('最多只能上传一张图片！');
