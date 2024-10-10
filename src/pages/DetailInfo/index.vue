@@ -100,6 +100,13 @@
               group="people"
               @update="onUpdate"
           >-->
+          <VueDraggable 
+            v-model="question"
+            :animation="300" 
+            ghost-class="ghost"
+            @end="updateQuestionSerialNumbers"
+          >
+          
           <div v-for="q in question" :key="q.serial_num" >
             <!-- 根据问题类型渲染组件 -->
             <div v-if="q.question_type === 1">
@@ -148,7 +155,7 @@
               </el-skeleton>
             </div>
           </div>
-          <!--</VueDraggable>-->
+          </VueDraggable>
         </div>
         <div class="flex justify-center items-center gap-160 mt-20">
           <button class="btn btn-success dark:opacity-75 dark:text-white"
@@ -425,8 +432,19 @@ const submit = (state:number) => {
   });
 };**/
 
+//导入可拖动组件
+import {VueDraggable} from 'vue-draggable-plus';
+//修改serial_num
+const updateQuestionSerialNumbers = () => {
+  question.value.forEach((q, index) => {
+    q.serial_num = index + 1;
+  });
+}
+
 </script>
 
 <style scoped>
-
+.ghost {
+  opacity: 0.4;
+}
 </style>
