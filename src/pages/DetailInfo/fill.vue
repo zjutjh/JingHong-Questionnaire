@@ -10,7 +10,7 @@
           <span class="w-50">问题描述</span>
           <textarea type="text" placeholder="Describe" class="dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70" v-model="localDescribe"/>
         </div>
-        <div class="flex items-center gap-20 my-10" v-if="initialReg==='customise'">
+        <div class="flex items-center gap-20 my-10" v-if=" pal === '自定义' ">
           <span class="w-50">正则</span>
           <textarea type="text" placeholder="示例: ^(?:\+?\d{1,3}[- ]?)?\d{10}$ 国际电话格式" class="dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70" v-model="customiseReg"/>
           <a href="https://regexr.com" target="_blank">测试正则</a>
@@ -54,14 +54,10 @@ const localOptionChoose = ref<boolean>(props.optionChoose);
 const localUnique = ref<boolean>(props.unique);
 const localDescribe = ref<string>(props.describe || '');
 
-//保存第一次传入的reg 用于渲染输入框
-const initialReg = ref('')
-onMounted(() => {
-  initialReg.value = props.reg || ''
-  // console.log(initialReg.value)
-})
+
 //储存当前的自定义正则
-const customiseReg = ref('')
+const customiseReg = ref(props.reg||'')
+
 
 
 
@@ -105,17 +101,15 @@ watch(localUnique, (newUnique) => {
 
 
 const pal = computed(() => {
-  if(initialReg.value==='customise'){
-    return '自定义'
+  if(props.reg === '^1[3456789]\\d{9}$') return `电话`
+  else if(props.reg === '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$') return `邮箱`
+  else if(props.reg === '^\\d{12}$') return `学号`
+  else if (props.reg === '^.*$') return `无限制`
+  else if (props.reg === '^[0-9]{1}$'){
+    const num = props.reg[7]
+    return num + `位数`
   }else{
-    if(props.reg === '^1[3456789]\\d{9}$') return `电话`
-    else if(props.reg === '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$') return `邮箱`
-    else if(props.reg === '^\\d{12}$') return `学号`
-    else if (props.reg === '') return `无限制`
-    else {
-      const num = props.reg[7]
-      return num + `位数`
-    }
+    return '自定义'
   }
 })
 

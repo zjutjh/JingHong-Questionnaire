@@ -28,11 +28,11 @@
         <div v-show="selectedOption === 3">
           <div class="divider"></div>
           <div class="flex gap-10 my-5">
-            <input type="radio" name="radio-2" class="radio-sm" value="" v-model="reg"/>
+            <input type="radio" name="radio-2" class="radio-sm" value="^.*$" v-model="reg"/>
             <span>无限制</span>
           </div>
           <div class="flex gap-10 my-5">
-            <input type="radio" name="radio-2" class="radio-sm" value="customise" v-model="reg"/>
+            <input type="radio" name="radio-2" class="radio-sm" value="" v-model="reg"/>
             <span>自定义</span>
           </div>
           <div class="flex gap-10 my-5">
@@ -240,7 +240,7 @@ const title = ref();
 const submitData = ref();
 const id = ref<number>();
 const reg = ref<string>('');
-const regNum = ref("^[0-9]{1}$");
+const regNum = ref('^[0-9]{1}$');
 const time = ref();
 const loading = ref(true)
 const setting = reactive({
