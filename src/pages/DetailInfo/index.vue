@@ -32,6 +32,10 @@
             <span>无限制</span>
           </div>
           <div class="flex gap-10 my-5">
+            <input type="radio" name="radio-2" class="radio-sm" value="customise" v-model="reg"/>
+            <span>自定义</span>
+          </div>
+          <div class="flex gap-10 my-5">
             <input type="radio" name="radio-2" class="radio-sm" value="^1[3456789]\d{9}$" v-model="reg"/>
             <span>手机号</span>
           </div>
@@ -69,6 +73,10 @@
         <button class="btn btn-accent dark:opacity-75 dark:text-white" @click="addQuestion">添加题目</button>
       </div>
     </div>
+    <!-- 自定义正则输入框
+    <div class="bg-base-200 dark:bg-customGray h-200 w-full mt-4 p-4">
+      <input  type="text" v-model="regCustomise" placeholder="请输入自定义正则" class="w-full h-full border border-gray-300 rounded-md p-2"/>
+    </div> -->
     <div class="p-40">
       <div class="bg-base-200 dark:bg-customGray w-750 p-40 shadow-lg rounded-xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700 ">
         <div class="flex-col justify-center">
@@ -100,6 +108,13 @@
               group="people"
               @update="onUpdate"
           >-->
+          <VueDraggable 
+            v-model="question"
+            :animation="300" 
+            ghost-class="ghost"
+            @end="updateQuestionSerialNumbers"
+          >
+          
           <div v-for="q in question" :key="q.serial_num" >
             <!-- 根据问题类型渲染组件 -->
             <div v-if="q.question_type === 1">
@@ -148,7 +163,7 @@
               </el-skeleton>
             </div>
           </div>
-          <!--</VueDraggable>-->
+          </VueDraggable>
         </div>
         <div class="flex justify-center items-center gap-160 mt-20">
           <button class="btn btn-success dark:opacity-75 dark:text-white"
@@ -419,14 +434,36 @@ const submit = (state:number) => {
   }
 };
 
+//调试 监听reg
+watch(question, (newQuestions) => {
+  newQuestions.forEach((q, index) => {
+    // 监听每个问题的 reg 值
+    watch(() => q.reg, (newReg) => {
+      console.log(`问题 ${index + 1} 的正则表达式变化为: ${newReg}`);
+      // 在这里添加处理逻辑，比如更新状态或执行其他操作
+    });
+  });
+}, { deep: true });
+
 /**const onUpdate = () => {
   question.value.forEach((q, idx) => {
     q.serial_num = idx + 1;
   });
 };**/
 
+//导入可拖动组件
+import {VueDraggable} from 'vue-draggable-plus';
+//修改serial_num
+const updateQuestionSerialNumbers = () => {
+  question.value.forEach((q, index) => {
+    q.serial_num = index + 1;
+  });
+}
+
 </script>
 
 <style scoped>
-
+.ghost {
+  opacity: 0.4;
+}
 </style>

@@ -10,6 +10,11 @@
           <span class="w-50">问题描述</span>
           <textarea type="text" placeholder="Describe" class="dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70" v-model="localDescribe"/>
         </div>
+        <div class="flex items-center gap-20 my-10" v-if="initialReg==='customise'">
+          <span class="w-50">正则</span>
+          <textarea type="text" placeholder="示例: ^(?:\+?\d{1,3}[- ]?)?\d{10}$ 国际电话格式" class="dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70" v-model="customiseReg"/>
+          <a href="https://regexr.com" target="_blank">测试正则</a>
+        </div>
       </div>
       <div class="flex-col justify-center items-center">
         <div class=" flex gap-10 ">
@@ -33,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, defineEmits, ref, watch} from "vue";
+import {computed, defineEmits, onMounted, ref, watch} from "vue";
 
 const props = defineProps<{
   serial_num: number,
@@ -43,11 +48,23 @@ const props = defineProps<{
   optionChoose:boolean
   unique:boolean
   }>()
-const emits = defineEmits(['update:unique', 'on-click', 'update:optionChoose','update:title','update:describe']);
+const emits = defineEmits(['update:unique', 'on-click', 'update:optionChoose','update:title','update:describe','update:reg']);
 const localTitle = ref<string>(props.title || '');
 const localOptionChoose = ref<boolean>(props.optionChoose);
 const localUnique = ref<boolean>(props.unique);
 const localDescribe = ref<string>(props.describe || '');
+
+//保存第一次传入的reg 用于渲染输入框
+const initialReg = ref('')
+onMounted(() => {
+  initialReg.value = props.reg || ''
+  // console.log(initialReg.value)
+})
+//储存当前的自定义正则
+const customiseReg = ref('')
+
+
+
 watch(() => props.title, (newTitle) => {
   localTitle.value = newTitle || '';
 });
@@ -62,6 +79,10 @@ watch(() => props.unique, (newUnique) => {
 
 watch(() => props.describe, (newLocalDescribe) => {
   localDescribe.value = newLocalDescribe
+});
+
+watch(customiseReg, (newReg) => {
+  emits('update:reg', newReg);
 });
 
 watch(localTitle, (newTitle) => {
@@ -80,14 +101,21 @@ watch(localUnique, (newUnique) => {
   emits('update:unique', newUnique);
 });
 
+
+
+
 const pal = computed(() => {
-  if(props.reg === '^1[3456789]\\d{9}$') return `电话`
-  else if(props.reg === '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$') return `邮箱`
-  else if(props.reg === '^\\d{12}$') return `学号`
-  else if (props.reg === '') return `无限制`
-  else {
-    const num = props.reg[7]
-    return num + `位数`
+  if(initialReg.value==='customise'){
+    return '自定义'
+  }else{
+    if(props.reg === '^1[3456789]\\d{9}$') return `电话`
+    else if(props.reg === '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$') return `邮箱`
+    else if(props.reg === '^\\d{12}$') return `学号`
+    else if (props.reg === '') return `无限制`
+    else {
+      const num = props.reg[7]
+      return num + `位数`
+    }
   }
 })
 
