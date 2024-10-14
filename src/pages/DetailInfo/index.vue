@@ -100,6 +100,13 @@
               group="people"
               @update="onUpdate"
           >-->
+          <VueDraggableNext 
+            v-model="question"
+            :animation="300" 
+            ghost-class="ghost"
+            @end="updateQuestionSerialNumbers"
+          >
+          
           <div v-for="q in question" :key="q.serial_num" >
             <!-- 根据问题类型渲染组件 -->
             <div v-if="q.question_type === 1">
@@ -148,7 +155,7 @@
               </el-skeleton>
             </div>
           </div>
-          <!--</VueDraggable>-->
+          </VueDraggableNext>
         </div>
         <div class="flex justify-center items-center gap-160 mt-20">
           <button class="btn btn-success dark:opacity-75 dark:text-white"
@@ -216,6 +223,7 @@ import radio from "@/pages/DetailInfo/radio.vue";
 import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 import router from "@/router";
 import {closeLoading, startLoading} from "@/utilities";
+import {VueDraggableNext} from "vue-draggable-next"
 
 const selectedOption = ref(1);
 const selectedNumber = ref(1);
@@ -336,6 +344,12 @@ const addQuestion = () => {
     unique: setting.isUnique,
   });
 
+  question.value.forEach((q, index) => {
+    q.serial_num = index + 1;
+  });
+
+  console.log(question.value)
+
   // 等待 DOM 更新完成后再执行滚动
   nextTick(() => {
     if (questionnaireContainer.value) {
@@ -350,7 +364,7 @@ const cleanReg = () => {
 watch(selectedOption, cleanReg);
 
 const deleteQuestion = (serial_num: number) => {
-  console.log(serial_num);
+  // console.log(serial_num);
     question.value = question.value.filter((item) => item.serial_num !== serial_num);
     question.value.forEach((item) => {
       if (item.serial_num > serial_num) {
@@ -363,7 +377,7 @@ const dataReverse = () => {
   submitData.value = deepCopy(formData.value);
   question.value = deepCopy(formData.value.questions);
   time.value = submitData.value.time
-  console.log(question.value);
+  // console.log(question.value);
   ElNotification.success('成功放弃修改');
   showModal('reverseQuestionnaireSubmit',true)
   router.push('/admin')
@@ -372,7 +386,7 @@ const dataReverse = () => {
 const submit = (state:number) => {
   submitData.value.time = time.value
   submitData.value.questions = question.value;
-  console.log(question.value);
+  // console.log(question.value);
   if(isNew === 'false') {
     useRequest(() => setQuestionnaireDetailAPI(submitData.value), {
       onBefore: () => startLoading(),
@@ -425,8 +439,20 @@ const submit = (state:number) => {
   });
 };**/
 
+//导入可拖动组件
+import {VueDraggable} from 'vue-draggable-plus';
+//修改serial_num
+const updateQuestionSerialNumbers = () => {
+  question.value.forEach((q, index) => {
+    q.serial_num = index + 1;
+  });
+  console.log(question.value)
+}
+
 </script>
 
 <style scoped>
-
+.ghost {
+  opacity: 0.4;
+}
 </style>
