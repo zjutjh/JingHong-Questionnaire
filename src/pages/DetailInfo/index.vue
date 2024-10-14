@@ -86,6 +86,7 @@
               v-model="time"
               type="datetime"
               placeholder="截止时间"
+              :clearable="false"
           />
             </div>
             </template>
