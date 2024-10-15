@@ -44,6 +44,7 @@ const optionStore = useMainStore().useOptionStore()
 
 
 const props = defineProps<{
+  questionnaireID:string
   serial_num: number,
   title?: string,
   required: boolean,
@@ -61,7 +62,7 @@ const props = defineProps<{
 const localUnique = ref<boolean>(props.unique);
 const localOtherOption = ref<boolean>(props.otherOption);
 const localOptions = ref(props.options ? [...props.options] : []);
-const otherAnswer = ref<string>(optionStore.search(props.serial_num));
+const otherAnswer = ref<string>(optionStore.search(props.questionnaireID,props.serial_num));
 const answerArr = ref<string[]>(props.answer ? props.answer.split('┋') : []);
 // console.log(answerArr)
 const emits = defineEmits(['update:answer']);
@@ -112,7 +113,7 @@ watch(filteredAnswerArr, () => {
 
 watch(otherAnswer, (newOtherAnswer, oldOtherAnswer) => {
   if(newOtherAnswer){
-    optionStore.update(props.serial_num,newOtherAnswer)
+    optionStore.update(props.questionnaireID,props.serial_num,newOtherAnswer)
   }
   if (newOtherAnswer !== oldOtherAnswer && otherCheckbox.value && otherCheckbox.value.checked) {
     const otherIndex = answerArr.value.indexOf(oldOtherAnswer);

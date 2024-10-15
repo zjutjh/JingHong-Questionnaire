@@ -39,6 +39,7 @@ import { ref, watch, defineProps, defineEmits } from 'vue';
 const optionStore = useMainStore().useOptionStore()
 
 const props = defineProps<{
+  questionnaireID:string,
   serial_num: number,
   title?: string,
   required: boolean,
@@ -56,14 +57,14 @@ const props = defineProps<{
 const localUnique = ref<boolean>(props.unique);
 const localOtherOption = ref<boolean>(props.otherOption);
 const localOptions = ref(props.options ? [...props.options] : []);
-const otherAnswer = ref<string>(optionStore.search(props.serial_num));
+const otherAnswer = ref<string>(optionStore.search(props.questionnaireID,props.serial_num));
 const emits = defineEmits(['update:answer']);
 const localAnswer = ref(props.answer);
 
 
 watch([localAnswer, otherAnswer], ([newLocalAnswer, newOtherAnswer]) => {
   if(newOtherAnswer){
-    optionStore.update(props.serial_num,newOtherAnswer)
+    optionStore.update(props.questionnaireID,props.serial_num,newOtherAnswer)
   }//更新optionStore
   if (localOtherOption.value && newLocalAnswer === newOtherAnswer) {
     emits('update:answer', newOtherAnswer);

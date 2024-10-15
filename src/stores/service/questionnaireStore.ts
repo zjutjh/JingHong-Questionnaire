@@ -3,10 +3,10 @@ import { ref } from "vue";
 
 const useQuestionnaireStore = defineStore("questionnaires", () => {
     const userAnswer = ref([])
-    const searchAnswer = (id: number, serial_num: number) => {
+    const searchAnswer = (id: any, serial_num: number) => {
         return userAnswer.value.find(question => question.id === id && question.serial_num === serial_num)
     }
-    const updateAnswer = (id: number, serial_num: number, answer: any,) => {
+    const updateAnswer = (id: any, serial_num: number, answer: any,) => {
         const question = userAnswer.value.find(question => question.id === id && question.serial_num === serial_num)
         if (question) {
             question.answer = answer
@@ -18,8 +18,9 @@ const useQuestionnaireStore = defineStore("questionnaires", () => {
             })
         }
     }
-    const deleteAnswer = () => {
-        userAnswer.value = []
+    console.log(userAnswer.value)
+    const deleteAnswer = (id: any) => {
+        userAnswer.value = userAnswer.value.filter(a => a.id !== id)
     }
     return {
         userAnswer,

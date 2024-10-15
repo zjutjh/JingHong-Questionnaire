@@ -49,7 +49,7 @@
               <!-- 根据问题类型渲染组件 -->
               <div v-if="q.question_type === 1">
                 <el-skeleton animated :loading="loading">
-                  <radio v-model:answer="q.answer" v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" v-model:unique="q.unique" v-model:required="q.required" v-model:other-option="q.other_option" v-model:describe="q.describe"></radio>
+                  <radio v-model:answer="q.answer" v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" v-model:unique="q.unique" v-model:required="q.required" v-model:other-option="q.other_option" v-model:describe="q.describe" v-model:questionnaireID = "decryptedId"></radio>
                 </el-skeleton>
               </div>
               <div v-if="q.question_type === 2">
@@ -58,7 +58,7 @@
                     <skeleton-card></skeleton-card>
                   </template>
                   <template #default>
-                <checkbox v-model:answer="q.answer" v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num"  v-model:unique="q.unique" v-model:required="q.required" v-model:other-option="q.other_option" v-model:describe="q.describe"></checkbox>
+                <checkbox v-model:answer="q.answer" v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num"  v-model:unique="q.unique" v-model:required="q.required" v-model:other-option="q.other_option" v-model:describe="q.describe" v-model:questionnaireID = "decryptedId"></checkbox>
                   </template>
                 </el-skeleton>
               </div>
@@ -164,7 +164,7 @@
   watch(question, (newQuestions) => {
       newQuestions.forEach(q => {
           if (q.answer) {
-              questionnaireStore.updateAnswer(q.id, q.serial_num, q.answer);
+              questionnaireStore.updateAnswer(decryptedId.value, q.serial_num, q.answer);
               console.log(questionnaireStore.userAnswer)
           }
       });
@@ -189,10 +189,10 @@
             question.value = formData.value.questions;
             time.value = formData.value.time.replace("T", " ").split("+")[0].split(".")[0]
             submitData.value.id = res.data.id;
-            console.log("问卷id:"+submitData.value.id)
+            // console.log("问卷id:"+submitData.value.id)
             question.value.forEach(q => {
               //获取已存储的答案
-              const storedAnswer = questionnaireStore.searchAnswer(q.id,q.serial_num)
+              const storedAnswer = questionnaireStore.searchAnswer(decryptedId.value,q.serial_num)
               if (storedAnswer) {
                   q.answer = storedAnswer.answer;
               }else if (q.question_type===1){
@@ -256,9 +256,9 @@
         if (res.code === 200 && res.msg === 'OK') {
           const imageStore = useMainStore().useImageStore()
           ElNotification.success('提交成功');
-          questionnaireStore.deleteAnswer()
+          questionnaireStore.deleteAnswer(decryptedId.value)
           imageStore.clearFiles()
-          optionStore.options = []
+          optionStore.deleteOption(decryptedId.value)
           router.push('/Thank');
         } else {
           ElNotification.error(res.msg);
