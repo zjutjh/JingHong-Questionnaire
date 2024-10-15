@@ -13,7 +13,7 @@
         <div class="flex items-center gap-20 my-10" v-if=" pal === '自定义' ">
           <span class="w-50">正则</span>
           <textarea type="text" placeholder="示例: ^(?:\+?\d{1,3}[- ]?)?\d{10}$ 国际电话格式" class="dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70" v-model="customiseReg"/>
-          <a href="https://regexr.com" target="_blank">测试正则</a>
+          <!-- <span></span><a href="https://regexr.com" target="_blank">测试</a> -->
         </div>
       </div>
       <div class="flex-col justify-center items-center">
