@@ -108,7 +108,7 @@
               group="people"
               @update="onUpdate"
           >-->
-          <VueDraggable 
+          <VueDraggableNext 
             v-model="question"
             :animation="300" 
             ghost-class="ghost"
@@ -163,7 +163,7 @@
               </el-skeleton>
             </div>
           </div>
-          </VueDraggable>
+          </VueDraggableNext>
         </div>
         <div class="flex justify-center items-center gap-160 mt-20">
           <button class="btn btn-success dark:opacity-75 dark:text-white"
@@ -231,6 +231,7 @@ import radio from "@/pages/DetailInfo/radio.vue";
 import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 import router from "@/router";
 import {closeLoading, startLoading} from "@/utilities";
+import {VueDraggableNext} from "vue-draggable-next"
 
 const selectedOption = ref(1);
 const selectedNumber = ref(1);
@@ -298,7 +299,7 @@ const getInfo = () => {
     onBefore: () => startLoading(),
     onSuccess(res) {
       if (res.code === 200) {
-        console.log(res.data);
+        // console.log(res.data);
         const formDataCopy = deepCopy(res.data); // Use deep copy here
         if (formDataCopy.questions) {
           formDataCopy.questions.forEach((item) => {
@@ -351,6 +352,12 @@ const addQuestion = () => {
     unique: setting.isUnique,
   });
 
+  question.value.forEach((q, index) => {
+    q.serial_num = index + 1;
+  });
+
+  // console.log(question.value)
+
   // 等待 DOM 更新完成后再执行滚动
   nextTick(() => {
     if (questionnaireContainer.value) {
@@ -365,7 +372,7 @@ const cleanReg = () => {
 watch(selectedOption, cleanReg);
 
 const deleteQuestion = (serial_num: number) => {
-  console.log(serial_num);
+  // console.log(serial_num);
     question.value = question.value.filter((item) => item.serial_num !== serial_num);
     question.value.forEach((item) => {
       if (item.serial_num > serial_num) {
@@ -378,7 +385,7 @@ const dataReverse = () => {
   submitData.value = deepCopy(formData.value);
   question.value = deepCopy(formData.value.questions);
   time.value = submitData.value.time
-  console.log(question.value);
+  // console.log(question.value);
   ElNotification.success('成功放弃修改');
   showModal('reverseQuestionnaireSubmit',true)
   router.push('/admin')
@@ -387,7 +394,7 @@ const dataReverse = () => {
 const submit = (state:number) => {
   submitData.value.time = time.value
   submitData.value.questions = question.value;
-  console.log(question.value);
+  // console.log(question.value);
   if(isNew === 'false') {
     useRequest(() => setQuestionnaireDetailAPI(submitData.value), {
       onBefore: () => startLoading(),
@@ -434,27 +441,20 @@ const submit = (state:number) => {
   }
 };
 
-//调试 监听reg
-watch(question, (newQuestions) => {
-  newQuestions.forEach((q, index) => {
-    // 监听每个问题的 reg 值
-    watch(() => q.reg, (newReg) => {
-      console.log(`问题 ${index + 1} 的正则表达式变化为: ${newReg}`);
-      // 在这里添加处理逻辑，比如更新状态或执行其他操作
-    });
-  });
-}, { deep: true });
+// //调试 监听reg
+// watch(question, (newQuestions) => {
+//   newQuestions.forEach((q, index) => {
+//     // 监听每个问题的 reg 值
+//     watch(() => q.reg, (newReg) => {
+//       console.log(`问题 ${index + 1} 的正则表达式变化为: ${newReg}`);
+//       // 在这里添加处理逻辑，比如更新状态或执行其他操作
+//     });
+//   });
+// }, { deep: true });
 
-/**const onUpdate = () => {
-  question.value.forEach((q, idx) => {
-    q.serial_num = idx + 1;
-  });
-};**/
-
-//导入可拖动组件
-import {VueDraggable} from 'vue-draggable-plus';
-//修改serial_num
+//修改serial_numquestion.value =[...question.value]
 const updateQuestionSerialNumbers = () => {
+  // console.log(question.value)
   question.value.forEach((q, index) => {
     q.serial_num = index + 1;
   });

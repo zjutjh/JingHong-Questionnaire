@@ -77,6 +77,11 @@ watch(() => props.describe, (newLocalDescribe) => {
   localDescribe.value = newLocalDescribe
 });
 
+watch(() => props.reg, (newReg) => {
+  customiseReg.value = newReg
+});
+
+
 watch(customiseReg, (newReg) => {
   emits('update:reg', newReg);
 });
