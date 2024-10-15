@@ -4,6 +4,7 @@ import useTempStore from './service/tempStore'
 import useDarkModeStore from './service/darkStore'
 import useQuetionnaireStore from './service/questionnaireStore'
 import { useImageStore } from './service/imageStore'
+import useOptionStore from './service/optionStore'
 
 export const useMainStore = defineStore(
   'main',
@@ -13,7 +14,8 @@ export const useMainStore = defineStore(
       useTempStore,
       useDarkModeStore,
       useQuetionnaireStore,
-      useImageStore
+      useImageStore,
+      useOptionStore
     }
   },
   { persist: true }

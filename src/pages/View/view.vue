@@ -142,8 +142,9 @@
   const decryptedId = ref<string | null>()
   const allowSend = ref(true)
   const isOutDate = ref(false)
-
-  const questionnaireStore = useMainStore().useQuetionnaireStore(); 
+  
+  const optionStore = useMainStore().useOptionStore()
+  const questionnaireStore = useMainStore().useQuetionnaireStore();
 
   onMounted(() => {
     loginStore.setShowHeader(false);
@@ -164,7 +165,7 @@
       newQuestions.forEach(q => {
           if (q.answer) {
               questionnaireStore.updateAnswer(q.id, q.serial_num, q.answer);
-              // console.log(questionnaireStore.userAnswer)
+              console.log(questionnaireStore.userAnswer)
           }
       });
   }, { deep: true });
@@ -188,12 +189,11 @@
             question.value = formData.value.questions;
             time.value = formData.value.time.replace("T", " ").split("+")[0].split(".")[0]
             submitData.value.id = res.data.id;
-            //获取已存储的答案
+            console.log("问卷id:"+submitData.value.id)
             question.value.forEach(q => {
+              //获取已存储的答案
               const storedAnswer = questionnaireStore.searchAnswer(q.id,q.serial_num)
-              // console.log("222")
               if (storedAnswer) {
-                  // console.log("111")
                   q.answer = storedAnswer.answer;
               }else if (q.question_type===1){
                 q.answer = " ";
@@ -258,13 +258,14 @@
           ElNotification.success('提交成功');
           questionnaireStore.deleteAnswer()
           imageStore.clearFiles()
+          optionStore.options.values = []
           router.push('/Thank');
         } else {
           ElNotification.error(res.msg);
         }
       },
       onError(e) {
-        ElNotification.error( e.message);
+        ElNotification.error(e.message);
       },
       onFinally: () => {
         showModal('QuestionnaireSubmit', true);

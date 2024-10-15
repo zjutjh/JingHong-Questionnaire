@@ -37,7 +37,11 @@
 </template>
 
 <script setup lang="ts">
+import { useMainStore } from '@/stores';
 import { ref, watch, defineProps, defineEmits, computed } from 'vue'
+
+const optionStore = useMainStore().useOptionStore()
+
 
 const props = defineProps<{
   serial_num: number,
@@ -57,8 +61,9 @@ const props = defineProps<{
 const localUnique = ref<boolean>(props.unique);
 const localOtherOption = ref<boolean>(props.otherOption);
 const localOptions = ref(props.options ? [...props.options] : []);
-const otherAnswer = ref<string>('');
-  const answerArr = ref<string[]>(props.answer ? props.answer.split('┋') : []);
+const otherAnswer = ref<string>(optionStore.search(props.serial_num));
+const answerArr = ref<string[]>(props.answer ? props.answer.split('┋') : []);
+console.log(answerArr)
 const emits = defineEmits(['update:answer']);
 const otherAnswerChecked = ref(false)
 const otherCheckbox = ref<HTMLInputElement | null>(null);
@@ -93,7 +98,11 @@ watch(filteredAnswerArr, () => {
   emits('update:answer', combinedAnswers);
 });
 
+
 watch(otherAnswer, (newOtherAnswer, oldOtherAnswer) => {
+  if(newOtherAnswer){
+    optionStore.update(props.serial_num,newOtherAnswer)
+  }
   if (newOtherAnswer !== oldOtherAnswer && otherCheckbox.value && otherCheckbox.value.checked) {
     const otherIndex = answerArr.value.indexOf(oldOtherAnswer);
     if (otherIndex !== -1) {
