@@ -258,7 +258,7 @@
           ElNotification.success('提交成功');
           questionnaireStore.deleteAnswer()
           imageStore.clearFiles()
-          optionStore.options.values = []
+          optionStore.options = []
           router.push('/Thank');
         } else {
           ElNotification.error(res.msg);

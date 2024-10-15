@@ -29,7 +29,7 @@
         </div>
       </div>
       <div class="flex gap-10 mt-10" v-if="localOtherOption">
-        <input ref="otherCheckbox" type="checkbox" :name="props.serial_num" class="my-5" style="zoom: 140%" :value="otherAnswer"  @click='otherAnswerChecked = !otherAnswerChecked'/>
+        <input ref="otherCheckbox" type="checkbox" :name="props.serial_num" class="my-5" style="zoom: 140%" :value="otherAnswer" v-model="otherAnswerChecked"/>
         <input type="text" class="input-sm w-150" placeholder="其他" v-model="otherAnswer" @input="updateOtherAnswer"  />
       </div>
     </div>
@@ -38,7 +38,7 @@
 
 <script setup lang="ts">
 import { useMainStore } from '@/stores';
-import { ref, watch, defineProps, defineEmits, computed } from 'vue'
+import { ref, watch, defineProps, defineEmits, computed, onMounted } from 'vue'
 
 const optionStore = useMainStore().useOptionStore()
 
@@ -63,11 +63,22 @@ const localOtherOption = ref<boolean>(props.otherOption);
 const localOptions = ref(props.options ? [...props.options] : []);
 const otherAnswer = ref<string>(optionStore.search(props.serial_num));
 const answerArr = ref<string[]>(props.answer ? props.answer.split('┋') : []);
-console.log(answerArr)
+// console.log(answerArr)
 const emits = defineEmits(['update:answer']);
 const otherAnswerChecked = ref(false)
 const otherCheckbox = ref<HTMLInputElement | null>(null);
 
+// console.log(answerArr.value + ' '+ otherAnswer.value)
+
+onMounted(() => {
+    if(answerArr.value.includes(otherAnswer.value)){
+      // console.log("111")
+      otherAnswerChecked.value = true
+    }
+  }
+)
+
+// console.log(otherAnswerChecked.value)
 const deleteOldAnswer = () => {
   const otherIndex = answerArr.value.indexOf(otherAnswer.value);
   if (otherIndex !== -1) {
@@ -92,8 +103,8 @@ watch(filteredAnswerArr, () => {
   if (otherCheckbox.value && otherCheckbox.value.checked && !answerArr.value.includes(otherAnswer.value)) {
     answerArr.value.push(otherAnswer.value)
   }
-  console.log(filteredAnswerArr.value)
-  console.log(otherAnswerChecked.value)
+  // console.log(filteredAnswerArr.value)
+  // console.log(otherAnswerChecked.value)
   const combinedAnswers = filteredAnswerArr.value.join('┋');
   emits('update:answer', combinedAnswers);
 });
