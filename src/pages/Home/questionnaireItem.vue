@@ -15,6 +15,7 @@
         <div class="btn btn-sm btn-ghost" @click="() => showModal('delConfirmModal'+idName)">删除问卷</div>
       </div>
       <div class="absolute right-5 flex flex-row gap-5">
+        <div v-if="status===2" class="btn btn-sm btn-ghost" @click="() => showModal('QRcode')">查看分享二维码</div>
         <div v-if="status===2" class="btn btn-sm btn-ghost" @click="() => copyShareCode()">复制分享链接</div>
         <div class="pt-4" :class="{ 'text-blue-500': status===2, 'text-red-500': status===1}">{{ "状态:" + (status===1 ? "草稿" : "已发布") }}</div>
       </div>
@@ -38,6 +39,13 @@
       <div class="btn btn-error dark:opacity-70 dark:text-white w-80" @click="() => delQuestionnaire(idName)">确认</div>
     </template>
   </modal>
+  <modal :modal-id="'QRcode'">
+    <template #title>分享二维码</template>
+    <template #default> <img :src="qrCodeURL" class="w-1/2 mx-auto"> </template>
+    <template #action>
+      <div class="btn btn-success dark:opacity-70 dark:text-white w-80" @click="copyQrCode">复制</div>
+    </template>
+  </modal>
 </template>
 
 <script setup lang="ts">
@@ -50,6 +58,8 @@ import {closeLoading, startLoading} from "@/utilities";
 import { useMainStore } from '@/stores';
 import CryptoJS from 'crypto-js';
 import { ElMessage } from 'element-plus';
+import {computed} from 'vue'
+import {useQrCode} from '@/utilities/useQrCode'
 
 const baseURL = import.meta.env.VITE_COPY_LINK;
 const tempStore = useMainStore().useTempStore();
@@ -97,15 +107,26 @@ const delQuestionnaire = (id: number) => {
   })
 }
 
+//获取问卷url
+const questionnaireURL = computed(
+  () => {
+    const Key = 'JingHong';
+    const url =  baseURL + "/View?id=" + CryptoJS.AES.encrypt(props.idName+'',Key).toString()
+    return url
+  }
+)
+
+//复制问卷url
 const copyShareCode = () => {
-  const Key = 'JingHong';
-  const encryptedId = CryptoJS.AES.encrypt(props.idName+'',Key).toString();
-  navigator.clipboard.writeText( baseURL + "/View?id=" + encryptedId);
+  navigator.clipboard.writeText(questionnaireURL.value);
   ElMessage({
     message: '链接复制成功',
     type: 'success',
   })
 }
+
+//二维码处理
+const { qrCodeURL,copyQrCode } = useQrCode(questionnaireURL.value)
 
 const DetailInfo = () => {
   localStorage.setItem('isNew','false')
