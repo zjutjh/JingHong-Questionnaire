@@ -49,7 +49,7 @@
               <!-- 根据问题类型渲染组件 -->
               <div v-if="q.question_type === 1">
                 <el-skeleton animated :loading="loading">
-                  <radio v-model:answer="q.answer" v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" v-model:unique="q.unique" v-model:required="q.required" v-model:other-option="q.other_option" v-model:describe="q.describe"></radio>
+                  <radio v-model:answer="q.answer" v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" v-model:unique="q.unique" v-model:required="q.required" v-model:other-option="q.other_option" v-model:describe="q.describe" v-model:questionnaireID = "decryptedId"></radio>
                 </el-skeleton>
               </div>
               <div v-if="q.question_type === 2">
@@ -58,7 +58,7 @@
                     <skeleton-card></skeleton-card>
                   </template>
                   <template #default>
-                <checkbox v-model:answer="q.answer" v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num"  v-model:unique="q.unique" v-model:required="q.required" v-model:other-option="q.other_option" v-model:describe="q.describe"></checkbox>
+                <checkbox v-model:answer="q.answer" v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num"  v-model:unique="q.unique" v-model:required="q.required" v-model:other-option="q.other_option" v-model:describe="q.describe" v-model:questionnaireID = "decryptedId"></checkbox>
                   </template>
                 </el-skeleton>
               </div>
@@ -111,7 +111,7 @@
   </template>
 
   <script lang="ts" setup>
-  import {onMounted, ref,} from "vue";
+  import {onMounted, ref, watch } from "vue";
   import {useRequest} from "vue-hooks-plus";
   import {getUserAPI, setUserSubmitAPI} from "@/apis";
   import {ElNotification} from "element-plus";
@@ -142,6 +142,9 @@
   const decryptedId = ref<string | null>()
   const allowSend = ref(true)
   const isOutDate = ref(false)
+  
+  const optionStore = useMainStore().useOptionStore()
+  const questionnaireStore = useMainStore().useQuetionnaireStore();
 
   onMounted(() => {
     loginStore.setShowHeader(false);
@@ -150,12 +153,22 @@
       // 解密 ID
       idParam = idParam.replace(/ /g, "+");
       decryptedId.value = decryptId(idParam) as string | null;
+      // console.log(decryptedId.value)
       if (decryptedId.value === ""){
         ElNotification.error("无效的问卷id")
       }
     }
     getQuestionnaireView();
   });
+
+  watch(question, (newQuestions) => {
+      newQuestions.forEach(q => {
+          if (q.answer) {
+              questionnaireStore.updateAnswer(decryptedId.value, q.serial_num, q.answer);
+              console.log(questionnaireStore.userAnswer)
+          }
+      });
+  }, { deep: true });
 
   const decryptId = (encryptedId) => {
     try {
@@ -176,13 +189,18 @@
             question.value = formData.value.questions;
             time.value = formData.value.time.replace("T", " ").split("+")[0].split(".")[0]
             submitData.value.id = res.data.id;
-            question.value.forEach((q) => {
-              if(q.question_type === 1){
-                q.answer = ' '
-              } else {
-                q.answer = '';
+            // console.log("问卷id:"+submitData.value.id)
+            question.value.forEach(q => {
+              //获取已存储的答案
+              const storedAnswer = questionnaireStore.searchAnswer(decryptedId.value,q.serial_num)
+              if (storedAnswer) {
+                  q.answer = storedAnswer.answer;
+              }else if (q.question_type===1){
+                q.answer = " ";
+              }else {
+                  q.answer = "";
               }
-            });
+            })
             loading.value = false
           } else if (res.code === 200509){
             isOutDate.value = true
@@ -236,14 +254,18 @@
       onBefore: () => startLoading(),
       onSuccess(res) {
         if (res.code === 200 && res.msg === 'OK') {
+          const imageStore = useMainStore().useImageStore()
           ElNotification.success('提交成功');
+          questionnaireStore.deleteAnswer(decryptedId.value)
+          imageStore.clearFiles()
+          optionStore.deleteOption(decryptedId.value)
           router.push('/Thank');
         } else {
-          ElNotification.error(res.msg );
+          ElNotification.error(res.msg);
         }
       },
       onError(e) {
-        ElNotification.error( e.message);
+        ElNotification.error(e.message);
       },
       onFinally: () => {
         showModal('QuestionnaireSubmit', true);
