@@ -215,7 +215,7 @@
       }
       
       if (q.question_type === 3 && q.answer!== ''  && q.reg && !new RegExp(q.reg).test(q.answer)) {
-        ElNotification.error(`题目 "${q.subject}" 的回答不符合要求.`);
+        ElNotification.error(`第${q.serial_num}题的回答不符合要求.`);
         return true;
       }
     });
