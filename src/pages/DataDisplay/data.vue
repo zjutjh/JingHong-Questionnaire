@@ -1,5 +1,14 @@
 <template>
   <div>
+    <el-dialog v-model="imgVisible" @close = "closeImg()" width="25%">
+      <div class="flex justify-center items-center">
+        <img :src="imgSrc" class="large max-w-full h-auto center">
+      </div>
+      <!-- <div class="flex justify-end mt-30">
+        <button class="btn bg-blue-500 dark-opacity-40 mr-20" @click="copyImgUrl()">复制链接</button>
+        <button class="btn bg-blue-500 dark-opacity-40" @click="copyWholeImg()">复制图片</button>
+      </div> -->
+    </el-dialog>
     <table class="table">
       <thead>
         <tr>
@@ -16,7 +25,13 @@
           <th>{{ index+1 }}</th>
           <th>{{ t }}</th>
           <th   v-for="ans in answers">
-            <overflow-panel :text="ans.answers[index]"/>
+            <div v-if="ans.question_type!==5">
+              <overflow-panel :text="ans.answers[index]"/>
+            </div>
+            <div v-else>
+                <img :src="ans.answers[index]" class="w-16 h-auto md:w-24 lg:w-32"
+                tabindex="0" @click="showImg(ans.answers[index])">
+            </div>
           </th>
         </tr>
       </tbody>
@@ -90,4 +105,38 @@ getAnswers();
 
 watch(props, getAnswers);
 
+//控制完整图显示
+const imgVisible = ref(false)
+const imgSrc = ref('')
+const showImg = (src:string) => {
+  // console.log("showImg")
+  imgVisible.value = true 
+  imgSrc.value = src
+}
+const closeImg = () => {
+  // console.log("closeImg")
+  imgVisible.value = false
+  imgSrc.value = ''
+}
+
+const copyImgUrl = async() => {
+  try{
+    await navigator.clipboard.writeText(imgSrc.value)
+    ElNotification.success('复制成功')
+  }catch{
+    ElNotification.error('复制失败')
+  }
+}
+
+const copyWholeImg = async() => {
+  try{
+    const response = await fetch(imgSrc.value) //连接图片url
+    const blob = await response.blob() //下载图片
+    const tempItem = new ClipboardItem({[blob.type]:blob})
+    await navigator.clipboard.write([tempItem])
+    ElNotification.success('复制成功')
+  }catch{
+    ElNotification.error('复制失败')
+  }
+}
 </script>
