@@ -231,6 +231,11 @@
         ElNotification.error('您有多选题未完成作答.')
         return true;
       }
+      
+      if (q.question_type === 3 && q.answer!== ''  && q.reg && !new RegExp(q.reg).test(q.answer)) {
+        ElNotification.error(`第${q.serial_num}题的回答不符合要求.`);
+        return true;
+      }
     });
     if (hasUnansweredRequiredQuestion) {
       showModal('QuestionnaireSubmit', true);

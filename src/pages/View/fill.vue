@@ -53,6 +53,7 @@ watch(localAnswer, (newAnswer) => {
 
 const validateInput = () => {
   if (props.reg && !new RegExp(props.reg).test(localAnswer.value as string)) {
+    console.log(props.reg)
     errorMessage.value = '输入不符合要求';
   } else {
     errorMessage.value = '';
@@ -63,11 +64,11 @@ const pal = computed(() => {
   if (props.reg === '^1[3456789]\\d{9}$') return '电话';
   else if (props.reg === '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$') return '邮箱';
   else if (props.reg === '^\\d{12}$') return '学号';
-  else if (props.reg === '') return '';
-  else {
+  else if (props.reg === '^.*$') return '';
+  else if (props.reg === "^[0-9]{1}$") {
     const num = props.reg?.[7];
     return num + '位数';
-  }
+  }else return '请看题目规则'
 });
 </script>
 
