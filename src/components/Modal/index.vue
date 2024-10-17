@@ -1,8 +1,8 @@
 <template>
   <dialog :id="modalId" class="modal" >
-    <div class="modal-box p-30" :class="gray ? 'bg-gray-300' : 'bg-red-50'" >
+    <div class="bg-gray-300 dark:bg-customGray_shallow modal-box p-30" >
       <form method="dialog">
-        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 ">✕</button>
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 outline-none">✕</button>
       </form>
       <span class="text-3xl font-bold">
         <slot name="title" ></slot>
@@ -24,5 +24,4 @@ defineProps<{
   modalId: string,
   gray?: boolean,
 }>();
-
 </script>

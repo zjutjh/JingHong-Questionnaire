@@ -1,7 +1,7 @@
 <template>
   <div class="relative cursor-default">
-    <div class="overflowText text-slate-700" @click="showModal">{{ text }}</div>
-    <div class="overflowModal" @mouseout="hideModal">{{ text }}</div>
+    <div class="overflowText text-slate-700 dark:text-white" @click="showModal">{{ text }}</div>
+    <div class="overflowModal dark:text-white" @mouseout="hideModal">{{ text }}</div>
   </div>
 </template>
 
@@ -13,6 +13,7 @@ defineProps<{
 const showModal = (e: MouseEvent) => {
   console.log("debug:1")
   const et = (e.target as HTMLElement).nextElementSibling as HTMLElement;
+  et.classList.add("dark:bg-black")
   et.style.display = "block";
 }
 

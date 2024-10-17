@@ -33,7 +33,7 @@
 2. clone仓库到本地
 3. 切换至dev分支
 4. 在本地dev分支上进行修改
-5. Coding结束后运行`pnpm run lint`进行代码质量检测
+5. Coding结束后运行`pnpm run lint:fix`进行代码质量检测
 6. 提交修改
 7. pr至组织仓库的dev分支
 
