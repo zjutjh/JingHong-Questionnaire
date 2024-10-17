@@ -4,7 +4,7 @@
       <div class="flex-1">
         <a class="btn btn-ghost text-xl">JH Questionnaire Survey System</a>
       </div>
-      <div class="absolute right-180">
+      <div>
         <el-switch
           v-model="darkModeStatus"
           size="large"
