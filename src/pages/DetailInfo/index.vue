@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-center items-start h-screen gap-50 mt-60">
-    <div class="bg-base-200 p-30 rounded-xl shadow-lg w-230 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
+    <div class="bg-base-200 dark:bg-customGray p-30 rounded-xl shadow-lg w-230 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
       <span class="flex justify-center items-center  gap-10"><el-icon @click="showModal('setting')"><Setting /></el-icon><span class="text-2xl">添加问卷题目</span></span>
       <div class="p-20">
         <div class="flex-col justify-center items-center">
@@ -28,8 +28,12 @@
         <div v-show="selectedOption === 3">
           <div class="divider"></div>
           <div class="flex gap-10 my-5">
-            <input type="radio" name="radio-2" class="radio-sm" value="" v-model="reg"/>
+            <input type="radio" name="radio-2" class="radio-sm" value="^.*$" v-model="reg"/>
             <span>无限制</span>
+          </div>
+          <div class="flex gap-10 my-5">
+            <input type="radio" name="radio-2" class="radio-sm" value="" v-model="reg"/>
+            <span>自定义</span>
           </div>
           <div class="flex gap-10 my-5">
             <input type="radio" name="radio-2" class="radio-sm" value="^1[3456789]\d{9}$" v-model="reg"/>
@@ -66,18 +70,23 @@
         </div>
       </div>
       <div class="flex justify-center items-center">
-        <button class="btn btn-accent" @click="addQuestion">添加题目</button>
+        <button class="btn btn-accent dark:opacity-75 dark:text-white" @click="addQuestion">添加题目</button>
       </div>
     </div>
+    <!-- 自定义正则输入框
+    <div class="bg-base-200 dark:bg-customGray h-200 w-full mt-4 p-4">
+      <input  type="text" v-model="regCustomise" placeholder="请输入自定义正则" class="w-full h-full border border-gray-300 rounded-md p-2"/>
+    </div> -->
     <div class="p-40">
-      <div class="bg-base-200 w-750 p-40 shadow-lg rounded-xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700 ">
+      <div class="bg-base-200 dark:bg-customGray w-750 p-40 shadow-lg rounded-xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700 ">
         <div class="flex-col justify-center">
           <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
             <template #default>
-          <span class="flex gap-20 items-center"><span class="text-2xl">问卷标题</span><input type="text" placeholder="标题" class="input input-bordered w-300" v-model="submitData.title" /></span>
+          <span class="flex gap-20 items-center"><span class="text-2xl">问卷标题</span><input type="text" placeholder="标题" 
+          class="input input-bordered dark:bg-customGray_shallow w-300" v-model="submitData.title" /></span>
           <div class="flex items-top gap-20  my-15" >
             <span>问卷内容描述</span>
-            <textarea class="textarea textarea-bordered w-300" placeholder="描述问卷" v-model="submitData.desc" ></textarea>
+            <textarea class="dark:bg-customGray_shallow textarea textarea-bordered w-300" placeholder="描述问卷" v-model="submitData.desc" ></textarea>
           </div>
           <div class="flex gap-20 items-center my-15">
           <span >问卷截止时间</span>
@@ -85,6 +94,7 @@
               v-model="time"
               type="datetime"
               placeholder="截止时间"
+              :clearable="false"
           />
             </div>
             </template>
@@ -99,6 +109,13 @@
               group="people"
               @update="onUpdate"
           >-->
+          <VueDraggableNext 
+            v-model="question"
+            :animation="300" 
+            ghost-class="ghost"
+            @end="updateQuestionSerialNumbers"
+          >
+          
           <div v-for="q in question" :key="q.serial_num" >
             <!-- 根据问题类型渲染组件 -->
             <div v-if="q.question_type === 1">
@@ -147,13 +164,16 @@
               </el-skeleton>
             </div>
           </div>
-          <!--</VueDraggable>-->
+          </VueDraggableNext>
         </div>
         <div class="flex justify-center items-center gap-160 mt-20">
-          <button class="btn btn-success" @click="showModal('SaveQuestionnaireSubmit')" v-show="isNew === 'false'">保存更改</button>
-          <button class="btn btn-error" @click="showModal('reverseQuestionnaireSubmit')" v-show="isNew === 'false'">放弃更改</button>
-          <button class="btn btn-success" @click="submit(1)" v-show="isNew === 'true'">保存</button>
-          <button class="btn btn-primary" @click="showModal('NewQuestionnaireSubmit')" v-show="isNew === 'true'">发布</button>
+          <button class="btn btn-success dark:opacity-75 dark:text-white"
+          @click="showModal('SaveQuestionnaireSubmit')" v-show="isNew === 'false'">保存更改</button>
+          <button class="btn btn-error dark:opacity-75 dark:text-white"
+          @click="showModal('reverseQuestionnaireSubmit')" v-show="isNew === 'false'">放弃更改</button>
+          <button class="btn btn-success dark:opacity-75 dark:text-white" @click="submit(1)" v-show="isNew === 'true'">保存</button>
+          <button class="btn btn-primary dark:opacity-75 dark:text-white"
+          @click="showModal('NewQuestionnaireSubmit')" v-show="isNew === 'true'">发布</button>
         </div>
       </div>
     </div>
@@ -161,9 +181,9 @@
       <template #title>设置</template>
       <template #default>
       <div class="flex gap-20 p-10">
-        <span class="flex items-center gap-10"><span>默认唯一</span><input type="checkbox" class="checkbox" v-model="setting.isUnique"/></span>
-        <span class="flex items-center gap-10"><span>默认必答</span><input type="checkbox" class="checkbox" v-model="setting.isRequired"/></span>
-        <span class="flex items-center gap-10"><span>默认有"其他"选项</span><input type="checkbox" class="checkbox" v-model="setting.isOtherOptions"/></span>
+        <span class="flex items-center gap-10"><span>默认唯一</span><input type="checkbox" class="checkbox  dark:bg-customGray_more_shallow" v-model="setting.isUnique"/></span>
+        <span class="flex items-center gap-10"><span>默认必答</span><input type="checkbox" class="checkbox  dark:bg-customGray_more_shallow" v-model="setting.isRequired"/></span>
+        <span class="flex items-center gap-10"><span>默认有"其他"选项</span><input type="checkbox" class="checkbox  dark:bg-customGray_more_shallow" v-model="setting.isOtherOptions"/></span>
       </div>
       </template>
     </modal>
@@ -182,7 +202,7 @@
         确认要保存更改吗?
       </template>
       <template #action>
-        <button class="btn btn-success w-80" @click="submit">确认</button>
+        <button class="btn btn-success dark:opacity-75 w-80" @click="submit">确认</button>
       </template>
     </modal>
     <modal modal-id="reverseQuestionnaireSubmit">
@@ -191,7 +211,7 @@
         确认要放弃更改?
       </template>
       <template #action>
-        <button class="btn btn-success w-80" @click="dataReverse">确认</button>
+        <button class="btn btn-error dark:opacity-75 w-80" @click="dataReverse">确认</button>
       </template>
     </modal>
   </div>
@@ -212,6 +232,7 @@ import radio from "@/pages/DetailInfo/radio.vue";
 import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 import router from "@/router";
 import {closeLoading, startLoading} from "@/utilities";
+import {VueDraggableNext} from "vue-draggable-next"
 
 const selectedOption = ref(1);
 const selectedNumber = ref(1);
@@ -221,7 +242,7 @@ const title = ref();
 const submitData = ref();
 const id = ref<number>();
 const reg = ref<string>('');
-const regNum = ref("^[0-9]{1}$");
+const regNum = ref('^[0-9]{1}$');
 const time = ref();
 const loading = ref(true)
 const setting = reactive({
@@ -279,7 +300,7 @@ const getInfo = () => {
     onBefore: () => startLoading(),
     onSuccess(res) {
       if (res.code === 200) {
-        console.log(res.data);
+        // console.log(res.data);
         const formDataCopy = deepCopy(res.data); // Use deep copy here
         if (formDataCopy.questions) {
           formDataCopy.questions.forEach((item) => {
@@ -332,6 +353,12 @@ const addQuestion = () => {
     unique: setting.isUnique,
   });
 
+  question.value.forEach((q, index) => {
+    q.serial_num = index + 1;
+  });
+
+  // console.log(question.value)
+
   // 等待 DOM 更新完成后再执行滚动
   nextTick(() => {
     if (questionnaireContainer.value) {
@@ -346,7 +373,7 @@ const cleanReg = () => {
 watch(selectedOption, cleanReg);
 
 const deleteQuestion = (serial_num: number) => {
-  console.log(serial_num);
+  // console.log(serial_num);
     question.value = question.value.filter((item) => item.serial_num !== serial_num);
     question.value.forEach((item) => {
       if (item.serial_num > serial_num) {
@@ -359,7 +386,7 @@ const dataReverse = () => {
   submitData.value = deepCopy(formData.value);
   question.value = deepCopy(formData.value.questions);
   time.value = submitData.value.time
-  console.log(question.value);
+  // console.log(question.value);
   ElNotification.success('成功放弃修改');
   showModal('reverseQuestionnaireSubmit',true)
   router.push('/admin')
@@ -368,7 +395,7 @@ const dataReverse = () => {
 const submit = (state:number) => {
   submitData.value.time = time.value
   submitData.value.questions = question.value;
-  console.log(question.value);
+  // console.log(question.value);
   if(isNew === 'false') {
     useRequest(() => setQuestionnaireDetailAPI(submitData.value), {
       onBefore: () => startLoading(),
@@ -415,14 +442,29 @@ const submit = (state:number) => {
   }
 };
 
-/**const onUpdate = () => {
-  question.value.forEach((q, idx) => {
-    q.serial_num = idx + 1;
-  });
-};**/
+// //调试 监听reg
+// watch(question, (newQuestions) => {
+//   newQuestions.forEach((q, index) => {
+//     // 监听每个问题的 reg 值
+//     watch(() => q.reg, (newReg) => {
+//       console.log(`问题 ${index + 1} 的正则表达式变化为: ${newReg}`);
+//       // 在这里添加处理逻辑，比如更新状态或执行其他操作
+//     });
+//   });
+// }, { deep: true });
 
+//修改serial_numquestion.value =[...question.value]
+const updateQuestionSerialNumbers = () => {
+  // console.log(question.value)
+  question.value.forEach((q, index) => {
+    q.serial_num = index + 1;
+  });
+}
 
 </script>
 
 <style scoped>
+.ghost {
+  opacity: 0.4;
+}
 </style>
