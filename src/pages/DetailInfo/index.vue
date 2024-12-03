@@ -88,15 +88,19 @@
             <span>问卷内容描述</span>
             <textarea class="dark:bg-customGray_shallow textarea textarea-bordered w-300" placeholder="描述问卷" v-model="submitData.desc" ></textarea>
           </div>
-          <div class="flex gap-20 items-center my-15">
-          <span >问卷截止时间</span>
-          <el-date-picker
-              v-model="time"
-              type="datetime"
-              placeholder="截止时间"
-              :clearable="false"
-          />
-            </div>
+
+              <div class="flex  items-center my-15 gap-40">
+                <span class="flex  items-center gap-15">每日最多提交<input type="text"  class="input input-bordered dark:bg-customGray_shallow w-50" /></span><span class="flex  items-center gap-20">是否统一登录<input type="checkbox" class="checkbox-sm my-5" /></span>
+              </div>
+              <div class="flex gap-20 items-center my-15">
+                <span >问卷截止时间</span>
+                <el-date-picker
+                    v-model="time"
+                    type="datetime"
+                    placeholder="截止时间"
+                    :clearable="false"
+                />
+              </div>
             </template>
           </el-skeleton>
         </div>
@@ -233,7 +237,9 @@ import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 import router from "@/router";
 import {closeLoading, startLoading} from "@/utilities";
 import {VueDraggableNext} from "vue-draggable-next"
+import {useMainStore} from "@/stores";
 
+const tempStore = useMainStore().useTempStore()
 const selectedOption = ref(1);
 const selectedNumber = ref(1);
 const formData = ref();
@@ -273,7 +279,10 @@ onMounted(() => {
       questions: [],
       status: -1,
       time: '',
-      title: ''
+      title: '',
+      day_limit: 0,
+      survey_type: tempStore.surveyType.value,
+      verify: false
     }
     loading.value = false
   }
