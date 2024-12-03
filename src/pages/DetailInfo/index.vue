@@ -82,7 +82,7 @@
         <div class="flex-col justify-center">
           <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
             <template #default>
-          <span class="flex gap-20 items-center"><span class="text-2xl">问卷标题</span><input type="text" placeholder="标题" 
+          <span class="flex gap-20 items-center"><span class="text-2xl">问卷标题</span><input type="text" placeholder="标题"
           class="input input-bordered dark:bg-customGray_shallow w-300" v-model="submitData.title" /></span>
           <div class="flex items-top gap-20  my-15" >
             <span>问卷内容描述</span>
@@ -109,13 +109,13 @@
               group="people"
               @update="onUpdate"
           >-->
-          <VueDraggableNext 
+          <VueDraggableNext
             v-model="question"
-            :animation="300" 
+            :animation="300"
             ghost-class="ghost"
             @end="updateQuestionSerialNumbers"
           >
-          
+
           <div v-for="q in question" :key="q.serial_num" >
             <!-- 根据问题类型渲染组件 -->
             <div v-if="q.question_type === 1">
@@ -395,7 +395,7 @@ const dataReverse = () => {
 const submit = (state:number) => {
   submitData.value.time = time.value
   submitData.value.questions = question.value;
-  // console.log(question.value);
+   console.log(question.value);
   if(isNew === 'false') {
     useRequest(() => setQuestionnaireDetailAPI(submitData.value), {
       onBefore: () => startLoading(),

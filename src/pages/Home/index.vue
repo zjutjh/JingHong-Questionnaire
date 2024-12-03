@@ -23,14 +23,29 @@
       />
       </el-skeleton>
     </div>
+    <modal :modal-id="'select'">
+      <template #title>创建问卷</template>
+      <template #default>
+      <span class="flex justify-between items-center">请选择创建问卷的类型
+        <el-radio-group v-model="surveyType" style="margin-left: 20px" >
+          <el-radio-button value="0" size="large" label="调研问卷" />
+          <el-radio-button value="1" size="large" label="投票问卷" />
+        </el-radio-group>
+      </span>
+      </template>
+      <template #action>
+        <div class="btn btn-success dark:opacity-70 dark:text-white w-80" @click="newQues">创建</div>
+      </template>
+    </modal>
   </div>
 </template>
 
 <script setup lang="ts">
+import { modal, showModal } from '@/components';
 import questionnaireItem from './questionnaireItem.vue';
 import { useRequest } from 'vue-hooks-plus';
 import { getQuestionnaireListAPI } from '@/apis';
-import {onMounted, ref} from 'vue';
+import {nextTick, onMounted, ref} from 'vue';
 import router from '@/router';
 import {closeLoading, startLoading} from "@/utilities";
 import { useMainStore } from '@/stores';
@@ -42,6 +57,7 @@ const pageSize = 4;
 const totalPageNum = ref(1);
 const questionnaireList = ref();
 const loading = ref(true);
+const surveyType = ref(-1)
 onMounted(() => {
   loginStore.setShowHeader(true);
 })
@@ -70,8 +86,12 @@ const handleCurrentChange = (val: number) => {
 }
 
 const addNewQuestionnaire = () => {
+  showModal("select")
+}
+
+const newQues = () => {
+  showModal('select', true)
   localStorage.setItem('isNew','true')
   router.push('/admin/DetailInfo')
 }
-
 </script>
