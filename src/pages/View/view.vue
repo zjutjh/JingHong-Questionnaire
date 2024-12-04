@@ -22,7 +22,7 @@
 
           </div>
 
-          
+
           <el-image class="w-2/3" src="https://img.lonesome.cn/jhwl/project/questionnaire/jxh_logo.webp" />
         </div>
         <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
@@ -99,11 +99,24 @@
     </div>
       <modal modal-id="QuestionnaireSubmit">
         <template #title><span class="text-red-950 dark:text-red-500">提交问卷</span></template>
-        <template #default>
+
+        <template #default v-if="formData && !formData.verify">
           你确认要提交问卷吗?
         </template>
+        <template #default v-else>
+          <div class="flex-col">
+          <div>
+          该问卷提交需要统一登录认证
+          </div>
+          <div class="flex-col my-10">
+            <span>学号 &ensp; &ensp;<input class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10 w-2/3" v-modal="verifyData.stu_id" /></span><br/>
+            <span>密码 &ensp; &ensp;<input class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10 w-2/3" v-model="verifyData.password" /></span>
+          </div>
+          </div>
+        </template>
         <template #action>
-          <button class="btn bg-red-800 text-red-50 w-full" @click="submit">确认</button>
+          <button class="btn bg-red-800 text-red-50 w-full" @click="submit"  v-if="formData && !formData.verify">确认</button>
+          <button class="btn bg-red-800 text-red-50 w-full" @click="verify" v-else>确认</button>
         </template>
       </modal>
     </div>
@@ -127,7 +140,11 @@
   import {closeLoading, startLoading} from "@/utilities";
   import CryptoJS from 'crypto-js';
   import {useMainStore} from "@/stores";
-
+  //暗黑模式hook
+  import { useDarkModeSwitch } from "@/utilities/darkModeSwitch";
+  import {Discount} from "@element-plus/icons-vue";
+  import verifyAPI from "@/apis/service/User/verifyApi.ts";
+  const {darkModeStatus,switchDarkMode} = useDarkModeSwitch()
   const Key = 'JingHong';
   const formData = ref();
   const question = ref<any[]>([]);
@@ -142,10 +159,13 @@
   const decryptedId = ref<string | null>()
   const allowSend = ref(true)
   const isOutDate = ref(false)
-  
+  const verifyData = ref({
+    stu_id: "",
+    password: "",
+    survey: decryptedId.value
+  })
   const optionStore = useMainStore().useOptionStore()
-  const questionnaireStore = useMainStore().useQuetionnaireStore();
-
+  const questionnaireStore = useMainStore().useQuetionnaireStore()
   onMounted(() => {
     loginStore.setShowHeader(false);
     let idParam = route.query.id as string | undefined;
@@ -161,6 +181,17 @@
     getQuestionnaireView();
   });
 
+  const verify = () => {
+    useRequest(() => verifyAPI(verifyData.value),{
+      onSuccess(res){
+        if(res.code === 200){
+          submit()
+        } else {
+          ElNotification.error(res.msg)
+        }
+      }
+    })
+  }
   watch(question, (newQuestions) => {
       newQuestions.forEach(q => {
           if (q.answer) {
@@ -231,7 +262,7 @@
         ElNotification.error('您有多选题未完成作答.')
         return true;
       }
-      
+
       if (q.question_type === 3 && q.answer!== ''  && q.reg && !new RegExp(q.reg).test(q.answer)) {
         ElNotification.error(`第${q.serial_num}题的回答不符合要求.`);
         return true;
@@ -279,11 +310,9 @@
     });
   };
 
-  //暗黑模式hook
-  import { useDarkModeSwitch } from "@/utilities/darkModeSwitch";
-  const {darkModeStatus,switchDarkMode} = useDarkModeSwitch()
 
-  
+
+
 
   </script>
 
