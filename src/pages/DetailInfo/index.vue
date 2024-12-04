@@ -90,7 +90,7 @@
           </div>
 
               <div class="flex  items-center my-15 gap-40">
-                <span class="flex  items-center gap-15">每日最多提交<input type="text"  class="input input-bordered dark:bg-customGray_shallow w-50" /></span><span class="flex  items-center gap-20">是否统一登录<input type="checkbox" class="checkbox-sm my-5" /></span>
+                <span class="flex  items-center gap-15">每日最多提交<input type="text" v-model.number="submitData.day_limit" class="input input-bordered dark:bg-customGray_shallow w-50"  /></span><span class="flex  items-center gap-20">是否统一登录<input type="checkbox" class="checkbox-sm my-5" v-model="submitData.verify" /></span>
               </div>
               <div class="flex gap-20 items-center my-15">
                 <span >问卷截止时间</span>
@@ -133,7 +133,7 @@
                   <skeleton-card></skeleton-card>
                 </template>
                 <template #default>
-              <checkbox v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description"></checkbox>
+              <checkbox v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description" v-model:maximum_option="q.maximum_option" v-model:minimum_option="q.minimum_option"></checkbox>
                 </template>
               </el-skeleton>
             </div>

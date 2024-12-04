@@ -11,8 +11,8 @@
           <textarea type="text" placeholder="Describe" class="dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70 " v-model="localDescribe"/>
         </div>
         <span class="my-10 flex justify-between">
-          <span>最大多选数<input type="text" class="dark:bg-customGray_more_shallow input  shadow-md w-45 h-40 ml-10" v-model="localMax"/></span>
-          <span>最小多选数<input type="text" class="dark:bg-customGray_more_shallow input  shadow-md w-45 h-40 ml-10" v-model="localMin"/></span>
+          <span>最大多选数<input type="text" class="dark:bg-customGray_more_shallow input  shadow-md w-55 h-40 ml-10" v-model.number="localMax"/></span>
+          <span>最小多选数<input type="text" class="dark:bg-customGray_more_shallow input  shadow-md w-55 h-40 ml-10" v-model.number="localMin"/></span>
         </span>
       </div>
       <div class="flex-col justify-center items-center">
@@ -67,8 +67,8 @@ const props = defineProps<{
   unique: boolean,
   otherOption: boolean,
   describe: string,
-  max: number,
-  min: number,
+  maximum_option: number,
+  minimum_option: number,
   options?: {
     content: string;
     img: string;
@@ -86,8 +86,8 @@ const localUnique = ref<boolean>(props.unique);
 const localOtherOption = ref<boolean>(props.otherOption);
 const localDescribe = ref<string>(props.describe || '');
 const localOptions = ref(props.options );
-const localMax = ref(props.max)
-const localMin = ref(props.min)
+const localMax = ref(props.maximum_option)
+const localMin = ref(props.minimum_option)
 
 
 const handleFileChange = async (event, serial_num: number) => {
@@ -174,6 +174,14 @@ watch(localUnique, (newUnique) => {
 watch(localDescribe, (newLocalDescribe) => {
   emits('update:describe', newLocalDescribe);
 });
+watch(localMin, (newMin) => {
+  emits('update:minimum_option', Number(newMin));
+});
+
+watch(localMax, (newMax) => {
+  emits('update:maximum_option', Number(newMax));
+});
+
 
 watch(localOtherOption, (newOtherOption) => {
   emits('update:otherOption', newOtherOption);
