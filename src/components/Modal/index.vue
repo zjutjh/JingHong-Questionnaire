@@ -7,7 +7,7 @@
       <span class="text-3xl font-bold">
         <slot name="title" ></slot>
       </span>
-      <div class="flex items-center my-20 text-lg">
+      <div class="  my-20 text-lg flex-warp ">
         <slot></slot>
       </div>
       <div class="modal-action flex justify-end gap-10" :class="[centerBtn ? 'flex justify-center' : undefined]">

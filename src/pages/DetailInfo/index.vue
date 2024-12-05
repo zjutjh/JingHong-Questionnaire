@@ -82,21 +82,25 @@
         <div class="flex-col justify-center">
           <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
             <template #default>
-          <span class="flex gap-20 items-center"><span class="text-2xl">问卷标题</span><input type="text" placeholder="标题" 
+          <span class="flex gap-20 items-center"><span class="text-2xl">问卷标题</span><input type="text" placeholder="标题"
           class="input input-bordered dark:bg-customGray_shallow w-300" v-model="submitData.title" /></span>
           <div class="flex items-top gap-20  my-15" >
             <span>问卷内容描述</span>
             <textarea class="dark:bg-customGray_shallow textarea textarea-bordered w-300" placeholder="描述问卷" v-model="submitData.desc" ></textarea>
           </div>
-          <div class="flex gap-20 items-center my-15">
-          <span >问卷截止时间</span>
-          <el-date-picker
-              v-model="time"
-              type="datetime"
-              placeholder="截止时间"
-              :clearable="false"
-          />
-            </div>
+
+              <div class="flex  items-center my-15 gap-40">
+                <span class="flex  items-center gap-15">每日最多提交<input type="text" v-model.number="submitData.day_limit" class="input input-bordered dark:bg-customGray_shallow w-50"  /></span><span class="flex  items-center gap-20">是否统一登录<input type="checkbox" class="checkbox-sm my-5" v-model="submitData.verify" /></span>
+              </div>
+              <div class="flex gap-20 items-center my-15">
+                <span >问卷截止时间</span>
+                <el-date-picker
+                    v-model="time"
+                    type="datetime"
+                    placeholder="截止时间"
+                    :clearable="false"
+                />
+              </div>
             </template>
           </el-skeleton>
         </div>
@@ -109,13 +113,13 @@
               group="people"
               @update="onUpdate"
           >-->
-          <VueDraggableNext 
+          <VueDraggableNext
             v-model="question"
-            :animation="300" 
+            :animation="300"
             ghost-class="ghost"
             @end="updateQuestionSerialNumbers"
           >
-          
+
           <div v-for="q in question" :key="q.serial_num" >
             <!-- 根据问题类型渲染组件 -->
             <div v-if="q.question_type === 1">
@@ -129,7 +133,7 @@
                   <skeleton-card></skeleton-card>
                 </template>
                 <template #default>
-              <checkbox v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description"></checkbox>
+              <checkbox v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num" @on-click="deleteQuestion(q.serial_num)" v-model:unique="q.unique" v-model:option-choose="q.required" v-model:other-option="q.other_option" v-model:describe="q.description" v-model:maximum_option="q.maximum_option" v-model:minimum_option="q.minimum_option"></checkbox>
                 </template>
               </el-skeleton>
             </div>
@@ -233,7 +237,9 @@ import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 import router from "@/router";
 import {closeLoading, startLoading} from "@/utilities";
 import {VueDraggableNext} from "vue-draggable-next"
+import {useMainStore} from "@/stores";
 
+const tempStore = useMainStore().useTempStore()
 const selectedOption = ref(1);
 const selectedNumber = ref(1);
 const formData = ref();
@@ -273,7 +279,10 @@ onMounted(() => {
       questions: [],
       status: -1,
       time: '',
-      title: ''
+      title: '',
+      day_limit: 0,
+      survey_type: tempStore.surveyType.value,
+      verify: false
     }
     loading.value = false
   }
@@ -395,7 +404,7 @@ const dataReverse = () => {
 const submit = (state:number) => {
   submitData.value.time = time.value
   submitData.value.questions = question.value;
-  // console.log(question.value);
+   console.log(question.value);
   if(isNew === 'false') {
     useRequest(() => setQuestionnaireDetailAPI(submitData.value), {
       onBefore: () => startLoading(),

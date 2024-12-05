@@ -19,6 +19,7 @@
     </div>
     <div class="divider my-5"></div>
     <div class="flex-col p-5 h-auto">
+      <span class="dark:opacity-80 text-gray-700 dark:text-gray-400 text-sm my-5" v-if="props.minimum_option !== 0">最少选 {{ props.minimum_option }} 个&ensp;</span><span class="dark:opacity-80 text-gray-700 dark:text-gray-400 text-sm my-5" v-if="props.maximum_option !== 0">最多选 {{ props.maximum_option }} 个</span>
       <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
         <input type="checkbox" :name="props.serial_num" class="my-5" style="zoom: 140%" :value="item.content" v-model="answerArr"/>
         <span v-if="item.content" class="text-sm">{{ item.content }}</span>
@@ -52,6 +53,8 @@ const props = defineProps<{
   otherOption: boolean,
   describe: string,
   answer: string,
+  maximum_option: number,
+  minimum_option: number,
   options?: {
     content: string;
     img: string;
