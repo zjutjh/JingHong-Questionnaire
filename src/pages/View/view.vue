@@ -36,9 +36,12 @@
                 </div>
               </div>
             </div>
-            <div class="flex gap-20 items-center my-10  ml-20 mt-20">
+            <div class="flex gap-20 items-center my-10  ml-20 ">
               <span class="text-red-950 dark:text-red-400 dark:opacity-80">截止时间:</span>
               <span>{{ time }}</span>
+            </div>
+            <div class="flex gap-20 items-center my-10  ml-20 " v-if="formData.daily_limit !== 0">
+              <span class=" dark:opacity-80 text-gray-700 dark:text-gray-400" >本问卷每天最多提交 <span class="text-red-950 dark:text-red-400 dark:opacity-80">{{ formData.daily_limit }} </span> 次</span>
             </div>
             <div class="divider my-10"></div>
           </template>
@@ -58,7 +61,7 @@
                     <skeleton-card></skeleton-card>
                   </template>
                   <template #default>
-                <checkbox v-model:answer="q.answer" v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num"  v-model:unique="q.unique" v-model:required="q.required" v-model:other-option="q.other_option" v-model:describe="q.describe" v-model:questionnaireID = "decryptedId"></checkbox>
+                <checkbox v-model:answer="q.answer" v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num"  v-model:unique="q.unique" v-model:required="q.required" v-model:other-option="q.other_option" v-model:describe="q.describe" v-model:questionnaireID = "decryptedId" v-model:minimum_option="q.minimum_option" v-model:maximum_option="q.maximum_option"></checkbox>
                   </template>
                 </el-skeleton>
               </div>
@@ -94,13 +97,13 @@
               </div>
           </div>
           <div class="flex justify-center items-center py-50">
-            <button class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75" @click="showModal('QuestionnaireSubmit')" v-if="decryptedId !== '' && !isOutDate"  >提交问卷</button>
+            <button class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75 hover:bg-red-600" @click="showModal('QuestionnaireSubmit')" v-if="decryptedId !== '' && !isOutDate"  >提交问卷</button>
           </div>
     </div>
       <modal modal-id="QuestionnaireSubmit">
-        <template #title><span class="text-red-950 dark:text-red-500">提交问卷</span></template>
+        <template #title><span class="text-red-950 dark:text-red-500 ">提交问卷</span></template>
 
-        <template #default v-if="formData && !formData.verify">
+        <template #default v-if="formData && !formData.verify || stu_id">
           你确认要提交问卷吗?
         </template>
         <template #default v-else>
@@ -109,14 +112,14 @@
           该问卷提交需要统一登录认证
           </div>
           <div class="flex-col my-10">
-            <span>学号 &ensp; &ensp;<input class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10 w-2/3" v-modal="verifyData.stu_id" /></span><br/>
+            <span>学号 &ensp; &ensp;<input class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10 w-2/3" v-model="verifyData.stu_id" /></span><br/>
             <span>密码 &ensp; &ensp;<input class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10 w-2/3" v-model="verifyData.password" /></span>
           </div>
           </div>
         </template>
         <template #action>
-          <button class="btn bg-red-800 text-red-50 w-full" @click="submit"  v-if="formData && !formData.verify">确认</button>
-          <button class="btn bg-red-800 text-red-50 w-full" @click="verify" v-else>确认</button>
+          <button class="btn bg-red-800 text-red-50 w-full hover:bg-red-600" @click="submit"  v-if="formData && !formData.verify || stu_id">确认</button>
+          <button class="btn bg-red-800 text-red-50 w-full hover:bg-red-600" @click="verify" v-else>确认</button>
         </template>
       </modal>
     </div>
@@ -159,10 +162,11 @@
   const decryptedId = ref<string | null>()
   const allowSend = ref(true)
   const isOutDate = ref(false)
-  const verifyData = ref({
+  const stu_id = localStorage.getItem("stu_id")
+  const verifyData = ref( {
     stu_id: "",
     password: "",
-    survey: decryptedId.value
+    survey_id: -1
   })
   const optionStore = useMainStore().useOptionStore()
   const questionnaireStore = useMainStore().useQuetionnaireStore()
@@ -174,6 +178,7 @@
       idParam = idParam.replace(/ /g, "+");
       decryptedId.value = decryptId(idParam) as string | null;
       // console.log(decryptedId.value)
+      verifyData.value.survey_id = Number(decryptedId.value)
       if (decryptedId.value === ""){
         ElNotification.error("无效的问卷id")
       }
@@ -185,6 +190,7 @@
     useRequest(() => verifyAPI(verifyData.value),{
       onSuccess(res){
         if(res.code === 200){
+          localStorage.setItem("stu_id", verifyData.value.stu_id)
           submit()
         } else {
           ElNotification.error(res.msg)

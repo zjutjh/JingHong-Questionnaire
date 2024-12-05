@@ -26,7 +26,7 @@
     <modal :modal-id="'select'">
       <template #title>创建问卷</template>
       <template #default>
-      <span class="flex justify-between items-center">请选择创建问卷的类型
+      <span class="flex items-center">请选择创建问卷的类型
         <el-radio-group v-model="surveyType" style="margin-left: 30px" >
           <el-radio-button value="0" size="middle" label="调研问卷" />
           <el-radio-button value="1" size="middle" label="投票问卷" />

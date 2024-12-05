@@ -10,7 +10,7 @@ const urlde =
 type verifyData = {
   stu_id: string,
   password :string,
-  survey: number
+  survey_id: number
 }
 const verifyAPI = (data: verifyData ) => {
   return request("/api/user/oauth", {
