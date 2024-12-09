@@ -45,7 +45,7 @@ import { modal, showModal } from '@/components';
 import questionnaireItem from './questionnaireItem.vue';
 import { useRequest } from 'vue-hooks-plus';
 import { getQuestionnaireListAPI } from '@/apis';
-import {nextTick, onMounted, ref} from 'vue';
+import {nextTick, onMounted, ref, watch} from 'vue';
 import router from '@/router';
 import {closeLoading, startLoading} from "@/utilities";
 import { useMainStore } from '@/stores';
@@ -57,7 +57,10 @@ const pageSize = 4;
 const totalPageNum = ref(1);
 const questionnaireList = ref();
 const loading = ref(true);
-const surveyType = ref(tempStore.surveyType.value)
+const surveyType = ref(tempStore.surveyType)
+watch(surveyType, () => {
+  tempStore.surveyType = surveyType
+})
 onMounted(() => {
   loginStore.setShowHeader(true);
 })
