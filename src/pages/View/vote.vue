@@ -24,11 +24,11 @@
       <div v-for="(item, index) in localOptions" :key="item.serial_num" class="flex items-center justify-center my-10 w-1/2">
 
         <div class="  rounded" style="width: 90%" >
-          <div class="border-red-300 border-2 dark:border-0">
+          <div class="border-red-300 border-2 dark:border-0 ">
             <img v-if="item.img" :src="item.img" alt="Preview" style="width: 100%" />
-          <span class="flex gap-8 items-center justify-center border-t-2 border-red-300 dark:border-0" style="flex: 0.5">
+          <span class="flex gap-8 items-center justify-center border-t-2 border-red-300 dark:border-0 bg-red-100 dark:bg-customGray_shallow" style="flex: 0.5">
             <input type="checkbox" :name="props.serial_num" class="my-5" style="zoom: 140%" :value="item.content" v-model="answerArr"/>
-            <span v-if="item.content" class="text-sm">{{ item.content }}</span>
+            <span v-if="item.content" class="text-sm ">{{ item.content }}</span>
           </span>
           </div>
           <span class="text-sm text-gray-400 flex items-center gap-20 justify-center mt-5" v-if="count !== undefined">

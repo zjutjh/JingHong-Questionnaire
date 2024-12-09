@@ -123,7 +123,7 @@
       <modal modal-id="QuestionnaireSubmit">
         <template #title><span class="text-red-950 dark:text-red-500 ">提交问卷</span></template>
 
-        <template #default v-if="formData && !formData.verify || stu_id">
+        <template #default v-if="formData && !formData.verify || !tokenOutDate">
           你确认要提交问卷吗?
         </template>
         <template #default v-else>
@@ -138,7 +138,7 @@
           </div>
         </template>
         <template #action>
-          <button class="btn bg-red-800 text-red-50 w-full hover:bg-red-600" @click="submit"  v-if="formData && !formData.verify || stu_id">确认</button>
+          <button class="btn bg-red-800 text-red-50 w-full hover:bg-red-600" @click="submit"  v-if="formData && !formData.verify || !tokenOutDate">确认</button>
           <button class="btn bg-red-800 text-red-50 w-full hover:bg-red-600" @click="verify" v-else>确认</button>
         </template>
       </modal>
@@ -148,7 +148,7 @@
   </template>
 
   <script lang="ts" setup>
-  import {nextTick, onMounted, ref, watch} from "vue";
+  import {computed, nextTick, onMounted, ref, watch} from "vue";
   import {useRequest} from "vue-hooks-plus";
   import {getUserAPI, setUserSubmitAPI} from "@/apis";
   import {ElNotification} from "element-plus";
@@ -185,7 +185,6 @@
   const decryptedId = ref<string | null>()
   const allowSend = ref(true)
   const isOutDate = ref(false)
-  const stu_id = localStorage.getItem("stu_id")
   const verifyData = ref( {
     stu_id: "",
     password: "",
@@ -209,18 +208,42 @@
     getQuestionnaireView();
   });
 
+  const tokenOutDate = computed(() => {
+    const lastDate = localStorage.getItem('timestamp');
+
+    // 如果没有存储时间戳（首次请求或过期），调用 verifyAPI
+    if (!lastDate || Date.now() - parseInt(lastDate) > 7 * 24 * 60 * 60 * 1000){
+      return true
+    } else {
+      return false
+    }
+  });
+
   const verify = () => {
-    useRequest(() => verifyAPI(verifyData.value),{
-      onSuccess(res){
-        if(res.code === 200){
-          localStorage.setItem("stu_id", verifyData.value.stu_id)
-          submit()
-        } else {
-          ElNotification.error(res.msg)
+    const lastDate = localStorage.getItem('timestamp');
+
+    // 如果没有存储时间戳（首次请求或过期），调用 verifyAPI
+    if (!lastDate || Date.now() - parseInt(lastDate) > 7 * 24 * 60 * 60 * 1000) {
+      // 调用 verifyAPI 获取新的 token
+      useRequest(() => verifyAPI(verifyData.value), {
+        onSuccess(res) {
+          if (res.code === 200) {
+            // 更新 token 和 timestamp
+            localStorage.setItem('token', res.data.token);
+            localStorage.setItem('timestamp', String(Date.now()));
+            submit();
+          } else {
+            ElNotification.error(res.msg);
+          }
         }
-      }
-    })
-  }
+      });
+    } else {
+      // 如果 timestamp 存在且未过期，直接调用 submit
+      submit();
+    }
+  };
+
+
   watch(question, (newQuestions) => {
       newQuestions.forEach(q => {
           if (q.answer) {
@@ -314,7 +337,7 @@
       serial_num: q.serial_num,
       answer: q.answer,
     }));
-    submitData.value.stu_id = stu_id
+    submitData.value.token = localStorage.getItem("token")
     useRequest(() => setUserSubmitAPI(submitData.value), {
       onBefore: () => startLoading(),
       async onSuccess(res) {
@@ -347,12 +370,6 @@
         closeLoading();
       },
     });
-  };
-  // 获取当前问题的选项计数
-  const getOptionCount = (index: number) => {
-    console.log(index)
-    const option = resultData.value[index];  // 获取对应选项数据
-    return option ? option.count : 0;  // 返回该选项的投票数，若未找到返回 0
   };
 
 
