@@ -82,7 +82,7 @@
         <div class="flex-col justify-center">
           <el-skeleton :loading="loading" :rows="1" animated style="height: 60px">
             <template #default>
-          <span class="flex gap-20 items-center"><span class="text-2xl">问卷标题</span><input type="text" placeholder="标题"
+          <span class="flex gap-20 items-center"><span class="text-2xl">问卷标题 {{ tempStore.surveyType }}</span><input type="text" placeholder="标题"
           class="input input-bordered dark:bg-customGray_shallow w-300" v-model="submitData.title" /></span>
           <div class="flex items-top gap-20  my-15" >
             <span>问卷内容描述</span>
@@ -281,7 +281,7 @@ onMounted(() => {
       time: '',
       title: '',
       day_limit: 0,
-      survey_type: tempStore.surveyType.value,
+      survey_type: tempStore.surveyType,
       verify: false
     }
     loading.value = false

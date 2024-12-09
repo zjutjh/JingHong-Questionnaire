@@ -11,6 +11,7 @@ import getDatatableAPI from './service/DataDisplay/getDatatableAPI'
 import getStaticsDataAPI from './service/DataDisplay/getStaticsDataAPI'
 import getUserAPI from './service/User/getUserApi'
 import setUserSubmitAPI from './service/User/setUserSubmit'
+import getVoteDataAPI from './service/Thank/getVoteDataAPI'
 export {
   loginAPI,
   getQuestionnaireListAPI,
@@ -25,4 +26,5 @@ export {
   getStaticsDataAPI,
   getUserAPI,
   setUserSubmitAPI,
+  getVoteDataAPI,
 }

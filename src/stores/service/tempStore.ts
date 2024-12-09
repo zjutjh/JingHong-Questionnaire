@@ -14,8 +14,15 @@ const useTempStore = defineStore("temporary", () => {
     const setCheckTitle = (title: string) => {
       checkTitle.value = title;
     }
+    const surveyId = ref(); // 投票问卷id -1为非投票问卷
+    const setSurveyId = (id: number) => {
+      surveyId.value = id;
+    }
 
-    const surveyType = ref(-1)
+    const surveyType = ref(-1);
+    const setSurveyType = (type: number) => {
+      surveyType.value = type;
+    }
     return{
         checkId,
         setCheckId,
@@ -23,7 +30,10 @@ const useTempStore = defineStore("temporary", () => {
         setHomePageNum,
         checkTitle,
         setCheckTitle,
-        surveyType
+        surveyType,
+        setSurveyType,
+        surveyId,
+        setSurveyId,
     };
 },{ persist: true });
 

@@ -37,7 +37,7 @@
               </div>
             </div>
             <div class="flex gap-20 items-center my-10  ml-20 ">
-              <span class="text-red-950 dark:text-red-400 dark:opacity-80">截止时间:</span>
+              <span class="text-red-950 dark:text-red-400 dark:opacity-80">{{ surveyType }}截止时间:</span>
               <span>{{ time }}</span>
             </div>
             <div class="flex gap-20 items-center my-10  ml-20 " v-if="formData.daily_limit !== 0">
@@ -159,7 +159,9 @@
   });
   const route = useRoute();
   const loginStore = useMainStore().useLoginStore();
+  const tempStore = useMainStore().useTempStore();
   const decryptedId = ref<string | null>()
+  const surveyType = ref(0); // 0 调研问卷 1 投票问卷
   const allowSend = ref(true)
   const isOutDate = ref(false)
   const stu_id = localStorage.getItem("stu_id")
@@ -226,6 +228,7 @@
             question.value = formData.value.questions;
             time.value = formData.value.time.replace("T", " ").split("+")[0].split(".")[0]
             submitData.value.id = res.data.id;
+            surveyType.value = res.data.survey_type;
             // console.log("问卷id:"+submitData.value.id)
             question.value.forEach(q => {
               //获取已存储的答案
@@ -301,6 +304,11 @@
           questionnaireStore.deleteAnswer(decryptedId.value)
           imageStore.clearFiles()
           optionStore.deleteOption(decryptedId.value)
+          if(surveyType.value == 1) { // 投票问卷判断 在thank页反馈数据
+            tempStore.setSurveyId(Number(decryptedId.value));
+          } else {
+            tempStore.setSurveyId(-1);
+          }
           router.push('/Thank');
         } else {
           ElNotification.error(res.msg);
