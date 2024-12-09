@@ -14,13 +14,19 @@
       </div>
     </div>
     <div class="divider my-5"></div>
-    <div class="flex-col p-5 h-auto">
-      <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
-        <input type="radio" :name="props.serial_num" class="my-5" style="zoom: 140%"  :value="item.content" v-model="localAnswer" />
-        <span v-if="item.content" class="text-sm ">{{ item.content }}</span>
-        <div class="ml-10 flex items-center gap-20">
-          <div v-if="item.img" class="mt-4">
-            <img v-if="item.img" :src="item.img" alt="Preview" style="max-width: 150px; max-height: 150px;" />
+    <div :class="localOptions[0].img ? 'grid grid-cols-2' : 'flex-col p-5 h-auto'">
+      <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5 justify-center cursor-pointer">
+        <!-- 无图片选项 -->
+        <div v-if="!item.img">
+          <input type="radio" :name="props.serial_num" class="my-5" style="zoom: 140%"  :value="item.content" v-model="localAnswer" />
+          <span v-if="item.content" class="text-sm ">{{ item.content }}</span>
+        </div>
+        <!-- 图片选项 -->
+        <div v-else class="m-10 p-0 rounded-2xl overflow-hidden w-200 relative" style="max-height: 300px;" @click="clickImgDiv(props.serial_num+item.content)">
+          <img v-if="item.img" :src="item.img" alt="Preview" width="200px" style="max-width: 16rem; max-height: 16rem;" draggable="false"/>
+          <div class="p-5 text-center w-full absolute bottom-0 opacity-80" :class="localAnswer == item.content ? 'bg-red-400' : 'bg-red-100'">
+            <div v-if="item.content" class="">{{ item.content }}</div>
+            <input type="radio" :name="props.serial_num" class=" size-8 my-5" style="zoom: 140%"  :value="item.content" v-model="localAnswer" :id="props.serial_num+item.content"/>
           </div>
         </div>
       </div>
@@ -61,6 +67,12 @@ const otherAnswer = ref<string>(optionStore.search(props.questionnaireID,props.s
 const emits = defineEmits(['update:answer']);
 const localAnswer = ref(props.answer);
 
+const clickImgDiv = (inputId: string) => {
+  const inputElement = document.getElementById(inputId);
+  if (inputElement) {
+    inputElement.click();
+  }
+}
 
 watch([localAnswer, otherAnswer], ([newLocalAnswer, newOtherAnswer]) => {
   if(newOtherAnswer){
