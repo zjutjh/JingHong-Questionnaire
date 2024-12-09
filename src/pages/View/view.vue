@@ -123,7 +123,7 @@
       <modal modal-id="QuestionnaireSubmit">
         <template #title><span class="text-red-950 dark:text-red-500 ">提交问卷</span></template>
 
-        <template #default v-if="formData && !formData.verify || !tokenOutDate">
+        <template #default v-if="formData && !formData.verify || tokenOutDate">
           你确认要提交问卷吗?
         </template>
         <template #default v-else>
@@ -138,7 +138,7 @@
           </div>
         </template>
         <template #action>
-          <button class="btn bg-red-800 text-red-50 w-full hover:bg-red-600" @click="submit"  v-if="formData && !formData.verify || !tokenOutDate">确认</button>
+          <button class="btn bg-red-800 text-red-50 w-full hover:bg-red-600" @click="submit"  v-if="formData && !formData.verify || tokenOutDate">确认</button>
           <button class="btn bg-red-800 text-red-50 w-full hover:bg-red-600" @click="verify" v-else>确认</button>
         </template>
       </modal>
@@ -192,7 +192,8 @@
   })
   const optionStore = useMainStore().useOptionStore()
   const questionnaireStore = useMainStore().useQuetionnaireStore()
-  onMounted(() => {
+  onMounted(async () => {
+
     loginStore.setShowHeader(false);
     let idParam = route.query.id as string | undefined;
     if (idParam) {
@@ -206,22 +207,22 @@
       }
     }
     getQuestionnaireView();
+    try{
+      const res = await getStatistic({id: Number(decryptedId.value)})
+      resultData.value = res.data.statistics[0].options
+    } catch (e) {
+      ElNotification.error(e)
+    }
   });
 
   const tokenOutDate = computed(() => {
     const lastDate = localStorage.getItem('timestamp');
-
     // 如果没有存储时间戳（首次请求或过期），调用 verifyAPI
-    if (!lastDate || Date.now() - parseInt(lastDate) > 7 * 24 * 60 * 60 * 1000){
-      return true
-    } else {
-      return false
-    }
+    return !(!lastDate || Date.now() - parseInt(lastDate) > 7 * 24 * 60 * 60 * 1000);
   });
 
   const verify = () => {
     const lastDate = localStorage.getItem('timestamp');
-
     // 如果没有存储时间戳（首次请求或过期），调用 verifyAPI
     if (!lastDate || Date.now() - parseInt(lastDate) > 7 * 24 * 60 * 60 * 1000) {
       // 调用 verifyAPI 获取新的 token
@@ -313,6 +314,14 @@
         ElNotification.error('您有多选题未完成作答.')
         return true;
       }
+      if(q.question_type === 2 && q.answer.split('┋').length > q.maximum_option || q.answer.split('┋').length < q.minimum_option) {
+        if(q.answer.split('┋').length > q.maximum_option) {
+          ElNotification.error(`该投票最多只能选择${q.maximum_option}个选项`)
+        } else if(q.answer.split('┋').length < q.minimum_option) {
+          ElNotification.error(`该投票最少需要选择${q.maximum_option}个选项`)
+        }
+        return true;
+      }
 
       if (q.question_type === 3 && q.answer!== ''  && q.reg && !new RegExp(q.reg).test(q.answer)) {
         ElNotification.error(`第${q.serial_num}题的回答不符合要求.`);
@@ -353,7 +362,6 @@
             try{
               const res = await getStatistic({id: Number(decryptedId.value)})
               resultData.value = res.data.statistics[0].options
-              console.log(resultData.value)
             } catch (e) {
               ElNotification.error(e)
             }
