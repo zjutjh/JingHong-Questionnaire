@@ -47,7 +47,7 @@
           </template>
         </el-skeleton>
       </div>
-      <div class="flex flex-col h-650 ">
+      <div class="flex flex-col h-650 " v-if="formData && formData.survey_type === 0">
           <div v-for="q in question" :key="q.serial_num">
               <!-- 根据问题类型渲染组件 -->
               <div v-if="q.question_type === 1">
@@ -61,7 +61,7 @@
                     <skeleton-card></skeleton-card>
                   </template>
                   <template #default>
-                <checkbox v-model:answer="q.answer" v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num"  v-model:unique="q.unique" v-model:required="q.required" v-model:other-option="q.other_option" v-model:describe="q.describe" v-model:questionnaireID = "decryptedId" v-model:minimum_option="q.minimum_option" v-model:maximum_option="q.maximum_option"></checkbox>
+                <checkbox v-model:answer="q.answer" v-model:title="q.subject" v-model:options="q.options" v-model:serial_num="q.serial_num"  v-model:unique="q.unique" v-model:required="q.required" v-model:other-option="q.other_option" v-model:describe="q.describe" v-model:questionnaireID = "decryptedId as string" v-model:minimum_option="q.minimum_option" v-model:maximum_option="q.maximum_option"></checkbox>
                   </template>
                 </el-skeleton>
               </div>
@@ -100,6 +100,26 @@
             <button class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75 hover:bg-red-600" @click="showModal('QuestionnaireSubmit')" v-if="decryptedId !== '' && !isOutDate"  >提交问卷</button>
           </div>
     </div>
+      <div class="flex flex-col h-650 " v-if="formData && formData.survey_type === 1">
+        <div v-for="(q, index) in question" :key="index">
+          <vote
+                v-model:answer="q.answer" v-model:title="q.subject"
+                v-model:options="q.options"
+                v-model:serial_num="q.serial_num"
+                v-model:unique="q.unique" v-model:required="q.required"
+                v-model:other-option="q.other_option" v-model:describe="q.describe"
+                v-model:questionnaireID = "decryptedId"
+                v-model:minimum_option="q.minimum_option"
+                v-model:maximum_option="q.maximum_option"
+                :count="resultData">
+            <div>
+          </div></vote>
+        </div>
+        <div class="flex justify-center items-center py-50">
+          <button class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75 hover:bg-red-600" @click="showModal('QuestionnaireSubmit')" v-if="decryptedId !== '' && !isOutDate"  >提交问卷</button>
+        </div>
+      </div>
+
       <modal modal-id="QuestionnaireSubmit">
         <template #title><span class="text-red-950 dark:text-red-500 ">提交问卷</span></template>
 
@@ -122,12 +142,13 @@
           <button class="btn bg-red-800 text-red-50 w-full hover:bg-red-600" @click="verify" v-else>确认</button>
         </template>
       </modal>
+
     </div>
   </div>
   </template>
 
   <script lang="ts" setup>
-  import {onMounted, ref, watch } from "vue";
+  import {nextTick, onMounted, ref, watch} from "vue";
   import {useRequest} from "vue-hooks-plus";
   import {getUserAPI, setUserSubmitAPI} from "@/apis";
   import {ElNotification} from "element-plus";
@@ -145,8 +166,9 @@
   import {useMainStore} from "@/stores";
   //暗黑模式hook
   import { useDarkModeSwitch } from "@/utilities/darkModeSwitch";
-  import {Discount} from "@element-plus/icons-vue";
   import verifyAPI from "@/apis/service/User/verifyApi.ts";
+  import Vote from "@/pages/View/vote.vue";
+  import getStatistic from "@/apis/service/User/getStatistic.ts";
   const {darkModeStatus,switchDarkMode} = useDarkModeSwitch()
   const Key = 'JingHong';
   const formData = ref();
@@ -157,6 +179,7 @@
     id: null,
     questions_list: [],
   });
+  const resultData = ref(undefined)
   const route = useRoute();
   const loginStore = useMainStore().useLoginStore();
   const decryptedId = ref<string | null>()
@@ -202,7 +225,6 @@
       newQuestions.forEach(q => {
           if (q.answer) {
               questionnaireStore.updateAnswer(decryptedId.value, q.serial_num, q.answer);
-              console.log(questionnaireStore.userAnswer)
           }
       });
   }, { deep: true });
@@ -292,16 +314,27 @@
       serial_num: q.serial_num,
       answer: q.answer,
     }));
+    submitData.value.stu_id = stu_id
     useRequest(() => setUserSubmitAPI(submitData.value), {
       onBefore: () => startLoading(),
-      onSuccess(res) {
+      async onSuccess(res) {
         if (res.code === 200 && res.msg === 'OK') {
           const imageStore = useMainStore().useImageStore()
           ElNotification.success('提交成功');
           questionnaireStore.deleteAnswer(decryptedId.value)
           imageStore.clearFiles()
           optionStore.deleteOption(decryptedId.value)
-          router.push('/Thank');
+          if (formData.value.survey_type === 0) {
+            router.push('/Thank');
+          } else {
+            try{
+              const res = await getStatistic({id: Number(decryptedId.value)})
+              resultData.value = res.data.statistics[0].options
+              console.log(resultData.value)
+            } catch (e) {
+              ElNotification.error(e)
+            }
+          }
         } else {
           ElNotification.error(res.msg);
         }
@@ -315,7 +348,12 @@
       },
     });
   };
-
+  // 获取当前问题的选项计数
+  const getOptionCount = (index: number) => {
+    console.log(index)
+    const option = resultData.value[index];  // 获取对应选项数据
+    return option ? option.count : 0;  // 返回该选项的投票数，若未找到返回 0
+  };
 
 
 

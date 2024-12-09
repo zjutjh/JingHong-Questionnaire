@@ -282,7 +282,7 @@ onMounted(() => {
       time: '',
       title: '',
       day_limit: 0,
-      survey_type: tempStore.surveyType,
+      survey_type: Number(tempStore.surveyType),
       verify: false
     }
     loading.value = false
