@@ -273,6 +273,7 @@ onMounted(() => {
     id.value = Number(localStorage.getItem('id'))
     getInfo();
   }else{
+    console.log(tempStore.surveyType)
     submitData.value = {
       desc: '',
       img: '',
@@ -281,7 +282,7 @@ onMounted(() => {
       time: '',
       title: '',
       day_limit: 0,
-      survey_type: tempStore.surveyType.value,
+      survey_type: Number(tempStore.surveyType),
       verify: false
     }
     loading.value = false
