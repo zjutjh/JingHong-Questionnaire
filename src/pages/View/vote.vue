@@ -30,9 +30,9 @@
             <span v-if="item.content" class="text-sm ">{{ item.content }}</span>
           </span>
           </div>
-          <span class="text-sm text-gray-400 flex items-center gap-20 justify-center mt-5" v-if="count !== undefined">
+          <span class="text-sm text-gray-400 flex items-center gap-10 justify-center mt-5" v-if="count !== undefined">
             <span>排名: {{ props.count[index].rank }}</span>
-            <span>当前票数: {{ props.count[index].count }}</span>
+            <span>票数: {{ props.count[index].count }}</span>
           </span>
         </div>
       </div>
