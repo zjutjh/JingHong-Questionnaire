@@ -93,6 +93,15 @@
                 <span class="flex  items-center gap-15">每日最多提交<input type="text" v-model.number="submitData.day_limit" class="input input-bordered dark:bg-customGray_shallow w-50"  /></span><span class="flex  items-center gap-20">是否统一登录<input type="checkbox" class="checkbox-sm my-5" v-model="submitData.verify" /></span>
               </div>
               <div class="flex gap-20 items-center my-15">
+                <span >问卷开始时间</span>
+                <el-date-picker
+                    v-model="startTime"
+                    type="datetime"
+                    placeholder="开始时间"
+                    :clearable="false"
+                />
+              </div>
+              <div class="flex gap-20 items-center my-15">
                 <span >问卷截止时间</span>
                 <el-date-picker
                     v-model="time"
@@ -264,6 +273,7 @@ const calculateFutureDate = (): Date => {
   return futureDate;
 };
 
+const startTime = ref(Date.now())
 // 用于获取问卷部分的容器元素
 const questionnaireContainer = ref<HTMLDivElement>();
 
@@ -404,6 +414,7 @@ const dataReverse = () => {
 
 const submit = (state:number) => {
   submitData.value.time = time.value
+  submitData.value.start_time = new Date(startTime.value).toISOString()
   submitData.value.questions = question.value;
    console.log(question.value);
   if(isNew === 'false') {
