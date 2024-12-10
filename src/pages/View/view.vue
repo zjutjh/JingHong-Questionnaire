@@ -206,12 +206,20 @@
         ElNotification.error("无效的问卷id")
       }
     }
-    getQuestionnaireView();
-    try{
-      const res = await getStatistic({id: Number(decryptedId.value)})
-      resultData.value = res.data.statistics[0].options
-    } catch (e) {
-      ElNotification.error(e)
+    //TODO: 支持设置问卷开始时间
+    const now = new Date(); // 当前时间
+    const targetDate = new Date(2024, 12, 10, 0, 0, 0);
+
+    if (now > targetDate) {
+      getQuestionnaireView();
+      try{
+        const res = await getStatistic({id: Number(decryptedId.value)})
+        resultData.value = res.data.statistics[0].options
+      } catch (e) {
+        ElNotification.error(e)
+      }
+    } else if (now < targetDate) {
+      ElNotification.error("投票未开放")
     }
   });
 
