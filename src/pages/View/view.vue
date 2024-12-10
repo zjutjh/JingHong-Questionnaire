@@ -128,9 +128,9 @@
         </template>
         <template #default v-else>
           <div class="flex-col">
-          <div>
-          该问卷提交需要统一登录认证
-          </div>
+            <div class="text-sm">
+              该问卷仅限校内师生作答,提交前需要先进行统一身份认证
+            </div>
           <div class="flex-col my-10">
             <span>学号 &ensp; &ensp;<input class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10 w-2/3" v-model="verifyData.stu_id" /></span><br/>
             <span>密码 &ensp; &ensp;<input class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10 w-2/3" v-model="verifyData.password" type="password" /></span>
