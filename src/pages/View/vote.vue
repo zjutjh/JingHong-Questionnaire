@@ -21,9 +21,8 @@
     <span class="dark:opacity-80 text-gray-700 dark:text-gray-400 text-sm my-5" v-if="props.minimum_option !== 0">最少选 {{ props.minimum_option }} 个&ensp;</span>
     <span class="dark:opacity-80 text-gray-700 dark:text-gray-400 text-sm my-5" v-if="props.maximum_option !== 0">最多选 {{ props.maximum_option }} 个</span>
     <div class="flex p-5 h-auto flex-wrap">
-      <div v-for="(item, index) in localOptions" :key="item.serial_num" class="flex items-center justify-center my-10 w-1/2">
-
-        <div class="  rounded" style="width: 90%" >
+      <div v-for="(item, index) in localOptions" :key="item.serial_num" class="flex items-end justify-center my-10 w-1/2">
+        <div class="rounded" style="width: 90%" >
           <div class="border-red-300 border-2 dark:border-0 ">
             <img v-if="item.img" :src="item.img" alt="Preview" style="width: 100%" />
           <span class="flex gap-8 items-center justify-center border-t-2 border-red-300 dark:border-0 bg-red-100 dark:bg-customGray_shallow" style="flex: 0.5">

@@ -116,7 +116,7 @@
           </div></vote>
         </div>
         <div class="flex justify-center items-center py-50">
-          <button class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75 hover:bg-red-600" @click="showModal('QuestionnaireSubmit')" v-if="decryptedId !== '' && !isOutDate"  >提交问卷</button>
+          <button class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75 hover:bg-red-600" @click=" handleSubmit" v-if="decryptedId !== '' && !isOutDate"  >提交问卷</button>
         </div>
       </div>
 
@@ -133,7 +133,7 @@
           </div>
           <div class="flex-col my-10">
             <span>学号 &ensp; &ensp;<input class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10 w-2/3" v-model="verifyData.stu_id" /></span><br/>
-            <span>密码 &ensp; &ensp;<input class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10 w-2/3" v-model="verifyData.password" /></span>
+            <span>密码 &ensp; &ensp;<input class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10 w-2/3" v-model="verifyData.password" type="password" /></span>
           </div>
           </div>
         </template>
@@ -179,6 +179,7 @@
     id: null,
     questions_list: [],
   });
+  const startTime = ref()
   const resultData = ref(undefined)
   const route = useRoute();
   const loginStore = useMainStore().useLoginStore();
@@ -206,11 +207,6 @@
         ElNotification.error("无效的问卷id")
       }
     }
-    //TODO: 支持设置问卷开始时间
-    const now = new Date(); // 当前时间
-    const targetDate = new Date(2024, 12, 10, 0, 0, 0);
-
-    if (now > targetDate) {
       getQuestionnaireView();
       try{
         const res = await getStatistic({id: Number(decryptedId.value)})
@@ -218,9 +214,6 @@
       } catch (e) {
         ElNotification.error(e)
       }
-    } else if (now < targetDate) {
-      ElNotification.error("投票未开放")
-    }
   });
 
   const tokenOutDate = computed(() => {
@@ -270,6 +263,16 @@
     }
   };
 
+  const handleSubmit = () => {
+    const nowDate = Date.now()
+    const startTimestamp = new Date(startTime.value).getTime()
+    const showTime = startTime.value.replace("T", " ").split("+")[0].split(".")[0]
+    if(nowDate - startTimestamp < 0){
+      ElNotification.error(`问卷开始时间为 ${showTime}`)
+    } else {
+      showModal('QuestionnaireSubmit')
+    }
+  }
   const getQuestionnaireView = () => {
     if(decryptedId.value){
       useRequest(() => getUserAPI({id: decryptedId.value as number}),{
@@ -280,6 +283,7 @@
             question.value = formData.value.questions;
             time.value = formData.value.time.replace("T", " ").split("+")[0].split(".")[0]
             submitData.value.id = res.data.id;
+            startTime.value = res.data.start_time
             // console.log("问卷id:"+submitData.value.id)
             question.value.forEach(q => {
               //获取已存储的答案
