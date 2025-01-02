@@ -129,17 +129,24 @@
         <template #default v-else>
           <div class="flex-col">
             <div class="text-sm">
-              该问卷仅限校内师生作答,提交前需要先进行统一身份认证
+              该问卷仅限校内师生作答,提交前需要先进行<span class="font-bold">统一身份认证</span>
             </div>
           <div class="flex-col my-10">
-            <span>学号 &ensp; &ensp;<input class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10 w-2/3" v-model="verifyData.stu_id" /></span><br/>
-            <span>密码 &ensp; &ensp;<input class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10 w-2/3" v-model="verifyData.password" type="password" /></span>
+            <span>职工号/学号 <input class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10" style="width: 100%" v-model="verifyData.stu_id" /></span><br/>
+            <span>密码 <br/><input class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10 " style="width: 100%" v-model="verifyData.password" type="password" /></span>
+
           </div>
+            <div class="flex justify-end">
+            <a href="https://oauth.zjut.edu.cn/im/V3/securitycenter/findPwd/index.zf" style=" text-decoration: underline;;" class="text-sm my-5 text-blue-500 dark:text-white">
+              忘记密码?
+            </a>
+            </div>
           </div>
+
         </template>
         <template #action>
-          <button class="btn bg-red-800 text-red-50 w-full hover:bg-red-600" @click="submit"  v-if="formData && !formData.verify || tokenOutDate">确认</button>
-          <button class="btn bg-red-800 text-red-50 w-full hover:bg-red-600" @click="verify" v-else>确认</button>
+          <button class="btn bg-red-800 text-red-50 w-full hover:bg-red-600" style="margin-top: -10px" @click="submit"  v-if="formData && !formData.verify || tokenOutDate">确认</button>
+          <button class="btn bg-red-800 text-red-50 w-full hover:bg-red-600" style="margin-top: -10px" @click="verify" v-else>确认</button>
         </template>
       </modal>
 
