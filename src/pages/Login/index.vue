@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-evenly gap-70 h-screen mt-60">
+  <div class="flex justify-evenly gap-70 mt-60 " style="height: 85vh">
     <div class="flex justify-center items-center w-1/2">
       <el-image class="h-250" src='https://img.lonesome.cn/jhwl/project/questionnaire/JH_logo.svg' ></el-image>
     </div>
@@ -7,11 +7,11 @@
     <el-divider direction="vertical" ></el-divider>
     </div>
     <div class="flex justify-start items-center w-1/2">
-      <div class="bg-base-200 dark:bg-customGray  
-      shadow-lg h-auto p-20 rounded-3xl w-10/12 items-center justify-center 
+      <div class="bg-base-200 dark:bg-customGray
+      shadow-lg h-auto p-20 rounded-3xl w-10/12 items-center justify-center
       hover:shadow-2xl hover:-translate-y-2 transform duration-700">
         <div class="flex justify-center items-center mt-15">
-      <span class="text-4xl font-medium my-10">精弘⽹络问卷系统</span>
+      <span class="text-4xl font-medium my-10">精弘网络问卷系统</span>
         </div>
         <div class="flex justify-center gap-30 flex-col h-300 p-40">
         <div class="w-full">

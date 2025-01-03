@@ -10,6 +10,10 @@
           <span class="w-50">问题描述</span>
           <textarea type="text" placeholder="Describe" class="dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70 " v-model="localDescribe"/>
         </div>
+        <span class="my-10 flex justify-between">
+          <span>最大多选数<input type="text" class="dark:bg-customGray_more_shallow input  shadow-md w-55 h-40 ml-10" v-model.number="localMax"/></span>
+          <span>最小多选数<input type="text" class="dark:bg-customGray_more_shallow input  shadow-md w-55 h-40 ml-10" v-model.number="localMin"/></span>
+        </span>
       </div>
       <div class="flex-col justify-center items-center">
         <div class="flex gap-10">
@@ -28,7 +32,8 @@
       <input type="checkbox" class="checkbox-sm" v-model="localOtherOption"/>
     </span>
     <div class="flex-col p-5 overflow-y-auto h-180 mt-10" ref="scrollContainer" style="scroll-behavior: smooth;" >
-      <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
+      <div v-for="item in localOptions" :key="item.serial_num" class="my-5">
+        <div class="flex items-center gap-10">
         <input type="checkbox" :name="item.serial_num" class="checkbox-sm my-5" />
         <input type="text" class="dark:bg-customGray_more_shallow input input-bordered h-40 shadow-md" placeholder="option" v-model="item.content" />
         <div class="ml-10 flex items-center gap-20">
@@ -38,12 +43,13 @@
           <input type="file" class="dark:bg-customGray_more_shallow file-input file-input-bordered file-input-sm w-7/12" @change="handleFileChange($event, item.serial_num)" />
         </div>
         <button class="btn dark:bg-customGray_more_shallow dark:text-white btn-sm shadow-md" @click="deleteOption(item.serial_num)">删除</button>
+        </div>
       </div>
     </div>
     <div class="divider"></div>
     <div class="mt-20 flex justify-evenly items-center">
       <button class="btn btn-accent dark:opacity-75 shadow-md dark:text-white" @click="addOption">新增选项</button>
-      <button class="btn btn-error dark:opacity-75 shadow-md shadow-md dark:text-white" @click="$emit('on-click')">删除题目</button>
+      <button class="btn btn-error dark:opacity-75 shadow-md dark:text-white" @click="$emit('on-click')">删除题目</button>
     </div>
   </div>
 </template>
@@ -61,6 +67,8 @@ const props = defineProps<{
   unique: boolean,
   otherOption: boolean,
   describe: string,
+  maximum_option: number,
+  minimum_option: number,
   options?: {
     content: string;
     img: string;
@@ -78,6 +86,9 @@ const localUnique = ref<boolean>(props.unique);
 const localOtherOption = ref<boolean>(props.otherOption);
 const localDescribe = ref<string>(props.describe || '');
 const localOptions = ref(props.options );
+const localMax = ref(props.maximum_option)
+const localMin = ref(props.minimum_option)
+
 
 const handleFileChange = async (event, serial_num: number) => {
   const file = event.target.files[0];
@@ -163,6 +174,14 @@ watch(localUnique, (newUnique) => {
 watch(localDescribe, (newLocalDescribe) => {
   emits('update:describe', newLocalDescribe);
 });
+watch(localMin, (newMin) => {
+  emits('update:minimum_option', Number(newMin));
+});
+
+watch(localMax, (newMax) => {
+  emits('update:maximum_option', Number(newMax));
+});
+
 
 watch(localOtherOption, (newOtherOption) => {
   emits('update:otherOption', newOtherOption);

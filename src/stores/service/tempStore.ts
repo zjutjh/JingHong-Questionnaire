@@ -15,6 +15,7 @@ const useTempStore = defineStore("temporary", () => {
       checkTitle.value = title;
     }
 
+    const surveyType = ref(-1)
     return{
         checkId,
         setCheckId,
@@ -22,6 +23,7 @@ const useTempStore = defineStore("temporary", () => {
         setHomePageNum,
         checkTitle,
         setCheckTitle,
+        surveyType
     };
 },{ persist: true });
 
