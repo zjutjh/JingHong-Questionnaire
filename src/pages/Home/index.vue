@@ -1,8 +1,13 @@
 <template>
   <div class="p-40 flex mt-60">
     <div class="basis-1/4 p-20 pl-0 flex justify-center gap-10">
-      <div class="btn btn-success dark:opacity-75 dark:text-white" style="width: 80%;" @click="addNewQuestionnaire">
+      <div class="flex flex-col gap-20" style="width: 80%">
+      <div class="btn btn-success dark:opacity-75 dark:text-white " @click="newQues" >
         + 新建问卷
+      </div>
+      <div class="btn btn-info dark:opacity-65 dark:text-white " @click="addVote" >
+        + 新建投票
+      </div>
       </div>
     </div>
     <div class="basis-3/4 flex flex-col gap-8">
@@ -57,10 +62,10 @@ const pageSize = 4;
 const totalPageNum = ref(1);
 const questionnaireList = ref();
 const loading = ref(true);
-const surveyType = ref(tempStore.surveyType)
-watch(surveyType, () => {
-  tempStore.surveyType = surveyType
-})
+// const surveyType = ref(tempStore.surveyType)
+// watch(surveyType, () => {
+//   tempStore.surveyType = surveyType
+// })
 onMounted(() => {
   loginStore.setShowHeader(true);
 })
@@ -88,13 +93,14 @@ const handleCurrentChange = (val: number) => {
   getQuestionnaireList();
 }
 
-const addNewQuestionnaire = () => {
-  showModal("select")
-}
 
 const newQues = () => {
-  showModal('select', true)
   localStorage.setItem('isNew','true')
   router.push('/admin/DetailInfo')
+}
+
+const addVote = () => {
+  localStorage.setItem('isNew','true')
+  router.push("/admin/addVote")
 }
 </script>

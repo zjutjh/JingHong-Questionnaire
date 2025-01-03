@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { login, home, detailInfo, datadisplay, view, thank } from '@/pages'
+import {login, home, detailInfo, datadisplay, view, thank, addVote} from '@/pages'
 import pinia from '@/stores/createPinia'
 import { useMainStore } from '@/stores'
 
@@ -25,6 +25,11 @@ const router = createRouter({
       path: '/admin/Data',
       name: 'datadisplay',
       component: datadisplay,
+    },
+    {
+      path: '/admin/addVote',
+      name: 'addVote',
+      component: addVote,
     },
     {
       path: '/View',
