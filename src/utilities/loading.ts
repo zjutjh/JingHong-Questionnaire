@@ -2,17 +2,11 @@ import { ElLoading, ElNotification } from "element-plus";
 import { useMainStore } from "@/stores";
 import { ref } from "vue";
 
-
-
-
-
-
 let loadingInstance: any = null;
 let isSuccess = false;
 const startLoading = () => {
-  const darkModeStore = useMainStore().useDarkModeStore()
-  const darkModeStatus = ref(darkModeStore.status)
-  console.log(darkModeStatus.value)
+  const darkModeStore = useMainStore().useDarkModeStore();
+  const darkModeStatus = ref(darkModeStore.status);
   loadingInstance = ElLoading.service({
     lock: true,
     text: "Loading",
@@ -24,7 +18,7 @@ const startLoading = () => {
       ElNotification({
         title: "Error",
         message: "失败,网络错误",
-        type: "error",
+        type: "error"
 
       });
     }

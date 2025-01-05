@@ -1,15 +1,15 @@
 import { request } from "@/apis/axios";
 type getquestionnaire = {
-    id:number;
-}
+  id: number;
+};
 
-const getServiceeAPI = (params:getquestionnaire ,token: string) => {
+const getServiceeAPI = (params: getquestionnaire, token: string) => {
   return request("/api/user/get", {
     method: "GET",
     headers: {
-      "Authorization": "Bearer " + token,
+      "Authorization": "Bearer " + token
     },
-    params: params,
+    params: params
   });
 };
 

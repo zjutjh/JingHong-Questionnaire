@@ -4,55 +4,77 @@
       <div class="flex-col">
         <div class="flex items-center gap-20">
           <span>{{ serial_num }}</span>
-          <input type="text" placeholder="Question" class="input dark:bg-customGray_more_shallow input-bordered shadow-md w-350" v-model="localTitle"/>
+          <input
+            v-model="localTitle"
+            type="text"
+            placeholder="Question"
+            class="input dark:bg-customGray_more_shallow input-bordered shadow-md w-350"
+          >
         </div>
         <div class="flex items-center gap-20 my-10">
           <span class="w-50">问题描述</span>
-          <textarea type="text" placeholder="Describe" class="dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70" style="overflow-wrap: break-word;" v-model="localDescribe"/>
+          <textarea
+            v-model="localDescribe"
+            type="text"
+            placeholder="Describe"
+            class="dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70"
+            style="overflow-wrap: break-word;"
+          />
         </div>
       </div>
       <div class="flex-col justify-center items-center ">
         <div class="flex gap-10">
           <span>必答</span>
-          <input type="checkbox" class="checkbox-sm" v-model="localOptionChoose"/>
+          <input v-model="localOptionChoose" type="checkbox" class="checkbox-sm">
         </div>
         <div class="flex gap-10">
           <span>唯一</span>
-          <input type="checkbox" class="checkbox-sm" v-model="localUnique"/>
+          <input v-model="localUnique" type="checkbox" class="checkbox-sm">
         </div>
       </div>
     </div>
-    <div class="divider"></div>
+    <div class="divider" />
     <span class="flex items-center justify-end gap-10">
       <span>有"其他"选项</span>
-      <input type="checkbox" class="checkbox-sm" v-model="localOtherOption"/>
+      <input v-model="localOtherOption" type="checkbox" class="checkbox-sm">
     </span>
-    <div class="flex-col p-5 overflow-y-auto h-180 mt-10" ref="scrollContainer" style="scroll-behavior: smooth;">
+    <div ref="scrollContainer" class="flex-col p-5 overflow-y-auto h-180 mt-10" style="scroll-behavior: smooth;">
       <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
-        <input type="radio" :name="props.serial_num" class="radio-sm my-5" />
-        <input type="text" class="dark:bg-customGray_more_shallow input input-bordered h-40 shadow-md" placeholder="option" v-model="item.content"  />
+        <input type="radio" :name="props.serial_num" class="radio-sm my-5">
+        <input
+          v-model="item.content"
+          type="text"
+          class="dark:bg-customGray_more_shallow input input-bordered h-40 shadow-md"
+          placeholder="option"
+        >
         <div class="ml-10 flex items-center gap-20">
           <div v-if="item.img" class="mt-4">
-            <img :src="item.img" alt="Preview" style="max-width: 50px; max-height: 50px;" />
+            <img :src="item.img" alt="Preview" style="max-width: 50px; max-height: 50px;">
           </div>
-          <input type="file" class="dark:bg-customGray_more_shallow file-input file-input-bordered file-input-sm w-7/12" @change="handleFileChange($event, item.serial_num)" />
+          <input type="file" class="dark:bg-customGray_more_shallow file-input file-input-bordered file-input-sm w-7/12" @change="handleFileChange($event, item.serial_num)">
         </div>
-        <button class="btn btn-sm dark:bg-customGray_more_shallow dark:text-white shadow-md" @click="deleteOption(item.serial_num);">删除</button>
+        <button class="btn btn-sm dark:bg-customGray_more_shallow dark:text-white shadow-md" @click="deleteOption(item.serial_num);">
+          删除
+        </button>
       </div>
     </div>
-    <div class="divider"></div>
+    <div class="divider" />
     <div class="mt-20 flex justify-evenly items-center">
-      <button class="btn btn-accent shadow-md dark:opacity-75 dark:text-white" @click="addOption">新增选项</button>
-      <button class="btn btn-error dark:opacity-75 shadow-md dark:text-white " @click="$emit('on-click')">删除题目</button>
+      <button class="btn btn-accent shadow-md dark:opacity-75 dark:text-white" @click="addOption">
+        新增选项
+      </button>
+      <button class="btn btn-error dark:opacity-75 shadow-md dark:text-white " @click="$emit('on-click')">
+        删除题目
+      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits, nextTick } from 'vue';
+import { ref, watch, defineProps, defineEmits, nextTick } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { saveImgAPI } from "@/apis";
-import {ElNotification} from "element-plus";
+import { ElNotification } from "element-plus";
 
 const props = defineProps<{
   serial_num: number,
@@ -68,11 +90,11 @@ const props = defineProps<{
   }[]
 }>();
 
-const emits = defineEmits(['update:unique', 'on-click', 'update:otherOption', 'update:optionChoose','update:title','update:options','update:describe']);
+const emits = defineEmits(["update:unique", "on-click", "update:otherOption", "update:optionChoose", "update:title", "update:options", "update:describe"]);
 
 const scrollContainer = ref<HTMLDivElement>();
-const localTitle = ref<string>(props.title || '');
-const localDescribe = ref<string>(props.describe || '');
+const localTitle = ref<string>(props.title || "");
+const localDescribe = ref<string>(props.describe || "");
 const localOptionChoose = ref<boolean>(props.optionChoose);
 const localUnique = ref<boolean>(props.unique);
 const localOtherOption = ref<boolean>(props.otherOption);
@@ -82,25 +104,25 @@ const handleFileChange = async (event, serial_num: number) => {
   const file = event.target.files[0];
   if (!file) return;
   const formData = new FormData();
-  formData.append('img', file);
+  formData.append("img", file);
   useRequest(() => saveImgAPI(formData), {
     onSuccess(res) {
       const option = localOptions.value.find(item => item.serial_num === serial_num);
       if (option) {
         option.img = res.data;
       }
-      ElNotification.success('上传图片成功')
+      ElNotification.success("上传图片成功");
     },
     onError(error) {
-      ElNotification.error("上传图片失败"+ error);
+      ElNotification.error("上传图片失败" + error);
     }
   });
 };
 
 const addOption = () => {
   localOptions.value.push({
-    content: '',
-    img: '',
+    content: "",
+    img: "",
     serial_num: localOptions.value.length + 1
   });
   nextTick(() => {
@@ -108,8 +130,7 @@ const addOption = () => {
       scrollContainer.value!.scrollTop = scrollContainer.value!.scrollHeight;
     }
   });
-  emits('update:options', localOptions)
-  console.log(localOptions.value)
+  emits("update:options", localOptions);
 };
 
 const deleteOption = (serial_num: number) => {
@@ -119,12 +140,11 @@ const deleteOption = (serial_num: number) => {
       item.serial_num -= 1;
     }
   });
-  console.log(localOptions.value)
 };
 
 // Watchers to sync local state with props
 watch(() => props.title, (newTitle) => {
-  localTitle.value = newTitle || '';
+  localTitle.value = newTitle || "";
 });
 
 watch(() => props.optionChoose, (newOptionChoose) => {
@@ -149,28 +169,27 @@ watch(() => props.describe, (newLocalDescribe) => {
 
 // Emit updates to parent component
 watch(localTitle, (newTitle) => {
-  emits('update:title', newTitle);
+  emits("update:title", newTitle);
 });
 
 watch(localOptionChoose, (newOptionChoose) => {
-  emits('update:optionChoose', newOptionChoose);
+  emits("update:optionChoose", newOptionChoose);
 });
 
 watch(localUnique, (newUnique) => {
-  emits('update:unique', newUnique);
+  emits("update:unique", newUnique);
 });
 
 watch(localDescribe, (newLocalDescribe) => {
-  emits('update:describe', newLocalDescribe);
+  emits("update:describe", newLocalDescribe);
 });
 
 watch(localOtherOption, (newOtherOption) => {
-  emits('update:otherOption', newOtherOption);
+  emits("update:otherOption", newOtherOption);
 });
 
 watch(localOptions, (newOptions) => {
-  console.log(localOptions.value)
-  emits('update:options', newOptions);
+  emits("update:options", newOptions);
 });
 
 </script>
