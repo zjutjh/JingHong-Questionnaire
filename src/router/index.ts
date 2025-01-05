@@ -29,12 +29,12 @@ const router = createRouter({
     {
       path: "/admin/addVote",
       name: "addVote",
-      component: addVote,
+      component: addVote
     },
     {
       path: "/View",
       name: "view",
-      component: view,
+      component: view
     },
     {
       path: "/Thank",

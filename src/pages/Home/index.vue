@@ -2,12 +2,12 @@
   <div class="p-40 flex mt-60">
     <div class="basis-1/4 p-20 pl-0 flex justify-center gap-10">
       <div class="flex flex-col gap-20" style="width: 80%">
-      <div class="btn btn-success dark:opacity-75 dark:text-white " @click="newQues" >
-        + 新建问卷
-      </div>
-      <div class="btn btn-info dark:opacity-65 dark:text-white " @click="addVote" >
-        + 新建投票
-      </div>
+        <div class="btn btn-success dark:opacity-75 dark:text-white " @click="newQues">
+          + 新建问卷
+        </div>
+        <div class="btn btn-info dark:opacity-65 dark:text-white " @click="addVote">
+          + 新建投票
+        </div>
       </div>
     </div>
     <div class="basis-3/4 flex flex-col gap-8">
@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { modal, showModal } from "@/components";
+import { modal } from "@/components";
 import questionnaireItem from "./questionnaireItem.vue";
 import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireListAPI } from "@/apis";
@@ -98,12 +98,12 @@ const handleCurrentChange = (val: number) => {
 };
 
 const newQues = () => {
-  localStorage.setItem("isNew", "true")
-  router.push("/admin/DetailInfo")
-}
+  localStorage.setItem("isNew", "true");
+  router.push("/admin/DetailInfo");
+};
 
 const addVote = () => {
-  localStorage.setItem("isNew","true")
-  router.push("/admin/addVote")
-}
+  localStorage.setItem("isNew", "true");
+  router.push("/admin/addVote");
+};
 </script>
