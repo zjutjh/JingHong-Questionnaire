@@ -1,9 +1,9 @@
 <template>
-  <div >
+  <div>
     <el-skeleton :rows="rowNumber" animated :loading="isLoading">
-    <template #default>
-      <slot></slot>
-    </template>
+      <template #default>
+        <slot />
+      </template>
     </el-skeleton>
   </div>
 </template>
@@ -12,7 +12,7 @@
 defineProps<{
   rowNumber: number,
   isLoading: boolean
-}>()
+}>();
 </script>
 
 <style scoped>

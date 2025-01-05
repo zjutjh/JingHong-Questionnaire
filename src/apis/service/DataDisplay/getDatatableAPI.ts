@@ -1,11 +1,11 @@
 import { request } from "@/apis/axios";
 
-const getDatatableAPI = (data:{
-  id:number
+const getDatatableAPI = (data: {
+  id: number
 }) => {
   return request("/api/admin/download", {
     params: data,
-    method: "GET",
+    method: "GET"
   });
 };
 

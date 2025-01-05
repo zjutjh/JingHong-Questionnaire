@@ -5,7 +5,7 @@ const delQuestionnaireAPI = (data: {
 }) => {
   return request("/api/admin/delete", {
     params: data,
-    method: "DELETE",
+    method: "DELETE"
   });
 };
 

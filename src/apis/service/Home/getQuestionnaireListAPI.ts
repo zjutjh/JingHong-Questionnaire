@@ -7,7 +7,7 @@ const getQuestionnaireListAPI = (data: {
 }) => {
   return request("/api/admin/list/questions", {
     params: data,
-    method: "GET",
+    method: "GET"
   });
 };
 
