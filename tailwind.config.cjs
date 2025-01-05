@@ -3,7 +3,7 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{vue,ts}",
-    "./src/**/**/*.{vue,ts}",
+    "./src/**/**/*.{vue,ts}"
   ],
   darkMode: "class",
   theme: {
@@ -14,16 +14,16 @@ export default {
     extend: {
       colors: {
         customGray: {
-          DEFAULT: '#212121',
+          DEFAULT: "#212121"
         },
         customGray_shallow: {
-          DEFAULT: '#313131',
+          DEFAULT: "#313131"
         },
         customGray_more_shallow: {
-          DEFAULT: '#4A4A4A'
+          DEFAULT: "#4A4A4A"
         }
-      },
-    },
+      }
+    }
   },
-  plugins: [require('daisyui'),],
-}
+  plugins: [require("daisyui")]
+};

@@ -6,7 +6,7 @@ const loginAPI = (data: {
 }) => {
   return request("/api/admin/login", {
     data: data,
-    method: "POST",
+    method: "POST"
   });
 };
 
