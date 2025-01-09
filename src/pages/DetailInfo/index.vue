@@ -1,205 +1,31 @@
 <template>
-  <div class="flex justify-center items-start h-screen gap-50 mt-60">
-    <div class="bg-base-200 dark:bg-customGray p-30 rounded-xl shadow-lg w-230 hover:-translate-y-2 hover:shadow-2xl  transition transform duration-700 mt-40">
-      <span class="flex justify-center items-center  gap-10"><el-icon @click="showModal('setting')"><Setting /></el-icon><span class="text-2xl">添加问卷题目</span></span>
-      <div class="p-20">
-        <div class="flex-col justify-center items-center">
-          <div class="flex gap-10 my-5">
-            <input
-              v-model="selectedOption"
-              type="radio"
-              name="radio-1"
-              class="radio-sm"
-              :value="1"
-              checked
-            >
-            <span>单选</span>
-          </div>
-          <div class="flex gap-10 my-5">
-            <input
-              v-model="selectedOption"
-              type="radio"
-              name="radio-1"
-              class="radio-sm"
-              :value="2"
-            >
-            <span>多选</span>
-          </div>
-          <div class="flex gap-10 my-5">
-            <input
-              v-model="selectedOption"
-              type="radio"
-              name="radio-1"
-              class="radio-sm"
-              :value="4"
-            >
-            <span>论述</span>
-          </div>
-          <div class="flex gap-10 my-5">
-            <input
-              v-model="selectedOption"
-              type="radio"
-              name="radio-1"
-              class="radio-sm"
-              :value="5"
-            >
-            <span>图片</span>
-          </div>
-          <div class="flex gap-10 my-5">
-            <input
-              v-model="selectedOption"
-              type="radio"
-              name="radio-1"
-              class="radio-sm"
-              :value="3"
-            >
-            <span>填空</span>
-          </div>
-        </div>
-        <div v-show="selectedOption === 3">
-          <div class="divider" />
-          <div class="flex gap-10 my-5">
-            <input
-              v-model="reg"
-              type="radio"
-              name="radio-2"
-              class="radio-sm"
-              value="^.*$"
-            >
-            <span>无限制</span>
-          </div>
-          <div class="flex gap-10 my-5">
-            <input
-              v-model="reg"
-              type="radio"
-              name="radio-2"
-              class="radio-sm"
-              value=""
-            >
-            <span>自定义</span>
-          </div>
-          <div class="flex gap-10 my-5">
-            <input
-              v-model="reg"
-              type="radio"
-              name="radio-2"
-              class="radio-sm"
-              value="^1[3456789]\d{9}$"
-            >
-            <span>手机号</span>
-          </div>
-          <div class="flex gap-10 my-5">
-            <input
-              v-model="reg"
-              type="radio"
-              name="radio-2"
-              class="radio-sm"
-              value="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-            >
-            <span>邮箱</span>
-          </div>
-          <div class="flex gap-10 my-5">
-            <input
-              v-model="reg"
-              type="radio"
-              name="radio-2"
-              class="radio-sm"
-              value="^\d{12}$"
-            >
-            <span>学号</span>
-          </div>
-          <div class="flex gap-10 my-5">
-            <input
-              v-model="reg"
-              type="radio"
-              name="radio-2"
-              class="radio-sm"
-              :value="regNum"
-            >
-            <span>
-              <el-select
-                v-model="selectedNumber"
-                placeholder="Select"
-                size="small"
-                style="width: 50px"
-                @change="updateInputPattern"
-              >
-                <el-option
-                  v-for="item in 9"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                />
-              </el-select>
-              位数
-            </span>
-          </div>
-        </div>
-      </div>
+  <div class="flex justify-between flex-1 gap-90">
+    <menu-panel>
+      <left-menu />
+    </menu-panel>
+    <div class="mt-20 flex flex-col gap-20">
       <div class="flex justify-center items-center">
-        <button class="btn btn-accent dark:opacity-75 dark:text-white" @click="addQuestion">
-          添加题目
-        </button>
+        <el-radio-group
+          v-model="mode"
+          size="middle"
+          text-color="#f87171"
+          fill="#fee2e2"
+        >
+          <el-radio-button label="问卷内容" value="ques" />
+          <el-radio-button label="问卷设置" value="setting" />
+          <el-radio-button label="题目逻辑" value="logic" disabled />
+        </el-radio-group>
       </div>
-    </div>
-    <!-- 自定义正则输入框
-    <div class="bg-base-200 dark:bg-customGray h-200 w-full mt-4 p-4">
-      <input  type="text" v-model="regCustomise" placeholder="请输入自定义正则" class="w-full h-full border border-gray-300 rounded-md p-2"/>
-    </div> -->
-    <div class="p-40">
-      <div class="bg-base-200 dark:bg-customGray w-750 p-40 shadow-lg rounded-xl flex-col justify-center items-center hover:shadow-2xl hover:-translate-y-2 transform duration-700 ">
-        <div class="flex-col justify-center">
-          <el-skeleton
-            :loading="loading"
-            :rows="1"
-            animated
-            style="height: 60px"
-          >
-            <template #default>
-              <span class="flex gap-20 items-center"><span class="text-2xl">问卷标题</span><input
-                v-model="submitData.title"
-                type="text"
-                placeholder="标题"
-                class="input input-bordered dark:bg-customGray_shallow w-300"
-              ></span>
-              <div class="flex items-top gap-20  my-15">
-                <span>问卷内容描述</span>
-                <textarea v-model="submitData.desc" class="dark:bg-customGray_shallow textarea textarea-bordered w-300" placeholder="描述问卷" />
-              </div>
 
-              <div class="flex  items-center my-15 gap-40">
-                <span class="flex  items-center gap-15">每日最多提交<input v-model.number="submitData.day_limit" type="text" class="input input-bordered dark:bg-customGray_shallow w-50"></span><span class="flex  items-center gap-20">是否统一登录<input v-model="submitData.verify" type="checkbox" class="checkbox-sm my-5"></span>
-              </div>
-              <div class="flex gap-20 items-center my-15">
-                <span>问卷开始时间</span>
-                <el-date-picker
-                  v-model="startTime"
-                  type="datetime"
-                  placeholder="开始时间"
-                  :clearable="false"
-                />
-              </div>
-              <div class="flex gap-20 items-center my-15">
-                <span>问卷截止时间</span>
-                <el-date-picker
-                  v-model="time"
-                  type="datetime"
-                  placeholder="截止时间"
-                  :clearable="false"
-                />
-              </div>
-            </template>
-          </el-skeleton>
+      <div class="bg-base-200 dark:bg-customGray w-750 p-20 shadow-lg flex-col justify-center items-center  ">
+        <div v-if="submitData" class="flex-col justify-center">
+          <div class="flex justify-center items-center flex-col gap-10">
+            <input v-model="submitData.title" class="input bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-2xl w-[100%] text-center dark:bg-customGray" placeholder="投票标题">
+            <textarea v-model="submitData.desc" class=" textarea bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-md w-[100%] resize-none dark:bg-customGray" placeholder="投票描述" />
+          </div>
         </div>
-        <div class="divider " />
+        <div class="divider" />
         <div ref="questionnaireContainer" class="overflow-y-auto h-800 p-20" style="scroll-behavior: smooth;">
-          <!-- <VueDraggable
-              v-model="question"
-              animation="300"
-              ghostClass="ghost"
-              group="people"
-              @update="onUpdate"
-          >-->
           <vue-draggable-next
             v-model="question"
             :animation="300"
@@ -207,7 +33,6 @@
             @end="updateQuestionSerialNumbers"
           >
             <div v-for="q in question" :key="q.serial_num">
-              <!-- 根据问题类型渲染组件 -->
               <div v-if="q.question_type === 1">
                 <el-skeleton animated :loading="loading">
                   <radio
@@ -326,6 +151,9 @@
         </div>
       </div>
     </div>
+    <menu-panel>
+      <right-menu />
+    </menu-panel>
     <modal modal-id="setting">
       <template #title>
         设置
@@ -381,23 +209,28 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch, nextTick, reactive } from "vue";
+import { computed, onMounted, ref, watch, nextTick, reactive, provide } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireDetailAPI, setNewQuestionnaireDetailAPI, setQuestionnaireDetailAPI } from "@/apis";
 import { ElNotification } from "element-plus";
 import { modal, showModal } from "@/components";
-import Checkbox from "@/pages/DetailInfo/checkbox.vue";
-import Fill from "@/pages/DetailInfo/fill.vue";
-import TextArea from "@/pages/DetailInfo/textArea.vue";
-import File from "@/pages/DetailInfo/file.vue";
-import radio from "@/pages/DetailInfo/radio.vue";
+import Checkbox from "@/pages/DetailInfo/question/checkbox.vue";
+import Fill from "@/pages/DetailInfo/question/fill.vue";
+import TextArea from "@/pages/DetailInfo/question/textArea.vue";
+import File from "@/pages/DetailInfo/question/file.vue";
+import radio from "@/pages/DetailInfo/question/radio.vue";
 // import {SortableEvent, VueDraggable} from 'vue-draggable-plus'
 import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 import router from "@/router";
 import { closeLoading, startLoading } from "@/utilities";
 import { VueDraggableNext } from "vue-draggable-next";
 import { useMainStore } from "@/stores";
+import LeftMenu from "@/pages/DetailInfo/leftMenu.vue";
+import MenuPanel from "@/pages/DetailInfo/menuPanel.vue";
+import { Right } from "@element-plus/icons-vue";
+import RightMenu from "@/pages/DetailInfo/rightMenu.vue";
 
+const mode = ref("ques");
 const tempStore = useMainStore().useTempStore();
 const selectedOption = ref(1);
 const selectedNumber = ref(1);
@@ -415,6 +248,41 @@ const setting = reactive({
   isOtherOptions: false,
   isRequired: false
 });
+const addQuestion = (type: number) => {
+  question.value.push({
+    description: "",
+    img: "",
+    options: [{
+      content: "",
+      img: "",
+      serial_num: 1
+    },
+    {
+      content: "",
+      img: "",
+      serial_num: 2
+    }
+    ],
+    other_option: setting.isOtherOptions,
+    question_type: type,
+    reg: reg.value,
+    required: setting.isRequired,
+    serial_num: question.value.length + 1,
+    subject: "",
+    unique: setting.isUnique
+  });
+
+  question.value.forEach((q, index) => {
+    q.serial_num = index + 1;
+  });
+  nextTick(() => {
+    if (questionnaireContainer.value) {
+      questionnaireContainer.value!.scrollTop = questionnaireContainer.value!.scrollHeight;
+    }
+  });
+};
+
+provide("addQuestion", addQuestion);
 const isNew = localStorage.getItem("isNew");
 const calculateFutureDate = (): Date => {
   const currentDate = new Date();
@@ -434,12 +302,12 @@ onMounted(() => {
     getInfo();
   } else {
     submitData.value = {
-      desc: "",
+      desc: "为了给您提供更好的服务，希望您能抽出几分钟时间，将您的感受和建议告诉我们，期待您的参与！",
       img: "",
       questions: [],
       status: -1,
       time: "",
-      title: "",
+      title: "投票标题",
       day_limit: 0,
       survey_type: Number(tempStore.surveyType),
       verify: false
@@ -490,49 +358,6 @@ const getInfo = () => {
       ElNotification.error("获取失败，请重试" + e);
     },
     onFinally: () => closeLoading()
-  });
-};
-
-const addQuestion = () => {
-  question.value.push({
-    description: "",
-    img: "",
-    options: [{
-      content: "",
-      img: "",
-      serial_num: 1
-    },
-    {
-      content: "",
-      img: "",
-      serial_num: 2
-    },
-    {
-      content: "",
-      img: "",
-      serial_num: 3
-    }
-    ],
-    other_option: setting.isOtherOptions,
-    question_type: selectedOption.value,
-    reg: reg.value,
-    required: setting.isRequired,
-    serial_num: question.value.length + 1,
-    subject: "",
-    unique: setting.isUnique
-  });
-
-  question.value.forEach((q, index) => {
-    q.serial_num = index + 1;
-  });
-
-  // console.log(question.value)
-
-  // 等待 DOM 更新完成后再执行滚动
-  nextTick(() => {
-    if (questionnaireContainer.value) {
-      questionnaireContainer.value!.scrollTop = questionnaireContainer.value!.scrollHeight;
-    }
   });
 };
 
@@ -636,4 +461,8 @@ const updateQuestionSerialNumbers = () => {
 .ghost {
   opacity: 0.4;
 }
+::v-deep(.el-radio-button__inner:hover ){
+  color: #f87171
+}
+
 </style>

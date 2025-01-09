@@ -4,4 +4,5 @@ import detailInfo from "./DetailInfo/index.vue";
 import datadisplay from "./DataDisplay/index.vue";
 import view from "./View/view.vue";
 import thank from "./Thank/thank.vue";
+import addVote from "./addVote/index.vue";
 export { home, login, detailInfo, datadisplay, view, thank, addVote };

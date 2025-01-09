@@ -1,5 +1,5 @@
 <template>
-  <div class=" h-[100vh] bg-base-100 flex flex-col">
+  <div class=" h-[100vh] bg-base-100 flex flex-col ">
     <div v-if="loginStore.showHeader" class="navbar bg-base-100 shadow-lg">
       <div class="flex-1">
         <a class="btn btn-ghost text-xl">JH Questionnaire Survey System</a>
@@ -30,7 +30,7 @@
         </ul>
       </div>
     </div>
-    <router-view v-slot="{ Component }" class="flex-1">
+    <router-view v-slot="{ Component }" class="flex-1 dark:text-white">
       <transition name="fade" mode="out-in">
         <component :is="Component" />
       </transition>
