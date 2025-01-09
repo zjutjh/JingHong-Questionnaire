@@ -227,7 +227,6 @@ import { VueDraggableNext } from "vue-draggable-next";
 import { useMainStore } from "@/stores";
 import LeftMenu from "@/pages/DetailInfo/leftMenu.vue";
 import MenuPanel from "@/pages/DetailInfo/menuPanel.vue";
-import { Right } from "@element-plus/icons-vue";
 import RightMenu from "@/pages/DetailInfo/rightMenu.vue";
 
 const mode = ref("ques");
@@ -327,10 +326,10 @@ const inputPattern = computed(() => {
 });
 
 // 监听选项变化，更新输入框的验证规则
-const updateInputPattern = () => {
-  regNum.value = inputPattern.value;
-  reg.value = inputPattern.value;
-};
+// const updateInputPattern = () => {
+//   regNum.value = inputPattern.value;
+//   reg.value = inputPattern.value;
+// };
 
 const getInfo = () => {
   useRequest(() => getQuestionnaireDetailAPI({ id: id.value as number }), {
