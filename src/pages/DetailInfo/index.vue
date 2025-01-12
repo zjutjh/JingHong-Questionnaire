@@ -1,9 +1,9 @@
 <template>
   <div class="flex justify-between flex-1 gap-90">
-    <menu-panel>
+    <menu-panel v-show="mode === 'ques'">
       <left-menu />
     </menu-panel>
-    <div class="mt-20 flex flex-col gap-20">
+    <div class="mt-20 flex flex-col gap-20 ">
       <div class="flex justify-center items-center">
         <el-radio-group
           v-model="mode"
@@ -17,25 +17,41 @@
         </el-radio-group>
       </div>
 
-      <div class="bg-base-200 dark:bg-customGray w-750 p-20 shadow-lg flex-col justify-center items-center  ">
-        <div v-if="submitData" class="flex-col justify-center">
+      <div v-if="mode === 'ques'" class="bg-base-200 dark:bg-customGray min-w-800 max-h-800 shadow-lg flex-col justify-center items-center flex-1 overflow-y-auto">
+        <div v-if="submitData" class="flex-col justify-center p-20 pb-0">
           <div class="flex justify-center items-center flex-col gap-10">
             <input v-model="submitData.title" class="input bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-2xl w-[100%] text-center dark:bg-customGray" placeholder="投票标题">
             <textarea v-model="submitData.desc" class=" textarea bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-md w-[100%] resize-none dark:bg-customGray" placeholder="投票描述" />
           </div>
         </div>
         <div class="divider" />
-        <div ref="questionnaireContainer" class="overflow-y-auto h-800 p-20" style="scroll-behavior: smooth;">
-          <vue-draggable-next
-            v-model="question"
-            :animation="300"
-            ghost-class="ghost"
-            @end="updateQuestionSerialNumbers"
+        <div class="flex flex-col gap-5 bg-base-100">
+          <div
+            v-for="q in question"
+            :key="q.serial_num"
+            @click="setActive(q.serial_num)"
           >
-            <div v-for="q in question" :key="q.serial_num">
-              <div v-if="q.question_type === 1">
-                <el-skeleton animated :loading="loading">
-                  <radio
+            <div v-if="q.question_type === 1">
+              <el-skeleton animated :loading="loading">
+                <radio
+                  v-model:title="q.subject"
+                  v-model:options="q.options"
+                  v-model:serial_num="q.serial_num"
+                  v-model:unique="q.unique"
+                  v-model:option-choose="q.required"
+                  v-model:other-option="q.other_option"
+                  v-model:describe="q.description"
+                  @on-click="deleteQuestion(q.serial_num)"
+                />
+              </el-skeleton>
+            </div>
+            <div v-if="q.question_type === 2">
+              <el-skeleton animated :loading="loading">
+                <template #template>
+                  <skeleton-card />
+                </template>
+                <template #default>
+                  <checkbox
                     v-model:title="q.subject"
                     v-model:options="q.options"
                     v-model:serial_num="q.serial_num"
@@ -43,115 +59,98 @@
                     v-model:option-choose="q.required"
                     v-model:other-option="q.other_option"
                     v-model:describe="q.description"
+                    v-model:maximum_option="q.maximum_option"
+                    v-model:minimum_option="q.minimum_option"
                     @on-click="deleteQuestion(q.serial_num)"
                   />
-                </el-skeleton>
-              </div>
-              <div v-if="q.question_type === 2">
-                <el-skeleton animated :loading="loading">
-                  <template #template>
-                    <skeleton-card />
-                  </template>
-                  <template #default>
-                    <checkbox
-                      v-model:title="q.subject"
-                      v-model:options="q.options"
-                      v-model:serial_num="q.serial_num"
-                      v-model:unique="q.unique"
-                      v-model:option-choose="q.required"
-                      v-model:other-option="q.other_option"
-                      v-model:describe="q.description"
-                      v-model:maximum_option="q.maximum_option"
-                      v-model:minimum_option="q.minimum_option"
-                      @on-click="deleteQuestion(q.serial_num)"
-                    />
-                  </template>
-                </el-skeleton>
-              </div>
-              <div v-if="q.question_type === 3">
-                <el-skeleton animated :loading="loading">
-                  <template #template>
-                    <skeleton-card />
-                  </template>
-                  <template #default>
-                    <fill
-                      v-model:title="q.subject"
-                      v-model:serial_num="q.serial_num"
-                      v-model:reg="q.reg"
-                      v-model:unique="q.unique"
-                      v-model:option-choose="q.required"
-                      v-model:describe="q.description"
-                      @on-click="deleteQuestion(q.serial_num)"
-                    />
-                  </template>
-                </el-skeleton>
-              </div>
-              <div v-if="q.question_type === 4">
-                <el-skeleton :loading="loading">
-                  <template #template>
-                    <skeleton-card />
-                  </template>
-                  <template #default>
-                    <text-area
-                      v-model:title="q.subject"
-                      v-model:serial_num="q.serial_num"
-                      v-model:unique="q.unique"
-                      v-model:option-choose="q.required"
-                      v-model:describe="q.description"
-                      @on-click="deleteQuestion(q.serial_num)"
-                    />
-                  </template>
-                </el-skeleton>
-              </div>
-              <div v-if="q.question_type === 5">
-                <el-skeleton animated :loading="loading">
-                  <template #template>
-                    <skeleton-card />
-                  </template>
-                  <template #default>
-                    <file
-                      v-model:title="q.subject"
-                      v-model:serial_num="q.serial_num"
-                      v-model:unique="q.unique"
-                      v-model:option-choose="q.required"
-                      v-model:describe="q.description"
-                      @on-click="deleteQuestion(q.serial_num)"
-                    />
-                  </template>
-                </el-skeleton>
-              </div>
+                </template>
+              </el-skeleton>
             </div>
-          </vue-draggable-next>
+            <div v-if="q.question_type === 3">
+              <el-skeleton animated :loading="loading">
+                <template #template>
+                  <skeleton-card />
+                </template>
+                <template #default>
+                  <fill
+                    v-model:title="q.subject"
+                    v-model:serial_num="q.serial_num"
+                    v-model:reg="q.reg"
+                    v-model:unique="q.unique"
+                    v-model:option-choose="q.required"
+                    v-model:describe="q.description"
+                    :is-active="q.serial_num === activeSerial"
+                    @on-click="deleteQuestion(q.serial_num)"
+                  />
+                </template>
+              </el-skeleton>
+            </div>
+            <div v-if="q.question_type === 4">
+              <el-skeleton :loading="loading">
+                <template #template>
+                  <skeleton-card />
+                </template>
+                <template #default>
+                  <text-area
+                    v-model:title="q.subject"
+                    v-model:serial_num="q.serial_num"
+                    v-model:unique="q.unique"
+                    v-model:option-choose="q.required"
+                    v-model:describe="q.description"
+                    @on-click="deleteQuestion(q.serial_num)"
+                  />
+                </template>
+              </el-skeleton>
+            </div>
+            <div v-if="q.question_type === 5">
+              <el-skeleton animated :loading="loading">
+                <template #template>
+                  <skeleton-card />
+                </template>
+                <template #default>
+                  <file
+                    v-model:title="q.subject"
+                    v-model:serial_num="q.serial_num"
+                    v-model:unique="q.unique"
+                    v-model:option-choose="q.required"
+                    v-model:describe="q.description"
+                    @on-click="deleteQuestion(q.serial_num)"
+                  />
+                </template>
+              </el-skeleton>
+            </div>
+          </div>
         </div>
-        <div class="flex justify-center items-center gap-160 mt-20">
-          <button
-            v-show="isNew === 'false'"
-            class="btn btn-success dark:opacity-75 dark:text-white"
-            @click="showModal('SaveQuestionnaireSubmit')"
-          >
-            保存更改
-          </button>
-          <button
-            v-show="isNew === 'false'"
-            class="btn btn-error dark:opacity-75 dark:text-white"
-            @click="showModal('reverseQuestionnaireSubmit')"
-          >
-            放弃更改
-          </button>
-          <button v-show="isNew === 'true'" class="btn btn-success dark:opacity-75 dark:text-white" @click="submit(1)">
-            保存
-          </button>
-          <button
-            v-show="isNew === 'true'"
-            class="btn btn-primary dark:opacity-75 dark:text-white"
-            @click="showModal('NewQuestionnaireSubmit')"
-          >
-            发布
-          </button>
-        </div>
+
+        <!--        <div class="flex justify-center items-center gap-160 mt-20">-->
+        <!--          <button-->
+        <!--            v-show="isNew === 'false'"-->
+        <!--            class="btn btn-success dark:opacity-75 dark:text-white"-->
+        <!--            @click="showModal('SaveQuestionnaireSubmit')"-->
+        <!--          >-->
+        <!--            保存更改-->
+        <!--          </button>-->
+        <!--          <button-->
+        <!--            v-show="isNew === 'false'"-->
+        <!--            class="btn btn-error dark:opacity-75 dark:text-white"-->
+        <!--            @click="showModal('reverseQuestionnaireSubmit')"-->
+        <!--          >-->
+        <!--            放弃更改-->
+        <!--          </button>-->
+        <!--          <button v-show="isNew === 'true'" class="btn btn-success dark:opacity-75 dark:text-white" @click="submit(1)">-->
+        <!--            保存-->
+        <!--          </button>-->
+        <!--          <button-->
+        <!--            v-show="isNew === 'true'"-->
+        <!--            class="btn btn-primary dark:opacity-75 dark:text-white"-->
+        <!--            @click="showModal('NewQuestionnaireSubmit')"-->
+        <!--          >-->
+        <!--            发布-->
+        <!--          </button>-->
+        <!--        </div>-->
       </div>
     </div>
-    <menu-panel>
+    <menu-panel v-show="mode === 'ques'">
       <right-menu />
     </menu-panel>
     <modal modal-id="setting">
@@ -209,7 +208,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch, nextTick, reactive, provide } from "vue";
+import { onMounted, ref, watch, nextTick, reactive, provide } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireDetailAPI, setNewQuestionnaireDetailAPI, setQuestionnaireDetailAPI } from "@/apis";
 import { ElNotification } from "element-plus";
@@ -223,7 +222,7 @@ import radio from "@/pages/DetailInfo/question/radio.vue";
 import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 import router from "@/router";
 import { closeLoading, startLoading } from "@/utilities";
-import { VueDraggableNext } from "vue-draggable-next";
+// import { VueDraggableNext } from "vue-draggable-next";
 import { useMainStore } from "@/stores";
 import LeftMenu from "@/pages/DetailInfo/leftMenu.vue";
 import MenuPanel from "@/pages/DetailInfo/menuPanel.vue";
@@ -232,14 +231,14 @@ import RightMenu from "@/pages/DetailInfo/rightMenu.vue";
 const mode = ref("ques");
 const tempStore = useMainStore().useTempStore();
 const selectedOption = ref(1);
-const selectedNumber = ref(1);
+// const selectedNumber = ref(1);
 const formData = ref();
 const question = ref([]);
 const title = ref();
 const submitData = ref();
 const id = ref<number>();
 const reg = ref<string>("");
-const regNum = ref("^[0-9]{1}$");
+// const regNum = ref("^[0-9]{1}$");
 const time = ref();
 const loading = ref(true);
 const setting = reactive({
@@ -247,6 +246,11 @@ const setting = reactive({
   isOtherOptions: false,
   isRequired: false
 });
+const activeSerial = ref(-1);
+const setActive = (serialNum: number) => {
+  console.log(serialNum);
+  activeSerial.value = serialNum;
+};
 const addQuestion = (type: number) => {
   question.value.push({
     description: "",
@@ -267,7 +271,7 @@ const addQuestion = (type: number) => {
     reg: reg.value,
     required: setting.isRequired,
     serial_num: question.value.length + 1,
-    subject: "",
+    subject: "标题",
     unique: setting.isUnique
   });
 
@@ -321,9 +325,9 @@ const deepCopy = (obj) => {
 };
 
 // 计算属性：动态生成正则表达式
-const inputPattern = computed(() => {
-  return `^[0-9]{${selectedNumber.value}}$`;
-});
+// const inputPattern = computed(() => {
+//   return `^[0-9]{${selectedNumber.value}}$`;
+// });
 
 // 监听选项变化，更新输入框的验证规则
 // const updateInputPattern = () => {
@@ -447,12 +451,12 @@ const submit = (state: number) => {
 // }, { deep: true });
 
 // 修改serial_numquestion.value =[...question.value]
-const updateQuestionSerialNumbers = () => {
-  // console.log(question.value)
-  question.value.forEach((q, index) => {
-    q.serial_num = index + 1;
-  });
-};
+// const updateQuestionSerialNumbers = () => {
+//   // console.log(question.value)
+//   question.value.forEach((q, index) => {
+//     q.serial_num = index + 1;
+//   });
+// };
 
 </script>
 
