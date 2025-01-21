@@ -33,8 +33,8 @@
         <div v-if="status===2" class="btn btn-sm btn-ghost" @click="() => copyShareCode()">
           复制分享链接
         </div>
-        <div class="pt-4" :class="{ 'text-blue-500': status===2, 'text-red-500': status===1}">
-          {{ "状态:" + (status===1 ? "草稿" : "已发布") }}
+        <div class="pt-4" :class="{ 'text-blue-500': status===2, 'text-red-500': status===1, 'text-gray-500': status===3}">
+          {{ "状态:" + (status===1 ? "草稿" : status===2 ? "已发布" : "已截止") }}
         </div>
       </div>
     </div>
