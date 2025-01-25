@@ -1,9 +1,9 @@
 <template>
-  <div class="flex justify-between flex-1 gap-90">
+  <div class="flex justify-between flex-1 gap-40">
     <menu-panel v-show="mode === 'ques'">
       <left-menu />
     </menu-panel>
-    <div class="mt-20 flex flex-col gap-20 ">
+    <div class="mt-20 flex flex-col gap-20 flex-1 ">
       <div class="flex justify-center items-center">
         <el-radio-group
           v-model="mode"
@@ -17,7 +17,7 @@
         </el-radio-group>
       </div>
 
-      <div v-if="mode === 'ques'" class="bg-base-200 dark:bg-customGray min-w-800 max-h-800 shadow-lg flex-col justify-center items-center flex-1 overflow-y-auto">
+      <div v-if="mode === 'ques'" class="bg-base-200 dark:bg-customGray flex-1 max-h-[80vh] overflow-y-auto">
         <div v-if="submitData" class="flex-col justify-center p-20 pb-0">
           <div class="flex justify-center items-center flex-col gap-10">
             <input v-model="submitData.title" class="input bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-2xl w-[100%] text-center dark:bg-customGray" placeholder="投票标题">
@@ -153,58 +153,58 @@
     <menu-panel v-show="mode === 'ques'">
       <right-menu />
     </menu-panel>
-    <modal modal-id="setting">
-      <template #title>
-        设置
-      </template>
-      <template #default>
-        <div class="flex gap-20 p-10">
-          <span class="flex items-center gap-10"><span>默认唯一</span><input v-model="setting.isUnique" type="checkbox" class="checkbox  dark:bg-customGray_more_shallow"></span>
-          <span class="flex items-center gap-10"><span>默认必答</span><input v-model="setting.isRequired" type="checkbox" class="checkbox  dark:bg-customGray_more_shallow"></span>
-          <span class="flex items-center gap-10"><span>默认有"其他"选项</span><input v-model="setting.isOtherOptions" type="checkbox" class="checkbox  dark:bg-customGray_more_shallow"></span>
-        </div>
-      </template>
-    </modal>
-    <modal modal-id="NewQuestionnaireSubmit">
-      <template #title>
-        确认发布
-      </template>
-      <template #default>
-        该操作会直接发布问卷!请确认问卷无误
-      </template>
-      <template #action>
-        <button class="btn btn-success w-80" @click="submit(2)">
-          确认
-        </button>
-      </template>
-    </modal>
-    <modal modal-id="SaveQuestionnaireSubmit">
-      <template #title>
-        保存更改
-      </template>
-      <template #default>
-        确认要保存更改吗?
-      </template>
-      <template #action>
-        <button class="btn btn-success dark:opacity-75 w-80" @click="submit">
-          确认
-        </button>
-      </template>
-    </modal>
-    <modal modal-id="reverseQuestionnaireSubmit">
-      <template #title>
-        放弃更改
-      </template>
-      <template #default>
-        确认要放弃更改?
-      </template>
-      <template #action>
-        <button class="btn btn-error dark:opacity-75 w-80" @click="dataReverse">
-          确认
-        </button>
-      </template>
-    </modal>
   </div>
+  <modal modal-id="setting">
+    <template #title>
+      设置
+    </template>
+    <template #default>
+      <div class="flex gap-20 p-10">
+        <span class="flex items-center gap-10"><span>默认唯一</span><input v-model="setting.isUnique" type="checkbox" class="checkbox  dark:bg-customGray_more_shallow"></span>
+        <span class="flex items-center gap-10"><span>默认必答</span><input v-model="setting.isRequired" type="checkbox" class="checkbox  dark:bg-customGray_more_shallow"></span>
+        <span class="flex items-center gap-10"><span>默认有"其他"选项</span><input v-model="setting.isOtherOptions" type="checkbox" class="checkbox  dark:bg-customGray_more_shallow"></span>
+      </div>
+    </template>
+  </modal>
+  <modal modal-id="NewQuestionnaireSubmit">
+    <template #title>
+      确认发布
+    </template>
+    <template #default>
+      该操作会直接发布问卷!请确认问卷无误
+    </template>
+    <template #action>
+      <button class="btn btn-success w-80" @click="submit(2)">
+        确认
+      </button>
+    </template>
+  </modal>
+  <modal modal-id="SaveQuestionnaireSubmit">
+    <template #title>
+      保存更改
+    </template>
+    <template #default>
+      确认要保存更改吗?
+    </template>
+    <template #action>
+      <button class="btn btn-success dark:opacity-75 w-80" @click="submit">
+        确认
+      </button>
+    </template>
+  </modal>
+  <modal modal-id="reverseQuestionnaireSubmit">
+    <template #title>
+      放弃更改
+    </template>
+    <template #default>
+      确认要放弃更改?
+    </template>
+    <template #action>
+      <button class="btn btn-error dark:opacity-75 w-80" @click="dataReverse">
+        确认
+      </button>
+    </template>
+  </modal>
 </template>
 
 <script setup lang="ts">
