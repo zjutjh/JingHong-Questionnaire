@@ -1,28 +1,28 @@
-import axios, { type AxiosRequestConfig } from 'axios'
+import axios, { type AxiosRequestConfig } from "axios";
 
 // axios.defaults.withCredentials = true;
-//自动存储cookie
+// 自动存储cookie
 
 const axiosInstance = axios.create({
   timeout: 10000,
   withCredentials: true
-})
+});
 
 axiosInstance.defaults.withCredentials = true;
 
 const request = <ResponseType = unknown>(
   url: string,
-  options?: AxiosRequestConfig<unknown>,
+  options?: AxiosRequestConfig<unknown>
 ): Promise<ResponseType> => {
   return new Promise((resolve, reject) => {
     axiosInstance({
       url,
-      ...options,
+      ...options
     })
       .then(res => {
-        resolve(res.data)
+        resolve(res.data);
       })
-      .catch(err => reject(err))
-  })
-}
-export { axiosInstance, request }
+      .catch(err => reject(err));
+  });
+};
+export { axiosInstance, request };

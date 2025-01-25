@@ -1,6 +1,6 @@
 <template>
-  <div class="overflow-y-scroll h-screen bg-base-100">
-    <div class="navbar bg-base-100 shadow-lg" v-if="loginStore.showHeader">
+  <div class=" h-[100vh] bg-base-100 flex flex-col ">
+    <div v-if="loginStore.showHeader" class="navbar bg-base-100 shadow-lg">
       <div class="flex-1">
         <a class="btn btn-ghost text-xl">JH Questionnaire Survey System</a>
       </div>
@@ -15,14 +15,22 @@
       </div>
       <div class="flex-none">
         <ul class="menu menu-horizontal px-1">
-          <li @click="router.push('/login')" v-show="!loginStore.loginSession"><a>登陆</a></li>
-          <li @click="router.push('/')" v-show="loginStore.loginSession"><a>问卷列表</a></li>
-          <li @click="router.push('/login'); loginStore.setLogin(false); ElNotification.success('登出成功')"
-            v-show="loginStore.loginSession"><a>登出</a></li>
+          <li v-show="!loginStore.loginSession" @click="router.push('/login')">
+            <a>登陆</a>
+          </li>
+          <li v-show="loginStore.loginSession" @click="router.push('/')">
+            <a>问卷列表</a>
+          </li>
+          <li
+            v-show="loginStore.loginSession"
+            @click="router.push('/login'); loginStore.setLogin(false); ElNotification.success('登出成功')"
+          >
+            <a>登出</a>
+          </li>
         </ul>
       </div>
     </div>
-    <router-view v-slot="{ Component }">
+    <router-view v-slot="{ Component }" class="flex-1 dark:text-white">
       <transition name="fade" mode="out-in">
         <component :is="Component" />
       </transition>
@@ -31,22 +39,16 @@
 </template>
 
 <script setup lang="ts">
-import { RouterView } from 'vue-router';
+import { RouterView } from "vue-router";
 import router from "@/router";
 import { useMainStore } from "@/stores";
 import { ElNotification } from "element-plus";
-import { ref,watch,onBeforeMount,onMounted } from 'vue';
-
-
 
 const loginStore = useMainStore().useLoginStore();
 
-
-//暗黑模式功能
-  import { useDarkModeSwitch } from './utilities/darkModeSwitch';
-  const {darkModeStatus} = useDarkModeSwitch() //暗黑模式 状态
-
-
+// 暗黑模式功能
+import { useDarkModeSwitch } from "./utilities/darkModeSwitch";
+const { darkModeStatus } = useDarkModeSwitch(); // 暗黑模式 状态
 
 </script>
 

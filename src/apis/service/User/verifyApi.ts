@@ -1,5 +1,5 @@
 import { request } from "@/apis/axios";
-//import CryptoJS from 'crypto-js';
+// import CryptoJS from 'crypto-js';
 
 /*
 const urlen =
@@ -9,13 +9,13 @@ const urlde =
 // 定义参数的类型
 type verifyData = {
   stu_id: string,
-  password :string,
+  password: string,
   survey_id: number
-}
-const verifyAPI = (data: verifyData ) => {
+};
+const verifyAPI = (data: verifyData) => {
   return request("/api/user/oauth", {
     method: "POST",
-    data: data,
+    data: data
   });
 };
 
