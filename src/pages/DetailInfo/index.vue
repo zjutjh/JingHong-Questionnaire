@@ -34,6 +34,7 @@
             <div v-if="q.question_type === 1">
               <el-skeleton animated :loading="loading">
                 <radio
+                  :is-active="q.serial_num === activeSerial"
                   v-model:title="q.subject"
                   v-model:options="q.options"
                   v-model:serial_num="q.serial_num"
@@ -52,6 +53,7 @@
                 </template>
                 <template #default>
                   <checkbox
+                    :is-active="q.serial_num === activeSerial"
                     v-model:title="q.subject"
                     v-model:options="q.options"
                     v-model:serial_num="q.serial_num"
@@ -92,6 +94,7 @@
                 </template>
                 <template #default>
                   <text-area
+                    :is-active="q.serial_num === activeSerial"
                     v-model:title="q.subject"
                     v-model:serial_num="q.serial_num"
                     v-model:unique="q.unique"
@@ -109,6 +112,7 @@
                 </template>
                 <template #default>
                   <file
+                    :is-active="q.serial_num === activeSerial"
                     v-model:title="q.subject"
                     v-model:serial_num="q.serial_num"
                     v-model:unique="q.unique"

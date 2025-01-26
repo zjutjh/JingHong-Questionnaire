@@ -1,25 +1,33 @@
 <template>
-  <div class="bg-base-300 dark:bg-customGray_shallow p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
+  <div class="bg-base-200 dark:bg-customGray_shallow p-30 hover:shadow-md " :class="isActive? 'bg-base-300' : ''">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
           <span>{{ serial_num }}</span>
           <input
+            v-if="isActive"
             v-model="localTitle"
             type="text"
             placeholder="Question"
-            class="input dark:bg-customGray_more_shallow input-bordered shadow-md w-350"
+            class="dark:bg-customGray_more_shallow input rounded-none h-40  focus:outline-none  w-350"
           >
+          <div v-else>
+            {{ localTitle }}
+          </div>
         </div>
         <div class="flex items-center gap-20 my-10">
-          <span class="w-50">问题描述</span>
+          <span class="w-50">问题<br>描述</span>
           <textarea
+            v-if="isActive"
             v-model="localDescribe"
             type="text"
             placeholder="Describe"
-            class="dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70"
+            class="dark:bg-customGray_more_shallow textarea rounded-none focus:outline-none textarea-bordered shadow-md w-full h-70"
             style="overflow-wrap: break-word;"
           />
+          <div v-else>
+            {{ localDescribe }}
+          </div>
         </div>
       </div>
       <div class="flex-col justify-center items-center ">
@@ -44,29 +52,29 @@
         <input
           v-model="item.content"
           type="text"
-          class="dark:bg-customGray_more_shallow input input-bordered h-40 shadow-md"
+          class="dark:bg-customGray_more_shallow input input-bordered h-40 shadow-md rounded-none focus:outline-none"
           placeholder="option"
         >
         <div class="ml-10 flex items-center gap-20">
           <div v-if="item.img" class="mt-4">
             <img :src="item.img" alt="Preview" style="max-width: 50px; max-height: 50px;">
           </div>
-          <input type="file" class="dark:bg-customGray_more_shallow file-input file-input-bordered file-input-sm w-7/12" @change="handleFileChange($event, item.serial_num)">
+          <input v-if="isActive" type="file" class="dark:bg-customGray_more_shallow file-input file-input-bordered file-input-sm w-7/12" @change="handleFileChange($event, item.serial_num)">
         </div>
-        <button class="btn btn-sm dark:bg-customGray_more_shallow dark:text-white shadow-md" @click="deleteOption(item.serial_num);">
+        <button v-if="isActive" class="btn btn-sm dark:bg-customGray_more_shallow dark:text-white shadow-md" @click="deleteOption(item.serial_num);">
           删除
         </button>
       </div>
     </div>
-    <div class="divider" />
+    <!-- <div class="divider" />
     <div class="mt-20 flex justify-evenly items-center">
-      <button class="btn btn-accent shadow-md dark:opacity-75 dark:text-white" @click="addOption">
+      <button class="btn btn-accent rounded-none shadow-md dark:opacity-75 dark:text-white" @click="addOption">
         新增选项
       </button>
-      <button class="btn btn-error dark:opacity-75 shadow-md dark:text-white " @click="$emit('on-click')">
+      <button class="btn rounded-none dark:opacity-75 shadow-md dark:text-white " @click="$emit('on-click')">
         删除题目
       </button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -77,6 +85,7 @@ import { saveImgAPI } from "@/apis";
 import { ElNotification } from "element-plus";
 
 const props = defineProps<{
+  isActive: boolean,
   serial_num: number,
   title?: string,
   optionChoose: boolean,
