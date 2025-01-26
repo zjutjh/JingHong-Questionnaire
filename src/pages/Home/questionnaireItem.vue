@@ -92,24 +92,24 @@ import CryptoJS from "crypto-js";
 import { ElMessage } from "element-plus";
 import { computed } from "vue";
 import { useQrCode } from "@/utilities/useQrCode";
-
+import { QuesStatus } from "@/utilities/constantMap.ts";
 const baseURL = import.meta.env.VITE_COPY_LINK;
 const tempStore = useMainStore().useTempStore();
 const props = defineProps<{
   title: string,
   idName: number,
-  status: 1 | 2 | 3,
+  status: QuesStatus.DRAFT | QuesStatus.PUBLISH | QuesStatus.EXPIRED,
 }>();
 const statusMap = {
-  1: "草稿",
-  2: "已发布",
-  3: "已截止"
+  [QuesStatus.DRAFT]: "草稿",
+  [QuesStatus.PUBLISH]: "已发布",
+  [QuesStatus.EXPIRED]: "已过期"
 };
 
 const classMap = {
-  1: "text-blue-500",
-  2: "text-red-500",
-  3: "text-gray-500"
+  [QuesStatus.DRAFT]: "text-blue-500",
+  [QuesStatus.PUBLISH]: "text-red-500",
+  [QuesStatus.EXPIRED]: "text-gray-500"
 };
 
 const emit = defineEmits(["updateList"]);
