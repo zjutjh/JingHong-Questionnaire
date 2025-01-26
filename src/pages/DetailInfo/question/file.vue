@@ -1,24 +1,32 @@
 <template>
-  <div class="bg-base-300 dark:bg-customGray_shallow p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
+  <div class="bg-base-200 dark:bg-customGray_shallow p-30 hover:shadow-md " :class="isActive? 'bg-base-300' : ''">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
           <span>{{ serial_num }}</span>
           <input
+            v-if="isActive"
             v-model="localTitle"
             type="text"
             placeholder="Question"
-            class="dark:bg-customGray_more_shallow input input-bordered shadow-md w-350"
+            class="rounded-none focus:outline-none dark:bg-customGray_more_shallow input input-bordered shadow-md w-350"
           >
+          <div v-else>
+            {{ localTitle }}
+          </div>
         </div>
         <div class="flex items-center gap-20 my-10">
-          <span class="w-50">问题描述</span>
+          <span class="w-50">问题<br>描述</span>
           <textarea
+            v-if="isActive"
             v-model="localDescribe"
             type="text"
             placeholder="Describe"
-            class="dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70"
+            class="rounded-none focus:outline-none dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70"
           />
+          <div v-else>
+            {{ localDescribe }}
+          </div>
         </div>
       </div>
       <div class="flex-col justify-center items-center">
@@ -46,12 +54,12 @@
         <el-icon><Plus /></el-icon>
       </el-upload>
     </div>
-    <div class="divider" />
+    <!-- <div class="divider" />
     <div class="mt-20 flex justify-evenly items-center ">
       <button class="btn btn-error  opacity-75 shadow-md dark:text-white" @click="$emit('on-click')">
         删除题目
       </button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -59,6 +67,7 @@
 import { defineEmits, ref, watch } from "vue";
 
 const props = defineProps<{
+  isActive: boolean,
   serial_num: number,
   title?: string,
   optionChoose: boolean
