@@ -15,37 +15,6 @@
             {{ localTitle }}
           </div>
         </div>
-        <div class="flex items-center gap-20 my-10">
-          <span class="w-50">问题<br>描述</span>
-          <textarea
-            v-if="isActive"
-            v-model="localDescribe"
-            type="text"
-            placeholder="Describe"
-            class="rounded-none focus:outline-none dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70"
-          />
-          <div v-else>
-            {{ localDescribe }}
-          </div>
-        </div>
-      </div>
-      <div class="flex-col justify-center items-center">
-        <div class="flex gap-10 ">
-          <span>必答</span><input
-            v-model="localOptionChoose"
-            type="checkbox"
-            :name="-1"
-            class="checkbox-sm"
-          >
-        </div>
-        <div class="flex gap-10 ">
-          <span>唯一</span><input
-            v-model="localUnique"
-            type="checkbox"
-            :name="-1"
-            class="checkbox-sm"
-          >
-        </div>
       </div>
     </div>
     <div class="divider" />

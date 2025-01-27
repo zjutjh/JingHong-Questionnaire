@@ -3,34 +3,49 @@
     <menu-panel v-show="mode === 'ques'">
       <left-menu />
     </menu-panel>
-    <question-list :loading="loading" v-model:question="question" />
+    <div class="mt-20 flex flex-col gap-20 flex-1 ">
+      <div class="flex justify-center items-center">
+        <el-radio-group
+          v-model="mode"
+          size="middle"
+          text-color="#f87171"
+          fill="#fee2e2"
+        >
+          <el-radio-button label="问卷内容" value="ques" />
+          <el-radio-button label="问卷设置" value="setting" />
+          <el-radio-button label="题目逻辑" value="logic" disabled />
+        </el-radio-group>
+      </div>
+      <question-list v-model:question="question" :loading="loading" />
+    </div>
 
-        <!--        <div class="flex justify-center items-center gap-160 mt-20">-->
-        <!--          <button-->
-        <!--            v-show="isNew === 'false'"-->
-        <!--            class="btn btn-success dark:opacity-75 dark:text-white"-->
-        <!--            @click="showModal('SaveQuestionnaireSubmit')"-->
-        <!--          >-->
-        <!--            保存更改-->
-        <!--          </button>-->
-        <!--          <button-->
-        <!--            v-show="isNew === 'false'"-->
-        <!--            class="btn btn-error dark:opacity-75 dark:text-white"-->
-        <!--            @click="showModal('reverseQuestionnaireSubmit')"-->
-        <!--          >-->
-        <!--            放弃更改-->
-        <!--          </button>-->
-        <!--          <button v-show="isNew === 'true'" class="btn btn-success dark:opacity-75 dark:text-white" @click="submit(1)">-->
-        <!--            保存-->
-        <!--          </button>-->
-        <!--          <button-->
-        <!--            v-show="isNew === 'true'"-->
-        <!--            class="btn btn-primary dark:opacity-75 dark:text-white"-->
-        <!--            @click="showModal('NewQuestionnaireSubmit')"-->
-        <!--          >-->
-        <!--            发布-->
-        <!--          </button>-->
-        <!--        </div>-->
+
+    <!--        <div class="flex justify-center items-center gap-160 mt-20">-->
+    <!--          <button-->
+    <!--            v-show="isNew === 'false'"-->
+    <!--            class="btn btn-success dark:opacity-75 dark:text-white"-->
+    <!--            @click="showModal('SaveQuestionnaireSubmit')"-->
+    <!--          >-->
+    <!--            保存更改-->
+    <!--          </button>-->
+    <!--          <button-->
+    <!--            v-show="isNew === 'false'"-->
+    <!--            class="btn btn-error dark:opacity-75 dark:text-white"-->
+    <!--            @click="showModal('reverseQuestionnaireSubmit')"-->
+    <!--          >-->
+    <!--            放弃更改-->
+    <!--          </button>-->
+    <!--          <button v-show="isNew === 'true'" class="btn btn-success dark:opacity-75 dark:text-white" @click="submit(1)">-->
+    <!--            保存-->
+    <!--          </button>-->
+    <!--          <button-->
+    <!--            v-show="isNew === 'true'"-->
+    <!--            class="btn btn-primary dark:opacity-75 dark:text-white"-->
+    <!--            @click="showModal('NewQuestionnaireSubmit')"-->
+    <!--          >-->
+    <!--            发布-->
+    <!--          </button>-->
+    <!--        </div>-->
     <menu-panel v-show="mode === 'ques'">
       <right-menu />
     </menu-panel>
@@ -156,7 +171,7 @@ const addQuestion = (type: number) => {
 };
 
 provide("addQuestion", addQuestion);
-provide('submitData',submitData);
+provide("submitData", submitData);
 
 const isNew = localStorage.getItem("isNew");
 const calculateFutureDate = (): Date => {
@@ -250,7 +265,7 @@ const deleteQuestion = (serial_num: number) => {
     }
   });
 };
-provide("deleteQuetion",deleteQuestion)
+provide("deleteQuetion", deleteQuestion);
 
 const dataReverse = () => {
   submitData.value = deepCopy(formData.value);
