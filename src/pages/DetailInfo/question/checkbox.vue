@@ -15,40 +15,9 @@
             {{ localTitle }}
           </div>
         </div>
-        <div class="flex items-center gap-20 my-10">
-          <span class="w-50">问题<br>描述</span>
-          <textarea
-            v-if="isActive"
-            v-model="localDescribe"
-            type="text"
-            placeholder="Describe"
-            class="rounded-none focus:outline-none dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70 "
-          />
-          <div v-else>
-            {{ localDescribe }}
-          </div>
-        </div>
-        <span class="my-10 flex justify-between">
-          <span>最大多选数<input v-model.number="localMax" type="text" class="rounded-none focus:outline-none dark:bg-customGray_more_shallow input  shadow-md w-55 h-40 ml-10"></span>
-          <span>最小多选数<input v-model.number="localMin" type="text" class="rounded-none focus:outline-none dark:bg-customGray_more_shallow input  shadow-md w-55 h-40 ml-10"></span>
-        </span>
-      </div>
-      <div class="flex-col justify-center items-center">
-        <div class="flex gap-10">
-          <span>必答</span>
-          <input v-model="localOptionChoose" type="checkbox" class="checkbox-sm">
-        </div>
-        <div class="flex gap-10">
-          <span>唯一</span>
-          <input v-model="localUnique" type="checkbox" class="checkbox-sm">
-        </div>
       </div>
     </div>
     <div class="divider" />
-    <span class="flex items-center justify-end gap-10">
-      <span>有"其他"选项</span>
-      <input v-model="localOtherOption" type="checkbox" class="checkbox-sm">
-    </span>
     <div ref="scrollContainer" class="flex-col p-5 overflow-y-auto h-180 mt-10" style="scroll-behavior: smooth;">
       <div v-for="item in localOptions" :key="item.serial_num" class="my-5">
         <div class="flex items-center gap-10">
@@ -63,7 +32,12 @@
             <div v-if="item.img" class="mt-4">
               <img :src="item.img" alt="Preview" style="max-width: 50px; max-height: 50px;">
             </div>
-            <input v-if="isActive" type="file" class="dark:bg-customGray_more_shallow file-input file-input-bordered file-input-sm w-7/12" @change="handleFileChange($event, item.serial_num)">
+            <input
+              v-if="isActive"
+              type="file"
+              class="dark:bg-customGray_more_shallow file-input file-input-bordered file-input-sm w-7/12"
+              @change="handleFileChange($event, item.serial_num)"
+            >
           </div>
           <button v-if="isActive" class="btn dark:bg-customGray_more_shallow dark:text-white btn-sm shadow-md" @click="deleteOption(item.serial_num)">
             删除

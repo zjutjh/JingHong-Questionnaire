@@ -15,37 +15,9 @@
             {{ localTitle }}
           </div>
         </div>
-        <div class="flex items-center gap-20 my-10">
-          <span class="w-50">问题<br>描述</span>
-          <textarea
-            v-if="isActive"
-            v-model="localDescribe"
-            type="text"
-            placeholder="Describe"
-            class="dark:bg-customGray_more_shallow textarea rounded-none focus:outline-none textarea-bordered shadow-md w-full h-70"
-            style="overflow-wrap: break-word;"
-          />
-          <div v-else>
-            {{ localDescribe }}
-          </div>
-        </div>
-      </div>
-      <div class="flex-col justify-center items-center ">
-        <div class="flex gap-10">
-          <span>必答</span>
-          <input v-model="localOptionChoose" type="checkbox" class="checkbox-sm">
-        </div>
-        <div class="flex gap-10">
-          <span>唯一</span>
-          <input v-model="localUnique" type="checkbox" class="checkbox-sm">
-        </div>
       </div>
     </div>
     <div class="divider" />
-    <span class="flex items-center justify-end gap-10">
-      <span>有"其他"选项</span>
-      <input v-model="localOtherOption" type="checkbox" class="checkbox-sm">
-    </span>
     <div ref="scrollContainer" class="flex-col p-5 overflow-y-auto h-180 mt-10" style="scroll-behavior: smooth;">
       <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
         <input type="radio" :name="props.serial_num" class="radio-sm my-5">
