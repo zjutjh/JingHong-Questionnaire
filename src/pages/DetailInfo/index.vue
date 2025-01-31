@@ -16,9 +16,8 @@
           <el-radio-button label="题目逻辑" value="logic" disabled />
         </el-radio-group>
       </div>
-      <question-list v-model:question="question" :loading="loading" />
+      <question-list v-model:question="question" :loading="loading" v-if="mode === 'ques'" />
     </div>
-
 
     <!--        <div class="flex justify-center items-center gap-160 mt-20">-->
     <!--          <button-->
