@@ -101,7 +101,6 @@ export const useEditStore = defineStore("edit", () => {
   const surveyId = ref(-1);
   const { schema, getSchemaFromRemote } = useInitializeSchema(surveyId);
   const questionDataList = schema.value.quesConfig.questionList;
-  const baseConfig = schema.value.baseConfig;
   function setQuestionDataList(data: any) {
     schema.value.quesConfig.questionList = data;
   }
@@ -134,7 +133,6 @@ export const useEditStore = defineStore("edit", () => {
     setSurveyId,
     setQuestionDataList,
     getQuestionDataList,
-    baseConfig,
     init,
     schema,
     surveyId
