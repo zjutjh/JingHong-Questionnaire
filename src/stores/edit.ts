@@ -1,11 +1,10 @@
-import { reactive, Ref, ref, computed } from "vue";
+import { Ref, ref, computed } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireDetailAPI } from "@/apis";
 import { closeLoading, startLoading } from "@/utilities";
 import { ElNotification } from "element-plus";
 import { defineStore } from "pinia";
 import { QuesItemType, QuesStatus, QuesType } from "@/utilities/coantantMap.ts";
-import { BaseConfig } from "@/utilities/type.ts";
 /**
  * 返回默认的问卷 schema
  */
@@ -14,7 +13,7 @@ function defaultSchema() {
     status: QuesStatus.DRAFT,
     surveyType: QuesType.SURVEY,
     baseConfig: {
-      startTime: new Date().toISOString(), // 新建时默认 startTime 为当前时间
+      startTime: Date.now(),
       endTime: "",
       dayLimit: 0,
       verify: false
@@ -57,23 +56,24 @@ function defaultSchema() {
   };
 }
 function useInitializeSchema(surveyId: Ref<number>) {
-  const schema = reactive(defaultSchema());
+  const schema = ref(defaultSchema());
+  const { run } = useRequest(() => getQuestionnaireDetailAPI({ id: surveyId.value }), {
+    onBefore: () => startLoading(),
+    onSuccess(res: any) {
+      if (res.code === 200) {
+        schema.value = res.data;
+      } else {
+        ElNotification.error(res.msg);
+      }
+    },
+    onError(e) {
+      ElNotification.error("获取失败，请重试" + e);
+    },
+    onFinally: () => closeLoading()
+  });
   async function getSchemaFromRemote() {
     if (surveyId.value === -1) return; // 新建问卷时不拉取远程数据
-    useRequest(() => getQuestionnaireDetailAPI({ id: surveyId.value }), {
-      onBefore: () => startLoading(),
-      onSuccess(res: any) {
-        if (res.code === 200) {
-          Object.assign(schema, res.data);
-        } else {
-          ElNotification.error(res.msg);
-        }
-      },
-      onError(e) {
-        ElNotification.error("获取失败，请重试" + e);
-      },
-      onFinally: () => closeLoading()
-    }).run();
+    run();
   }
 
   return {
@@ -97,42 +97,22 @@ function useQuestionListReducer(questionDataList: any) {
   };
 }
 
-function useBaseConfigReducer(baseConfig: BaseConfig) {
-
-  const getBaseConfig = computed(() => baseConfig);
-
-  const updateBaseConfig = (key: keyof BaseConfig, value: any) => {
-    Object.assign(baseConfig, { [key]: value });
-  };
-
-  const setBaseConfig = (newConfig: BaseConfig) => {
-    Object.assign(baseConfig, newConfig);
-  };
-
-  return {
-    getBaseConfig,
-    updateBaseConfig,
-    setBaseConfig
-
-  };
-}
-
 export const useEditStore = defineStore("edit", () => {
   const surveyId = ref(-1);
   const { schema, getSchemaFromRemote } = useInitializeSchema(surveyId);
-  const questionDataList = schema.quesConfig.questionList;
-  const baseConfig = schema.baseConfig;
+  const questionDataList = schema.value.quesConfig.questionList;
+  const baseConfig = schema.value.baseConfig;
   function setQuestionDataList(data: any) {
-    schema.quesConfig.questionList = data;
+    schema.value.quesConfig.questionList = data;
   }
   /**
    * 重置 schema 以便用于新建问卷
    */
   function resetSchema() {
-    Object.assign(schema, defaultSchema()); // 只重置 schema 的内容
+    schema.value = defaultSchema(); // 只重置 schema 的内容
     surveyId.value = -1; // 重新回到新建模式
   }
-  const getQuestionDataList = computed(() => schema.quesConfig.questionList);
+  const getQuestionDataList = computed(() => schema.value.quesConfig.questionList);
 
   function setSurveyId(id: number) {
     surveyId.value = id;
@@ -148,20 +128,16 @@ export const useEditStore = defineStore("edit", () => {
     questionDataList
   );
 
-  const { getBaseConfig, updateBaseConfig, setBaseConfig } = useBaseConfigReducer(baseConfig);
-
   return {
     addQuestion,
     deleteQuestion,
     setSurveyId,
     setQuestionDataList,
     getQuestionDataList,
+    baseConfig,
     init,
     schema,
-    surveyId,
-    getBaseConfig,
-    updateBaseConfig,
-    setBaseConfig
+    surveyId
   };
 }, {
   persist: true
