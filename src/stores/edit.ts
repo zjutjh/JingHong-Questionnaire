@@ -1,4 +1,4 @@
-import { Ref, ref, computed } from "vue";
+import { Ref, ref, computed, toRef } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireDetailAPI } from "@/apis";
 import { closeLoading, startLoading } from "@/utilities";
@@ -81,7 +81,7 @@ function useInitializeSchema(surveyId: Ref<number>) {
   };
 }
 
-function useQuestionListReducer(questionDataList: Question[]) {
+function useQuestionListReducer(questionDataList: Ref<Question[]>) {
   function createQuestion(type: QuesItemType, serialNum: number): Question {
     const commonSettings = {
       serialNum,
@@ -148,12 +148,12 @@ function useQuestionListReducer(questionDataList: Question[]) {
 
   function addQuestion(index: number, type: QuesItemType) {
     const newQuestion = createQuestion(type, index + 1);
-    questionDataList.splice(index, 0, newQuestion);
+    questionDataList.value.splice(index, 0, newQuestion);
   }
 
   function deleteQuestion(index: number) {
-    questionDataList.splice(index, 1);
-    questionDataList.forEach((q, idx) => {
+    questionDataList.value.splice(index, 1);
+    questionDataList.value.forEach((q, idx) => {
       q.serialNum = idx + 1;
     });
   }
@@ -167,7 +167,7 @@ function useQuestionListReducer(questionDataList: Question[]) {
 export const useEditStore = defineStore("edit", () => {
   const surveyId = ref(-1);
   const { schema, getSchemaFromRemote } = useInitializeSchema(surveyId);
-  const questionDataList: Question[] = schema.value.quesConfig.questionList;
+  const questionDataList = toRef(schema.value.quesConfig, "questionList");
   function setQuestionDataList(data: any) {
     schema.value.quesConfig.questionList = data;
   }
