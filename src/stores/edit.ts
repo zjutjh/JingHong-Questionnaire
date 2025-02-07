@@ -5,6 +5,8 @@ import { closeLoading, startLoading } from "@/utilities";
 import { ElNotification } from "element-plus";
 import { defineStore } from "pinia";
 import { QuesItemType, QuesStatus, QuesType } from "@/utilities/coantantMap.ts";
+import { Question, Option } from "@/utilities/type.ts";
+
 /**
  * 返回默认的问卷 schema
  */
@@ -31,10 +33,7 @@ function defaultSchema() {
             required: true,
             unique: false,
             otherOption: false,
-            questionType: QuesItemType.RADIO,
-            reg: "",
-            maximumOption: 0,
-            minimumOption: 0
+            questionType: QuesItemType.RADIO
           },
           options: [
             {
@@ -82,13 +81,81 @@ function useInitializeSchema(surveyId: Ref<number>) {
   };
 }
 
-function useQuestionListReducer(questionDataList: any) {
-  function addQuestion({ question, index }: { question: any; index: number }) {
-    questionDataList.value.splice(index, 0, question);
+function useQuestionListReducer(questionDataList: Question[]) {
+  function createQuestion(type: QuesItemType, serialNum: number): Question {
+    const commonSettings = {
+      serialNum,
+      subject: "新问题",
+      description: "",
+      img: ""
+    };
+
+    const defaultOptions: Option[] = [
+      { serialNum: 1, content: "选项1", img: "", description: "" },
+      { serialNum: 2, content: "选项2", img: "", description: "" }
+    ];
+
+    const defaultSetting = {
+      required: true,
+      unique: false
+    };
+
+    const quesSettingMap = {
+      [QuesItemType.RADIO]: {
+        ...defaultSetting,
+        questionType: QuesItemType.RADIO,
+        otherOption: false
+      },
+      [QuesItemType.CHECKBOX]: {
+        questionType: QuesItemType.CHECKBOX,
+        ...defaultSetting,
+        otherOption: false,
+        maximumOption: 0,
+        minimumOption: 0
+      },
+      [QuesItemType.INPUT]: {
+        questionType: QuesItemType.INPUT,
+        ...defaultSetting,
+        reg: ""
+      },
+      [QuesItemType.TEXTAREA]: {
+        questionType: QuesItemType.TEXTAREA,
+        ...defaultSetting,
+        reg: ""
+      },
+      [QuesItemType.PHOTO]: {
+        questionType: QuesItemType.PHOTO,
+        ...defaultSetting
+      },
+      [QuesItemType.VOTE]: {
+        questionType: QuesItemType.VOTE,
+        ...defaultSetting,
+        maximumOption: 0,
+        minimumOption: 0
+      }
+    };
+
+    if (!(type in quesSettingMap)) {
+      throw new Error("未知的题目类型");
+    }
+
+    return {
+      ...commonSettings,
+      quesSetting: quesSettingMap[type],
+      ...(type === QuesItemType.RADIO || type === QuesItemType.CHECKBOX ? { options: [...defaultOptions] } : {})
+    } as Question;
   }
 
-  function deleteQuestion({ index }: { index: number }) {
-    questionDataList.value.splice(index, 1);
+  function addQuestion(index: number, type: QuesItemType) {
+    const newQuestion = createQuestion(type, index + 1);
+    questionDataList.splice(index, 0, newQuestion);
+  }
+
+  function deleteQuestion(index: number) {
+    questionDataList.splice(index, 1);
+    questionDataList.forEach((q, idx) => {
+      q.serialNum = idx + 1;
+    });
   }
 
   return {
@@ -100,7 +167,7 @@ function useQuestionListReducer(questionDataList: any) {
 export const useEditStore = defineStore("edit", () => {
   const surveyId = ref(-1);
   const { schema, getSchemaFromRemote } = useInitializeSchema(surveyId);
-  const questionDataList = schema.value.quesConfig.questionList;
+  const questionDataList: Question[] = schema.value.quesConfig.questionList;
   function setQuestionDataList(data: any) {
     schema.value.quesConfig.questionList = data;
   }
