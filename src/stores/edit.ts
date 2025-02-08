@@ -1,11 +1,12 @@
-import { Ref, ref, computed, toRef } from "vue";
+import { Ref, ref, toRef } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireDetailAPI } from "@/apis";
 import { closeLoading, startLoading } from "@/utilities";
 import { ElNotification } from "element-plus";
 import { defineStore } from "pinia";
-import { QuesItemType, QuesStatus, QuesType } from "@/utilities/coantantMap.ts";
+import { QuesItemType, QuesStatus, QuesType } from "@/utilities/constMap.ts";
 import { Question, Option } from "@/utilities/type.ts";
+import { quesSettingMap } from "@/utilities/quesSettingMap.ts";
 
 /**
  * 返回默认的问卷 schema
@@ -95,46 +96,6 @@ function useQuestionListReducer(questionDataList: Ref<Question[]>) {
       { serialNum: 2, content: "选项2", img: "", description: "" }
     ];
 
-    const defaultSetting = {
-      required: true,
-      unique: false
-    };
-
-    const quesSettingMap = {
-      [QuesItemType.RADIO]: {
-        ...defaultSetting,
-        questionType: QuesItemType.RADIO,
-        otherOption: false
-      },
-      [QuesItemType.CHECKBOX]: {
-        questionType: QuesItemType.CHECKBOX,
-        ...defaultSetting,
-        otherOption: false,
-        maximumOption: 0,
-        minimumOption: 0
-      },
-      [QuesItemType.INPUT]: {
-        questionType: QuesItemType.INPUT,
-        ...defaultSetting,
-        reg: ""
-      },
-      [QuesItemType.TEXTAREA]: {
-        questionType: QuesItemType.TEXTAREA,
-        ...defaultSetting,
-        reg: ""
-      },
-      [QuesItemType.PHOTO]: {
-        questionType: QuesItemType.PHOTO,
-        ...defaultSetting
-      },
-      [QuesItemType.VOTE]: {
-        questionType: QuesItemType.VOTE,
-        ...defaultSetting,
-        maximumOption: 0,
-        minimumOption: 0
-      }
-    };
-
     if (!(type in quesSettingMap)) {
       throw new Error("未知的题目类型");
     }
@@ -168,9 +129,6 @@ export const useEditStore = defineStore("edit", () => {
   const surveyId = ref(-1);
   const { schema, getSchemaFromRemote } = useInitializeSchema(surveyId);
   const questionDataList = toRef(schema.value.quesConfig, "questionList");
-  function setQuestionDataList(data: any) {
-    schema.value.quesConfig.questionList = data;
-  }
   /**
    * 重置 schema 以便用于新建问卷
    */
@@ -178,7 +136,6 @@ export const useEditStore = defineStore("edit", () => {
     schema.value = defaultSchema(); // 只重置 schema 的内容
     surveyId.value = -1; // 重新回到新建模式
   }
-  const getQuestionDataList = computed(() => schema.value.quesConfig.questionList);
 
   function setSurveyId(id: number) {
     surveyId.value = id;
@@ -198,8 +155,6 @@ export const useEditStore = defineStore("edit", () => {
     addQuestion,
     deleteQuestion,
     setSurveyId,
-    setQuestionDataList,
-    getQuestionDataList,
     init,
     schema,
     surveyId
