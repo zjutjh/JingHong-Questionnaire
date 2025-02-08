@@ -1,4 +1,4 @@
-import { QuesItemType } from "@/utilities/coantantMap.ts";
+import { QuesItemType } from "@/utilities/constMap.ts";
 
 interface BaseConfig {
   dayLimit: number;
