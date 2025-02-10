@@ -2,44 +2,7 @@
   <div class="fixed inset-0 flex items-center justify-center bg-red-300 text-red-950 dark:text-white dark:bg-black">
     <div class="bg-red-50 dark:bg-customGray flex-col overflow-auto w-full sm:w-1/2 lg:w-6/12 p-30 h-full  shadow-lg">
       <div class="flex-col justify-center relative">
-        <div class="flex justify-center">
-          <div class="absolute top-0 right-4 z-10">
-            <button
-              class="flex items-center justify-center w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-800 transition-colors duration-300"
-              @click="switchDarkMode"
-            >
-              <span v-if="!darkModeStatus">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-50 w-50 text-yellow-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 3v1m0 16v1m9-9h1m-16 0H3m15.364-7.364l-.707.707M6.636 17.364l-.707.707m12.728-12.728l-.707.707M6.636 6.636l-.707-.707M12 15.5A3.5 3.5 0 1 0 12 8.5A3.5 3.5 0 0 0 12 15.5z"
-                  />
-                </svg>
-              </span>
-              <span v-else>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-60 w-60 text-customGray_more_shallow"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path d="M12 3c0 6.627 0 12 0 12a6 6 0 1 1 0-12z" />
-                </svg>
-              </span>
-            </button>
-          </div>
-
-          <el-image class="w-2/3" src="https://img.lonesome.cn/jhwl/project/questionnaire/jxh_logo.webp" />
-        </div>
+        <header-img />
         <el-skeleton
           :loading="loading"
           :rows="1"
@@ -47,25 +10,12 @@
           style="height: 60px"
         >
           <template #default>
-            <div class="flex flex-col ">
-              <div class="divider" />
-              <div class="flex gap-20 my-10 justify-center">
-                <span class="text-4xl break-all px-50">{{ formData.title }}</span>
-              </div>
-              <div v-if="formData.desc !== ''" class="items-top my-10 items-start mx-20">
-                <div class="items-top my-10 items-start ">
-                  <pre class="text-gray-500 flex break-all text-xl dark:text-white dark:opacity-50">{{ formData.desc }}</pre>
-                </div>
-              </div>
-            </div>
-            <div class="flex gap-20 items-center my-10  ml-20 ">
-              <span class="text-red-950 dark:text-red-400 dark:opacity-80">截止时间:</span>
-              <span>{{ time }}</span>
-            </div>
-            <div v-if="formData.daily_limit !== 0" class="flex gap-20 items-center my-10  ml-20 ">
-              <span class=" dark:opacity-80 text-gray-700 dark:text-gray-400">本问卷每天最多提交 <span class="text-red-950 dark:text-red-400 dark:opacity-80">{{ formData.daily_limit }} </span> 次</span>
-            </div>
-            <div class="divider my-10" />
+            <ques-header
+              :title="formData.title"
+              :desc="formData.desc"
+              :time="time"
+              :daily-limit="formData.daily_limit"
+            />
           </template>
         </el-skeleton>
       </div>
@@ -252,23 +202,19 @@ import { useRequest } from "vue-hooks-plus";
 import { getUserAPI, setUserSubmitAPI } from "@/apis";
 import { ElNotification } from "element-plus";
 import { modal, showModal } from "@/components";
-import radio from "@/pages/View/radio.vue";
-import Checkbox from "@/pages/View/checkbox.vue";
-import Fill from "@/pages/View/fill.vue";
-import TextArea from "@/pages/View/textArea.vue";
-import File from "@/pages/View/file.vue";
+import radio from "@/pages/View/question/radio.vue";
+import Checkbox from "@/pages/View/question/checkbox.vue";
+import Fill from "@/pages/View/question/fill.vue";
+import TextArea from "@/pages/View/question/textArea.vue";
+import File from "@/pages/View/question/file.vue";
 import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 import router from "@/router";
 import { useRoute } from "vue-router";
 import { closeLoading, startLoading } from "@/utilities";
 import CryptoJS from "crypto-js";
 import { useMainStore } from "@/stores";
-// 暗黑模式hook
-import { useDarkModeSwitch } from "@/utilities/darkModeSwitch";
-import verifyAPI from "@/apis/service/User/verifyApi.ts";
-import Vote from "@/pages/View/vote.vue";
-import getStatistic from "@/apis/service/User/getStatistic.ts";
-const { darkModeStatus, switchDarkMode } = useDarkModeSwitch();
+import HeaderImg from "@/pages/View/headerImg.vue";
+import QuesHeader from "@/pages/View/QuesHeader.vue";
 const Key = "JingHong";
 const formData = ref();
 const question = ref<any[]>([]);
