@@ -129,6 +129,10 @@ const question = props.question;
 
 const emits = defineEmits(["update:question"]);
 
+const activeSerial = inject("activeSerial")
+
+const setActive = inject("setActive")
+
 watch(question, (newVal) => {
   emits("update:question", newVal);
 });
@@ -137,9 +141,4 @@ const mode = ref("ques");
 
 const deleteQuestion = inject("deleteQuestion");
 const submitData = inject("submitData");
-const activeSerial = ref(-1);
-const setActive = (serialNum: number) => {
-  console.log(serialNum);
-  activeSerial.value = serialNum;
-};
 </script>

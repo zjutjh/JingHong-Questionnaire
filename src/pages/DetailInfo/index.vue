@@ -169,6 +169,15 @@ const addQuestion = (type: number) => {
   });
 };
 
+const activeSerial = ref(-1);
+const setActive = (serialNum: number) => {
+  console.log(serialNum);
+  activeSerial.value = serialNum;
+};
+
+provide("activeSerial",activeSerial)
+provide("setActive",setActive)
+
 provide("addQuestion", addQuestion);
 provide("submitData", submitData);
 
