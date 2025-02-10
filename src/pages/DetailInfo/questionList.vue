@@ -11,9 +11,9 @@
       <div
         v-for="q in question"
         :key="q.serialNum"
-        @click="setActive(q.serialNum)"
+        @click="handleSetActive(q.serialNum)"
       >
-        <div v-if="q.quesSetting.questionType === 1">
+        <div v-if="q.quesSetting.questionType === QuesItemType.RADIO">
           <el-skeleton animated :loading="loading">
             <radio
               v-model:title="q.subject"
@@ -28,7 +28,7 @@
             />
           </el-skeleton>
         </div>
-        <div v-if="q.quesSetting.questionType === 2">
+        <div v-if="q.quesSetting.questionType === QuesItemType.CHECKBOX">
           <el-skeleton animated :loading="loading">
             <template #template>
               <skeleton-card />
@@ -50,7 +50,7 @@
             </template>
           </el-skeleton>
         </div>
-        <div v-if="q.quesSetting.questionType === 3">
+        <div v-if="q.quesSetting.questionType === QuesItemType.INPUT">
           <el-skeleton animated :loading="loading">
             <template #template>
               <skeleton-card />
@@ -69,7 +69,7 @@
             </template>
           </el-skeleton>
         </div>
-        <div v-if="q.quesSetting.questionType === 4">
+        <div v-if="q.quesSetting.questionType === QuesItemType.TEXTAREA">
           <el-skeleton :loading="loading">
             <template #template>
               <skeleton-card />
@@ -87,7 +87,7 @@
             </template>
           </el-skeleton>
         </div>
-        <div v-if="q.quesSetting.questionType === 5">
+        <div v-if="q.quesSetting.questionType === QuesItemType.PHOTO">
           <el-skeleton animated :loading="loading">
             <template #template>
               <skeleton-card />
@@ -122,6 +122,8 @@ import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 
 import { useEditStore } from "@/stores/edit";
 
+import {QuesItemType} from "../../utilities/constMap"
+
 
 
 const props = defineProps<{
@@ -136,7 +138,11 @@ const emits = defineEmits(["update:question"]);
 
 const activeSerial = inject("activeSerial")
 
-const setActive = inject("setActive")
+const setActive = inject<(serialNum: number) => void>("setActive")
+
+const handleSetActive = (serialNum: number) => {
+  setActive?.(serialNum)
+}
 
 watch(question, (newVal) => {
   emits("update:question", newVal);
