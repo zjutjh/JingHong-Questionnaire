@@ -3,7 +3,7 @@
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
-          <span>{{ serial_num }}</span>
+          <span>{{ serialNum }}</span>
           <input
             v-if="isActive"
             v-model="localTitle"
@@ -19,8 +19,8 @@
     </div>
     <div class="divider" />
     <div ref="scrollContainer" class="flex-col p-5 overflow-y-auto h-180 mt-10" style="scroll-behavior: smooth;">
-      <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
-        <input type="radio" :name="props.serial_num" class="radio-sm my-5">
+      <div v-for="item in localOptions" :key="item.serialNum" class="flex items-center gap-10 my-5">
+        <input type="radio" :name="props.serialNum" class="radio-sm my-5">
         <input
           v-model="item.content"
           type="text"
@@ -31,9 +31,9 @@
           <div v-if="item.img" class="mt-4">
             <img :src="item.img" alt="Preview" style="max-width: 50px; max-height: 50px;">
           </div>
-          <input v-if="isActive" type="file" class="dark:bg-customGray_more_shallow file-input file-input-bordered file-input-sm w-7/12" @change="handleFileChange($event, item.serial_num)">
+          <input v-if="isActive" type="file" class="dark:bg-customGray_more_shallow file-input file-input-bordered file-input-sm w-7/12" @change="handleFileChange($event, item.serialNum)">
         </div>
-        <button v-if="isActive" class="btn btn-sm dark:bg-customGray_more_shallow dark:text-white shadow-md" @click="deleteOption(item.serial_num);">
+        <button v-if="isActive" class="btn btn-sm dark:bg-customGray_more_shallow dark:text-white shadow-md" @click="deleteOption(item.serialNum);">
           删除
         </button>
       </div>
@@ -58,7 +58,7 @@ import { ElNotification } from "element-plus";
 
 const props = defineProps<{
   isActive: boolean,
-  serial_num: number,
+  serialNum: number,
   title?: string,
   optionChoose: boolean,
   unique: boolean,
@@ -67,7 +67,7 @@ const props = defineProps<{
   options?: {
     content: string;
     img: string;
-    serial_num: number;
+    serialNum: number;
   }[]
 }>();
 
@@ -81,14 +81,14 @@ const localUnique = ref<boolean>(props.unique);
 const localOtherOption = ref<boolean>(props.otherOption);
 const localOptions = ref(props.options ? [...props.options] : []);
 
-const handleFileChange = async (event, serial_num: number) => {
+const handleFileChange = async (event, serialNum: number) => {
   const file = event.target.files[0];
   if (!file) return;
   const formData = new FormData();
   formData.append("img", file);
   useRequest(() => saveImgAPI(formData), {
     onSuccess(res) {
-      const option = localOptions.value.find(item => item.serial_num === serial_num);
+      const option = localOptions.value.find(item => item.serialNum === serialNum);
       if (option) {
         option.img = res.data;
       }
@@ -104,7 +104,7 @@ const addOption = () => {
   localOptions.value.push({
     content: "",
     img: "",
-    serial_num: localOptions.value.length + 1
+    serialNum: localOptions.value.length + 1
   });
   nextTick(() => {
     if (scrollContainer.value) {
@@ -114,11 +114,11 @@ const addOption = () => {
   emits("update:options", localOptions);
 };
 
-const deleteOption = (serial_num: number) => {
-  localOptions.value = localOptions.value.filter(item => item.serial_num !== serial_num);
+const deleteOption = (serialNum: number) => {
+  localOptions.value = localOptions.value.filter(item => item.serialNum !== serialNum);
   localOptions.value.forEach((item) => {
-    if (item.serial_num > serial_num) {
-      item.serial_num -= 1;
+    if (item.serialNum > serialNum) {
+      item.serialNum -= 1;
     }
   });
 };
