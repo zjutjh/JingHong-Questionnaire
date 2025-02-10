@@ -99,7 +99,7 @@ const handleCurrentChange = (val: number) => {
 
 const newQues = () => {
   localStorage.setItem("isNew", "true");
-  router.push("/admin/DetailInfo");
+  router.push({path:"/admin/DetailInfo",query:{"id": -1}});
 };
 
 const addVote = () => {

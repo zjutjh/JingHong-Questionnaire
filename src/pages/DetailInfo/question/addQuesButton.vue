@@ -8,17 +8,21 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from "vue";
+import { useEditStore } from "@/stores/edit";
+import {computed} from "vue"
+
+const {addQuestion,schema} = useEditStore()
+
+const questionLens = computed(() => schema.quesConfig.questionList.length)
+
 const props = defineProps<{
   text: string
-  type: number
+  type: string
 }>();
 
-const injectedAddQues = inject<((type: number) => void)>("addQuestion");
 const addQues = () => {
-  if (injectedAddQues) {
-    injectedAddQues(Number(props.type));
-  }
+  addQuestion(questionLens.value,Number(props.type))
+  // console.log(schema)
 };
 </script>
 

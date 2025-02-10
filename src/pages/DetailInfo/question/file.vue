@@ -3,7 +3,7 @@
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
-          <span>{{ serial_num }}</span>
+          <span>{{ serialNum }}</span>
           <input
             v-if="isActive"
             v-model="localTitle"
@@ -37,7 +37,7 @@ import { defineEmits, ref, watch } from "vue";
 
 const props = defineProps<{
   isActive: boolean,
-  serial_num: number,
+  serialNum: number,
   title?: string,
   optionChoose: boolean
   describe: string,

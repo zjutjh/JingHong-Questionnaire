@@ -2,33 +2,33 @@
   <div v-if="mode === 'ques'" class="bg-base-200 dark:bg-customGray flex-1 max-h-[80vh] overflow-y-auto">
     <div v-if="submitData" class="flex-col justify-center p-20 pb-0">
       <div class="flex justify-center items-center flex-col gap-10">
-        <input v-model="submitData.title" class="input bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-2xl w-[100%] text-center dark:bg-customGray" placeholder="投票标题">
-        <textarea v-model="submitData.desc" class=" textarea bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-md w-[100%] resize-none dark:bg-customGray" placeholder="投票描述" />
+        <input v-model="schema.quesConfig.title" class="input bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-2xl w-[100%] text-center dark:bg-customGray" placeholder="投票标题">
+        <textarea v-model="schema.quesConfig.desc" class=" textarea bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-md w-[100%] resize-none dark:bg-customGray" placeholder="投票描述" />
       </div>
     </div>
     <div class="divider" />
     <div class="flex flex-col gap-5 bg-base-100">
       <div
         v-for="q in question"
-        :key="q.serial_num"
-        @click="setActive(q.serial_num)"
+        :key="q.serialNum"
+        @click="setActive(q.serialNum)"
       >
-        <div v-if="q.question_type === 1">
+        <div v-if="q.quesSetting.questionType === 1">
           <el-skeleton animated :loading="loading">
             <radio
               v-model:title="q.subject"
               v-model:options="q.options"
-              v-model:serial_num="q.serial_num"
-              v-model:unique="q.unique"
-              v-model:option-choose="q.required"
-              v-model:other-option="q.other_option"
+              v-model:serialNum="q.serialNum"
+              v-model:unique="q.quesSetting.unique"
+              v-model:option-choose="q.quesSetting.required"
+              v-model:other-option="q.quesSetting.otherOption"
               v-model:describe="q.description"
-              :is-active="q.serial_num === activeSerial"
-              @on-click="deleteQuestion(q.serial_num)"
+              :is-active="q.serialNum === activeSerial"
+              @on-click="deleteQuestion(q.serialNum)"
             />
           </el-skeleton>
         </div>
-        <div v-if="q.question_type === 2">
+        <div v-if="q.quesSetting.questionType === 2">
           <el-skeleton animated :loading="loading">
             <template #template>
               <skeleton-card />
@@ -37,20 +37,20 @@
               <checkbox
                 v-model:title="q.subject"
                 v-model:options="q.options"
-                v-model:serial_num="q.serial_num"
-                v-model:unique="q.unique"
-                v-model:option-choose="q.required"
-                v-model:other-option="q.other_option"
+                v-model:serialNum="q.serialNum"
+                v-model:unique="q.quesSetting.unique"
+                v-model:option-choose="q.quesSetting.required"
+                v-model:other-option="q.quesSetting.otherOption"
                 v-model:describe="q.description"
-                v-model:maximum_option="q.maximum_option"
-                v-model:minimum_option="q.minimum_option"
-                :is-active="q.serial_num === activeSerial"
-                @on-click="deleteQuestion(q.serial_num)"
+                v-model:maximum_option="q.quesSetting.maximumOption"
+                v-model:minimum_option="q.quesSetting.minimumOption"
+                :is-active="q.serialNum === activeSerial"
+                @on-click="deleteQuestion(q.serialNum)"
               />
             </template>
           </el-skeleton>
         </div>
-        <div v-if="q.question_type === 3">
+        <div v-if="q.quesSetting.questionType === 3">
           <el-skeleton animated :loading="loading">
             <template #template>
               <skeleton-card />
@@ -58,18 +58,18 @@
             <template #default>
               <fill
                 v-model:title="q.subject"
-                v-model:serial_num="q.serial_num"
-                v-model:reg="q.reg"
-                v-model:unique="q.unique"
-                v-model:option-choose="q.required"
+                v-model:serialNum="q.serialNum"
+                v-model:reg="q.quesSetting.reg"
+                v-model:unique="q.quesSetting.unique"
+                v-model:option-choose="q.quesSetting.required"
                 v-model:describe="q.description"
-                :is-active="q.serial_num === activeSerial"
-                @on-click="deleteQuestion(q.serial_num)"
+                :is-active="q.serialNum === activeSerial"
+                @on-click="deleteQuestion(q.serialNum)"
               />
             </template>
           </el-skeleton>
         </div>
-        <div v-if="q.question_type === 4">
+        <div v-if="q.quesSetting.questionType === 4">
           <el-skeleton :loading="loading">
             <template #template>
               <skeleton-card />
@@ -77,17 +77,17 @@
             <template #default>
               <text-area
                 v-model:title="q.subject"
-                v-model:serial_num="q.serial_num"
-                v-model:unique="q.unique"
-                v-model:option-choose="q.required"
+                v-model:serialNum="q.serialNum"
+                v-model:unique="q.quesSetting.unique"
+                v-model:option-choose="q.quesSetting.required"
                 v-model:describe="q.description"
-                :is-active="q.serial_num === activeSerial"
-                @on-click="deleteQuestion(q.serial_num)"
+                :is-active="q.serialNum === activeSerial"
+                @on-click="deleteQuestion(q.serialNum)"
               />
             </template>
           </el-skeleton>
         </div>
-        <div v-if="q.question_type === 5">
+        <div v-if="q.quesSetting.questionType === 5">
           <el-skeleton animated :loading="loading">
             <template #template>
               <skeleton-card />
@@ -95,12 +95,12 @@
             <template #default>
               <file
                 v-model:title="q.subject"
-                v-model:serial_num="q.serial_num"
-                v-model:unique="q.unique"
-                v-model:option-choose="q.required"
+                v-model:serialNum="q.serialNum"
+                v-model:unique="q.quesSetting.unique"
+                v-model:option-choose="q.quesSetting.required"
                 v-model:describe="q.description"
-                :is-active="q.serial_num === activeSerial"
-                @on-click="deleteQuestion(q.serial_num)"
+                :is-active="q.serialNum === activeSerial"
+                @on-click="deleteQuestion(q.serialNum)"
               />
             </template>
           </el-skeleton>
@@ -120,12 +120,17 @@ import radio from "@/pages/DetailInfo/question/radio.vue";
 // import {SortableEvent, VueDraggable} from 'vue-draggable-plus'
 import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 
+import { useEditStore } from "@/stores/edit";
+
+
+
 const props = defineProps<{
   loading: boolean
-  question: any;
 }>();
 
-const question = props.question;
+const {schema,deleteQuestion} = useEditStore()
+
+const question = schema.quesConfig.questionList;
 
 const emits = defineEmits(["update:question"]);
 
@@ -139,6 +144,5 @@ watch(question, (newVal) => {
 
 const mode = ref("ques");
 
-const deleteQuestion = inject("deleteQuestion");
 const submitData = inject("submitData");
 </script>
