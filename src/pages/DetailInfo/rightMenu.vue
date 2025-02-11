@@ -5,9 +5,11 @@
 </template>
 
 <script setup lang="ts">
-import { inject  } from "vue";
+import { toRefs  } from "vue";
+import { useActiveStore } from "@/stores/edit";
+import { useEditStore } from "@/stores/edit";
 
-const activeSerial = inject("activeSerial")
+const {activeSerial} = toRefs(useActiveStore())
 </script>
 
 <style scoped>

@@ -11,7 +11,7 @@
       <div
         v-for="q in question"
         :key="q.serialNum"
-        @click="handleSetActive(q.serialNum)"
+        @click="setActive(q.serialNum)"
       >
         <div v-if="q.quesSetting.questionType === QuesItemType.RADIO">
           <el-skeleton animated :loading="loading">
@@ -111,7 +111,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, watch, defineProps, defineEmits } from "vue";
+import { ref, inject, watch, defineProps, defineEmits, toRefs } from "vue";
 import Checkbox from "@/pages/DetailInfo/question/checkbox.vue";
 import Fill from "@/pages/DetailInfo/question/fill.vue";
 import TextArea from "@/pages/DetailInfo/question/textArea.vue";
@@ -123,6 +123,8 @@ import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 import { useEditStore } from "@/stores/edit";
 
 import {QuesItemType} from "../../utilities/constMap"
+
+import { useActiveStore } from "@/stores/edit";
 
 
 
@@ -136,13 +138,7 @@ const question = schema.quesConfig.questionList;
 
 const emits = defineEmits(["update:question"]);
 
-const activeSerial = inject("activeSerial")
-
-const setActive = inject<(serialNum: number) => void>("setActive")
-
-const handleSetActive = (serialNum: number) => {
-  setActive?.(serialNum)
-}
+const { activeSerial , setActive} = toRefs(useActiveStore());
 
 watch(question, (newVal) => {
   emits("update:question", newVal);
