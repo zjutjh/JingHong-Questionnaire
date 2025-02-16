@@ -102,14 +102,14 @@ const handleUploadSuccess = (response: any, file: UploadFile) => {
 
 };
 
-const props = defineProps({
-  serial_num: Number,
-  title: String,
-  required: Boolean,
-  unique: Boolean,
-  describe: String,
-  answer: String
-});
+const props = defineProps<{
+  serial_num: number,
+  title: string,
+  required: boolean,
+  unique: boolean,
+  describe: string,
+  answer: string
+}>();
 
 const handleExceed = () => {
   ElMessage.warning("最多只能上传一张图片！");

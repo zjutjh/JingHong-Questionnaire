@@ -19,119 +19,26 @@
           </template>
         </el-skeleton>
       </div>
-      <div v-if="formData && formData.survey_type === 0" class="flex flex-col h-650 ">
-        <div v-for="q in question" :key="q.serial_num">
-          <!-- 根据问题类型渲染组件 -->
-          <div v-if="q.question_type === 1">
-            <el-skeleton animated :loading="loading">
-              <radio
-                v-model:answer="q.answer"
-                v-model:title="q.subject"
-                v-model:options="q.options"
-                v-model:serial_num="q.serial_num"
-                v-model:unique="q.unique"
-                v-model:required="q.required"
-                v-model:other-option="q.other_option"
-                v-model:describe="q.describe"
-                v-model:questionnaire-i-d="decryptedId"
-              />
-            </el-skeleton>
-          </div>
-          <div v-if="q.question_type === 2">
-            <el-skeleton animated :loading="loading">
-              <template #template>
-                <skeleton-card />
-              </template>
-              <template #default>
-                <checkbox
-                  v-model:answer="q.answer"
-                  v-model:title="q.subject"
-                  v-model:options="q.options"
-                  v-model:serial_num="q.serial_num"
-                  v-model:unique="q.unique"
-                  v-model:required="q.required"
-                  v-model:other-option="q.other_option"
-                  v-model:describe="q.describe"
-                  v-model:questionnaire-i-d="decryptedId as string"
-                  v-model:minimum_option="q.minimum_option"
-                  v-model:maximum_option="q.maximum_option"
-                />
-              </template>
-            </el-skeleton>
-          </div>
-          <div v-if="q.question_type === 3">
-            <el-skeleton animated :loading="loading">
-              <template #template>
-                <skeleton-card />
-              </template>
-              <template #default>
-                <fill
-                  v-model:answer="q.answer"
-                  v-model:title="q.subject"
-                  v-model:serial_num="q.serial_num"
-                  v-model:reg="q.reg"
-                  v-model:unique="q.unique"
-                  v-model:required="q.required"
-                  v-model:describe="q.describe"
-                />
-              </template>
-            </el-skeleton>
-          </div>
-          <div v-if="q.question_type === 4">
-            <el-skeleton :loading="loading">
-              <template #template>
-                <skeleton-card />
-              </template>
-              <template #default>
-                <text-area
-                  v-model:answer="q.answer"
-                  v-model:title="q.subject"
-                  v-model:serial_num="q.serial_num"
-                  v-model:unique="q.unique"
-                  v-model:required="q.required"
-                  v-model:describe="q.describe"
-                />
-              </template>
-            </el-skeleton>
-          </div>
-          <div v-if="q.question_type === 5">
-            <el-skeleton animated :loading="loading">
-              <template #template>
-                <skeleton-card />
-              </template>
-              <template #default>
-                <file
-                  v-model:answer="q.answer"
-                  v-model:title="q.subject"
-                  v-model:serial_num="q.serial_num"
-                  v-model:unique="q.unique"
-                  v-model:required="q.required"
-                  v-model:describe="q.describe"
-                />
-              </template>
-            </el-skeleton>
-          </div>
-        </div>
-        <div class="flex justify-center items-center py-50">
-          <button v-if="decryptedId !== '' && !isOutDate" class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75 hover:bg-red-600" @click="showModal('QuestionnaireSubmit')">
-            提交问卷
-          </button>
-        </div>
-      </div>
+      <main-list
+        v-if="formData"
+        :form-data="formData"
+        :question="question"
+        :decrypted-id="decryptedId"
+      />
       <div v-if="formData && formData.survey_type === 1" class="flex flex-col h-650 ">
         <div v-for="(q, index) in question" :key="index">
           <vote
             v-model:answer="q.answer"
-            v-model:title="q.subject"
-            v-model:options="q.options"
-            v-model:serial_num="q.serial_num"
-            v-model:unique="q.unique"
-            v-model:required="q.required"
-            v-model:other-option="q.other_option"
-            v-model:describe="q.describe"
-            v-model:questionnaire-i-d="decryptedId"
-            v-model:minimum_option="q.minimum_option"
-            v-model:maximum_option="q.maximum_option"
+            :title="q.subject"
+            :options="q.options"
+            :serial_num="q.serial_num"
+            :unique="q.unique"
+            :required="q.required"
+            :other-option="q.other_option"
+            :describe="q.describe"
+            :questionnaire-i-d="decryptedId"
+            :minimum_option="q.minimum_option"
+            :maximum_option="q.maximum_option"
             :count="resultData"
           >
             <div />
@@ -143,55 +50,6 @@
           </button>
         </div>
       </div>
-
-      <modal modal-id="QuestionnaireSubmit">
-        <template #title>
-          <span class="text-red-950 dark:text-red-500 ">提交问卷</span>
-        </template>
-
-        <template v-if="formData && !formData.verify || tokenOutDate" #default>
-          你确认要提交问卷吗?
-        </template>
-        <template v-else #default>
-          <div class="flex-col">
-            <div class="text-sm">
-              该问卷仅限校内师生作答,提交前需要先进行<span class="font-bold">统一身份认证</span>
-            </div>
-            <div class="flex-col my-10">
-              <span>职工号/学号 <input v-model="verifyData.stu_id" class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10" style="width: 100%"></span><br>
-              <span>密码 <br><input
-                v-model="verifyData.password"
-                class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10 "
-                style="width: 100%"
-                type="password"
-              ></span>
-            </div>
-            <div class="flex justify-end">
-              <a href="https://oauth.zjut.edu.cn/im/V3/securitycenter/findPwd/index.zf" style=" text-decoration: underline;;" class="text-sm my-5 text-blue-500 dark:text-white">
-                忘记密码?
-              </a>
-            </div>
-          </div>
-        </template>
-        <template #action>
-          <button
-            v-if="formData && !formData.verify || tokenOutDate"
-            class="btn bg-red-800 text-red-50 w-full hover:bg-red-600"
-            style="margin-top: -10px"
-            @click="submit"
-          >
-            确认
-          </button>
-          <button
-            v-else
-            class="btn bg-red-800 text-red-50 w-full hover:bg-red-600"
-            style="margin-top: -10px"
-            @click="verify"
-          >
-            确认
-          </button>
-        </template>
-      </modal>
     </div>
   </div>
 </template>
@@ -202,12 +60,6 @@ import { useRequest } from "vue-hooks-plus";
 import { getUserAPI, setUserSubmitAPI } from "@/apis";
 import { ElNotification } from "element-plus";
 import { modal, showModal } from "@/components";
-import radio from "@/pages/View/question/radio.vue";
-import Checkbox from "@/pages/View/question/checkbox.vue";
-import Fill from "@/pages/View/question/fill.vue";
-import TextArea from "@/pages/View/question/textArea.vue";
-import File from "@/pages/View/question/file.vue";
-import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 import router from "@/router";
 import { useRoute } from "vue-router";
 import { closeLoading, startLoading } from "@/utilities";
@@ -215,6 +67,7 @@ import CryptoJS from "crypto-js";
 import { useMainStore } from "@/stores";
 import HeaderImg from "@/pages/View/headerImg.vue";
 import QuesHeader from "@/pages/View/QuesHeader.vue";
+import MainList from "@/pages/View/mainList.vue";
 const Key = "JingHong";
 const formData = ref();
 const question = ref<any[]>([]);
