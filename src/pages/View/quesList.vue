@@ -64,7 +64,6 @@
 
 <script setup lang="ts">
 
-import { showModal } from "@/components";
 import Radio from "@/pages/View/question/radio.vue";
 import Checkbox from "@/pages/View/question/checkbox.vue";
 import File from "@/pages/View/question/file.vue";

@@ -3,21 +3,13 @@
     <div class="bg-red-50 dark:bg-customGray flex-col overflow-auto w-full sm:w-1/2 lg:w-6/12 p-30 h-full  shadow-lg">
       <div class="flex-col justify-center relative">
         <header-img />
-        <el-skeleton
-          :loading="loading"
-          :rows="1"
-          animated
-          style="height: 60px"
-        >
-          <template #default>
-            <ques-header
-              :title="formData.title"
-              :desc="formData.desc"
-              :time="time"
-              :daily-limit="formData.daily_limit"
-            />
-          </template>
-        </el-skeleton>
+        <ques-header
+          v-if="formData"
+          :title="formData.title"
+          :desc="formData.desc"
+          :time="time"
+          :daily-limit="formData.daily_limit"
+        />
       </div>
       <main-list
         v-if="formData"
@@ -25,31 +17,6 @@
         :question="question"
         :decrypted-id="decryptedId"
       />
-      <div v-if="formData && formData.survey_type === 1" class="flex flex-col h-650 ">
-        <div v-for="(q, index) in question" :key="index">
-          <vote
-            v-model:answer="q.answer"
-            :title="q.subject"
-            :options="q.options"
-            :serial_num="q.serial_num"
-            :unique="q.unique"
-            :required="q.required"
-            :other-option="q.other_option"
-            :describe="q.describe"
-            :questionnaire-i-d="decryptedId"
-            :minimum_option="q.minimum_option"
-            :maximum_option="q.maximum_option"
-            :count="resultData"
-          >
-            <div />
-          </vote>
-        </div>
-        <div class="flex justify-center items-center py-50">
-          <button v-if="decryptedId !== '' && !isOutDate" class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75 hover:bg-red-600" @click=" handleSubmit">
-            提交问卷
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -59,7 +26,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { getUserAPI, setUserSubmitAPI } from "@/apis";
 import { ElNotification } from "element-plus";
-import { modal, showModal } from "@/components";
+
 import router from "@/router";
 import { useRoute } from "vue-router";
 import { closeLoading, startLoading } from "@/utilities";
@@ -68,6 +35,7 @@ import { useMainStore } from "@/stores";
 import HeaderImg from "@/pages/View/headerImg.vue";
 import QuesHeader from "@/pages/View/QuesHeader.vue";
 import MainList from "@/pages/View/mainList.vue";
+import getStatistic from "@/apis/service/User/getStatistic.ts";
 const Key = "JingHong";
 const formData = ref();
 const question = ref<any[]>([]);
