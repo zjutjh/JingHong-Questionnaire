@@ -98,7 +98,7 @@ const props = defineProps<{
   submitData: any
 }>();
 const submitData = ref({
-  id: props.decryptedId,
+  id: Number(props.decryptedId),
   questions_list: [],
   token: ""
 });
@@ -183,6 +183,7 @@ const submit = () => {
     },
     onFinally: () => {
       showModal("QuestionnaireSubmit", true);
+      showModal("QuestionnaireSubmitWithVerify", true);
       closeLoading();
     }
   });
