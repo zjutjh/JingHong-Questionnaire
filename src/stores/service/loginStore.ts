@@ -12,11 +12,13 @@ const useLoginStore = defineStore("login", () => {
     showHeader.value = showHeaderNew;
   };
 
+  const zfToken = "";
   return {
     setLogin,
     loginSession,
     setShowHeader,
-    showHeader
+    showHeader,
+    zfToken
   };
 }, { persist: true });
 

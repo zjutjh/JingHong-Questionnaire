@@ -5,7 +5,7 @@
       v-else
       :decrypted-id="props.decryptedId"
       :question="props.question"
-      :result-data="props.resultData"
+      :result-data="resultData"
     />
     <div class="flex justify-center items-center py-50">
       <button v-if="props.decryptedId !== '' && !isOutDate" class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75 hover:bg-red-600" @click="handleSubmit">
@@ -16,14 +16,11 @@
       <template #title>
         <span class="text-red-950 dark:text-red-500 ">提交问卷</span>
       </template>
-
       <template #default>
         你确认要提交问卷吗?
       </template>
-
       <template #action>
         <button
-          v-if="formData && !formData.verify || tokenOutDate"
           class="btn bg-red-800 text-red-50 w-full hover:bg-red-600"
           @click="submit"
         >
@@ -71,7 +68,7 @@
 import QuesList from "@/pages/View/quesList.vue";
 import VoteList from "@/pages/View/voteList.vue";
 import { showModal, modal } from "@/components";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { ElNotification } from "element-plus";
 import verifyAPI from "@/apis/service/User/verifyApi.ts";
@@ -84,7 +81,8 @@ const allowSend = ref(true);
 const isOutDate = ref(false);
 const optionStore = useMainStore().useOptionStore();
 const questionnaireStore = useMainStore().useQuetionnaireStore();
-
+const loginStore = useMainStore().useLoginStore();
+const zfToken = loginStore.zfToken;
 const verifyData = ref({
   stu_id: "",
   password: "",
@@ -94,7 +92,6 @@ const props = defineProps<{
   formData: any,
   question: any
   decryptedId: any
-  resultData?: any
   submitData: any
 }>();
 const submitData = ref({
@@ -102,51 +99,53 @@ const submitData = ref({
   questions_list: [],
   token: ""
 });
-
+const resultData = ref();
 const handleSubmit = () => {
   const nowDate = Date.now();
   const startTimestamp = new Date(props.formData.start_time).getTime();
   const showTime = props.formData.start_time.replace("T", " ").split("+")[0].split(".")[0];
   if (nowDate - startTimestamp < 0) {
     ElNotification.error(`问卷开始时间为 ${showTime}`);
-  } else if (props.formData.verify) {
+  } else if (props.formData.verify && needVerify.value || !zfToken) {
     showModal("QuestionnaireSubmitWithVerify");
   } else {
     showModal("QuestionnaireSubmit");
   }
 };
-const tokenOutDate = computed(() => {
-  const lastDate = localStorage.getItem("timestamp");
-  // 如果没有存储时间戳（首次请求或过期），调用 verifyAPI
-  return !(!lastDate || Date.now() - parseInt(lastDate) > 7 * 24 * 60 * 60 * 1000);
+
+onMounted(async () => {
+  if (props.formData.survey_type === 1) {
+    try {
+      const res = await getStatistic({ id: Number(props.decryptedId) });
+      resultData.value = res.data.statistics[0].options;
+    } catch (e) {
+      ElNotification.error(e);
+    }
+  }
 });
 
+const lastDate = localStorage.getItem("timestamp");
+const needVerify = computed(() => {
+  return !lastDate || Date.now() - parseInt(lastDate) > 7 * 24 * 60 * 60 * 1000;
+});
 const verify = () => {
-  const lastDate = localStorage.getItem("timestamp");
-  // 如果没有存储时间戳（首次请求或过期），调用 verifyAPI
-  if (!lastDate || Date.now() - parseInt(lastDate) > 7 * 24 * 60 * 60 * 1000) {
-    // 调用 verifyAPI 获取新的 token
-    useRequest(() => verifyAPI(verifyData.value), {
-      onSuccess(res) {
-        if (res.code === 200) {
-          // 更新 token 和 timestamp
-          localStorage.setItem("token", res.data.token);
-          localStorage.setItem("timestamp", String(Date.now()));
-          submit();
-        } else {
-          ElNotification.error(res.msg);
-        }
+  useRequest(() => verifyAPI(verifyData.value), {
+    onSuccess(res) {
+      if (res.code === 200) {
+        // 更新 token 和 timestamp
+        loginStore.zfToken = res.data.token;
+        localStorage.setItem("timestamp", String(Date.now()));
+        submit();
+      } else {
+        ElNotification.error(res.msg);
       }
-    });
-  } else {
-    // 如果 timestamp 存在且未过期，直接调用 submit
-    submit();
-  }
+    }
+  });
 };
 
 const submit = () => {
   checkAnswer();
-  if (allowSend.value === false) {
+  if (!allowSend.value) {
     return;
   }
   submitData.value.questions_list = props.question.map((q) => ({
@@ -154,7 +153,7 @@ const submit = () => {
     serial_num: q.serial_num,
     answer: q.answer
   }));
-  submitData.value.token = localStorage.getItem("token");
+  submitData.value.token = zfToken;
   useRequest(() => setUserSubmitAPI(submitData.value), {
     onBefore: () => startLoading(),
     async onSuccess(res) {
@@ -166,13 +165,13 @@ const submit = () => {
         optionStore.deleteOption(props.decryptedId);
         if (props.formData.survey_type === 0) {
           router.push("/Thank");
-        // } else {
-        //   try {
-        //     const res = await getStatistic({ id: Number(decryptedId.value) });
-        //     resultData.value = res.data.statistics[0].options;
-        //   } catch (e) {
-        //     ElNotification.error(e);
-        //   }
+        } else {
+          try {
+            const res = await getStatistic({ id: Number(props.decryptedId) });
+            resultData.value = res.data.statistics[0].options;
+          } catch (e) {
+            ElNotification.error(e);
+          }
         }
       } else {
         ElNotification.error(res.msg);
@@ -219,6 +218,7 @@ const checkAnswer = () => {
   });
   if (hasUnansweredRequiredQuestion) {
     showModal("QuestionnaireSubmit", true);
+    showModal("QuestionnaireSubmitWithVerify", true);
     allowSend.value = false;
     return;
   }

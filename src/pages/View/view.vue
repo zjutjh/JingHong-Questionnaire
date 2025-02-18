@@ -68,12 +68,7 @@ onMounted(async () => {
     }
   }
   getQuestionnaireView();
-  // try {
-  //   const res = await getStatistic({ id: Number(decryptedId.value) });
-  //   resultData.value = res.data.statistics[0].options;
-  // } catch (e) {
-  //   ElNotification.error(e);
-  // }
+
 });
 
 watch(question, (newQuestions) => {
