@@ -12,7 +12,7 @@ const useLoginStore = defineStore("login", () => {
     showHeader.value = showHeaderNew;
   };
 
-  const zfToken = "";
+  const zfToken = ref("");
   return {
     setLogin,
     loginSession,

@@ -83,17 +83,18 @@ const optionStore = useMainStore().useOptionStore();
 const questionnaireStore = useMainStore().useQuetionnaireStore();
 const loginStore = useMainStore().useLoginStore();
 const zfToken = loginStore.zfToken;
-const verifyData = ref({
-  stu_id: "",
-  password: "",
-  survey_id: -1
-});
+
 const props = defineProps<{
   formData: any,
   question: any
   decryptedId: any
   submitData: any
 }>();
+const verifyData = ref({
+  stu_id: "",
+  password: "",
+  survey_id: props.decryptedId
+});
 const submitData = ref({
   id: Number(props.decryptedId),
   questions_list: [],
