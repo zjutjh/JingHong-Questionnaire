@@ -1,15 +1,116 @@
 <template>
   <div class="bg-base-100 flex-1" >
-      {{ activeSerial }}
+
+      <!-- 题型显示 -->
+      <div class="flex bg-base-200 w-full opacity-0.6 items-center" style="height: 4vh;">
+        <div class="text-red-400 pl-16 text-sm" v-if="activeSerial!==-1">{{ typeChinese[currentType] }}</div>
+      </div>
+
+      <!-- 垂直间距 -->
+      <div class="w-full" style="height: 2vh;" /> 
+
+      <div v-if="activeSerial!==-1" class="pl-16">
+
+        <!-- 所有题型通用 -->
+        <div class="text-sm font-medium">
+          基础配置
+        </div>
+        <div class="pt-8">
+          <el-checkbox v-model="questionList[activeSerial-1].quesSetting.required" label="必选" size="large" />
+          <el-checkbox v-model="questionList[activeSerial-1].quesSetting.unique" label="唯一" size="large" />
+        </div>
+
+        <div class="pt-16 text-sm font-medium">
+          引导介绍文案
+        </div>
+
+        <div class="pt-16">
+          <el-input style="width: 240px" v-model="questionList[activeSerial-1].description" placeholder="Please input"/>
+        </div>
+
+        <!-- 填空特殊逻辑 -->
+        <div v-if="currentType===QuesItemType.INPUT||currentType===QuesItemType.TEXTAREA" class="pt-24">
+          <div class="text-sm font-medium">
+            内容格式限制
+          </div>
+          <div class="pt-16">
+            <el-select v-model="questionList[activeSerial-1].quesSetting.reg" style="width: 240px">
+              <el-option v-for="item in basicReg" :label="item.label" :value="item.value"/>
+            </el-select>
+          </div>
+        </div>
+
+        <!-- 多选特殊逻辑 -->
+        <div v-if="currentType===QuesItemType.CHECKBOX" class="pt-24">
+          <div class="text-sm font-medium">
+            选项配置
+          </div>
+          <div class="pt-16">
+            <div>
+              <span class="text-sm font-medium pr-8">最少选择数</span>
+              <el-input-number min="0" :max="questionList[activeSerial-1].quesSetting.maximumOption" v-model="questionList[activeSerial-1].quesSetting.minimumOption"/>
+            </div>
+            <div class="pt-10">
+              <span class="text-sm font-medium pr-8">最多选择数</span>
+              <el-input-number :min="questionList[activeSerial-1].quesSetting.minimumOption" v-model="questionList[activeSerial-1].quesSetting.maximumOption"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      
   </div>
 </template>
 
 <script setup lang="ts">
-import { toRefs  } from "vue";
+import { computed, toRefs  } from "vue";
 import { useActiveStore } from "@/stores/edit";
 import { useEditStore } from "@/stores/edit";
+import { QuesItemType } from "@/utilities/constMap";
+import { watch } from "fs";
+
+const typeChinese = {
+  1:"单项选择题",
+  2:"多项选择题",
+  3:"单行输入框",
+  4:"多行输入框",
+  5:"图片"
+}
+
 
 const {activeSerial} = toRefs(useActiveStore())
+
+const {questionList} = toRefs(useEditStore().schema.quesConfig)
+
+// console.log(questionList.value)
+
+const currentType = computed<number>(() => {
+  if(activeSerial.value===-1){
+    return 0
+  }else{
+    return(questionList.value[activeSerial.value-1].quesSetting.questionType)
+  }
+})
+
+const basicReg = [
+  {
+    label:"电话",
+    value:"^1[3456789]\\d{9}$"
+  },
+  {
+    label:"邮箱",
+    value:"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+  },
+  {
+    label:"学号",
+    value:"^\\d{12}$"
+  },
+  {
+    label:"无限制",
+    value:"^.*$"
+  }
+]
+
+
 </script>
 
 <style scoped>
