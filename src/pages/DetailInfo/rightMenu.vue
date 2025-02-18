@@ -66,7 +66,6 @@ import { computed, toRefs  } from "vue";
 import { useActiveStore } from "@/stores/edit";
 import { useEditStore } from "@/stores/edit";
 import { QuesItemType } from "@/utilities/constMap";
-import { watch } from "fs";
 
 const typeChinese = {
   1:"单项选择题",
