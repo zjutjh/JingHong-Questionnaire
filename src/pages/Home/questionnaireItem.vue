@@ -95,7 +95,7 @@ import router from "@/router";
 import { closeLoading, startLoading } from "@/utilities";
 import { useMainStore } from "@/stores";
 import CryptoJS from "crypto-js";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useQrCode } from "@/utilities/useQrCode";
 import { QuesStatus, SurveyType } from "@/utilities/constantMap.ts";
 import { useClipboard } from "@vueuse/core";
