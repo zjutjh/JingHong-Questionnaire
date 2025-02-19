@@ -34,7 +34,6 @@ import { useMainStore } from "@/stores";
 import HeaderImg from "@/pages/View/headerImg.vue";
 import QuesHeader from "@/pages/View/QuesHeader.vue";
 import MainList from "@/pages/View/mainList.vue";
-import getStatistic from "@/apis/service/User/getStatistic.ts";
 const Key = "JingHong";
 const formData = ref();
 const question = ref<any[]>([]);
@@ -45,7 +44,6 @@ const submitData = ref({
   questions_list: []
 });
 const startTime = ref();
-const resultData = ref(undefined);
 const route = useRoute();
 const loginStore = useMainStore().useLoginStore();
 const decryptedId = ref<string | null>();

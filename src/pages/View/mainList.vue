@@ -70,7 +70,7 @@ import VoteList from "@/pages/View/voteList.vue";
 import { showModal, modal } from "@/components";
 import { computed, onMounted, ref } from "vue";
 import { useRequest } from "vue-hooks-plus";
-import { ElNotification } from "element-plus";
+import { ElLoading, ElNotification } from "element-plus";
 import verifyAPI from "@/apis/service/User/verifyApi.ts";
 import { setUserSubmitAPI } from "@/apis";
 import { closeLoading, startLoading } from "@/utilities";
@@ -130,7 +130,9 @@ const needVerify = computed(() => {
   return !lastDate || Date.now() - parseInt(lastDate) > 7 * 24 * 60 * 60 * 1000;
 });
 const verify = () => {
+  showModal("QuestionnaireSubmitWithVerify", true);
   useRequest(() => verifyAPI(verifyData.value), {
+    onBefore: () => startLoading(),
     onSuccess(res) {
       if (res.code === 200) {
         // 更新 token 和 timestamp
@@ -140,6 +142,9 @@ const verify = () => {
       } else {
         ElNotification.error(res.msg);
       }
+    },
+    onFinally() {
+      closeLoading();
     }
   });
 };
@@ -183,7 +188,6 @@ const submit = () => {
     },
     onFinally: () => {
       showModal("QuestionnaireSubmit", true);
-      showModal("QuestionnaireSubmitWithVerify", true);
       closeLoading();
     }
   });
