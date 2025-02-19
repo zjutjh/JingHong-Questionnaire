@@ -36,7 +36,7 @@
         <div v-if="status===2" class="btn btn-sm btn-ghost" @click="() => showModal('QRcode')">
           查看分享二维码
         </div>
-        <div v-if="status===2" class="btn btn-sm btn-ghost" @click="() => copyShareCode()">
+        <div v-if="status===2" class="btn btn-sm btn-ghost" @click="handleCopy">
           复制分享链接
         </div>
         <div class="pt-4" :class="classMap[status]">
@@ -90,14 +90,15 @@
 import { modal, showModal } from "@/components";
 import { delQuestionnaireAPI, updateQuestionnaireStatusAPI } from "@/apis";
 import { useRequest } from "vue-hooks-plus";
-import { ElMessage, ElNotification } from "element-plus";
+import { ElNotification } from "element-plus";
 import router from "@/router";
 import { closeLoading, startLoading } from "@/utilities";
 import { useMainStore } from "@/stores";
 import CryptoJS from "crypto-js";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useQrCode } from "@/utilities/useQrCode";
 import { QuesStatus, SurveyType } from "@/utilities/constantMap.ts";
+import { useClipboard } from "@vueuse/core";
 
 const baseURL = import.meta.env.VITE_COPY_LINK;
 const tempStore = useMainStore().useTempStore();
@@ -107,6 +108,27 @@ const props = defineProps<{
   surveyType: SurveyType.VOTE | SurveyType.QUES,
   status: QuesStatus.DRAFT | QuesStatus.PUBLISH | QuesStatus.EXPIRED,
 }>();
+// 获取问卷url
+const questionnaireURL = computed(
+  () => {
+    const Key = "JingHong";
+    return baseURL + "/View?id=" + CryptoJS.AES.encrypt(props.idName + "", Key).toString();
+  }
+);
+
+const handleCopy = () => {
+  const { copy } = useClipboard({
+    source: questionnaireURL,
+    legacy: true
+  });
+  try {
+    copy(questionnaireURL.value);
+    ElNotification.success("复制成功");
+  } catch (e) {
+    ElNotification.error("复制失败" + e);
+  }
+
+};
 const statusMap = {
   [QuesStatus.DRAFT]: "草稿",
   [QuesStatus.PUBLISH]: "已发布",
@@ -154,47 +176,6 @@ const delQuestionnaire = (id: number) => {
     },
     onFinally: () => closeLoading()
   });
-};
-
-// 获取问卷url
-const questionnaireURL = computed(
-  () => {
-    const Key = "JingHong";
-    return baseURL + "/View?id=" + CryptoJS.AES.encrypt(props.idName + "", Key).toString();
-  }
-);
-
-// 复制问卷url兼容http
-const copyShareCode = () => {
-  const clipboardCopy = async () => {
-    if (navigator.clipboard) {
-      // 如果支持 clipboard API
-      try {
-        await navigator.clipboard.writeText(questionnaireURL.value);
-        ElMessage({
-          message: "链接复制成功",
-          type: "success"
-        });
-      } catch (error) {
-        console.error("Clipboard copy failed: ", error);
-      }
-    } else {
-      // 不支持 clipboard API，使用 fallback 方法
-      const textarea = document.createElement("textarea");
-      textarea.value = questionnaireURL.value;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
-
-      ElMessage({
-        message: "链接复制成功",
-        type: "success"
-      });
-    }
-  };
-
-  clipboardCopy();
 };
 
 // 二维码处理
