@@ -3,6 +3,12 @@
   <div class="bg-neutral-100 dark:bg-customGray border border-neutral-700 rounded-lg p-20">
     <div class="relative h-30">
       <div class="absolute left-0">
+        <el-tag v-if="props.surveyType === SurveyType.QUES">
+          问卷
+        </el-tag>
+        <el-tag v-else type="success">
+          投票
+        </el-tag>
         {{ title }}
       </div>
       <div class="absolute right-5 flex flex-row gap-5">
@@ -82,22 +88,23 @@
 
 <script setup lang="ts">
 import { modal, showModal } from "@/components";
-import { updateQuestionnaireStatusAPI, delQuestionnaireAPI } from "@/apis";
+import { delQuestionnaireAPI, updateQuestionnaireStatusAPI } from "@/apis";
 import { useRequest } from "vue-hooks-plus";
-import { ElNotification } from "element-plus";
+import { ElMessage, ElNotification } from "element-plus";
 import router from "@/router";
 import { closeLoading, startLoading } from "@/utilities";
 import { useMainStore } from "@/stores";
 import CryptoJS from "crypto-js";
-import { ElMessage } from "element-plus";
 import { computed } from "vue";
 import { useQrCode } from "@/utilities/useQrCode";
-import { QuesStatus } from "@/utilities/constantMap.ts";
+import { QuesStatus, SurveyType } from "@/utilities/constantMap.ts";
+
 const baseURL = import.meta.env.VITE_COPY_LINK;
 const tempStore = useMainStore().useTempStore();
 const props = defineProps<{
   title: string,
   idName: number,
+  surveyType: SurveyType.VOTE | SurveyType.QUES,
   status: QuesStatus.DRAFT | QuesStatus.PUBLISH | QuesStatus.EXPIRED,
 }>();
 const statusMap = {
@@ -118,7 +125,7 @@ const updateList = () => {
   emit("updateList");
 };
 
-const updateQuestionnaireStatus = (id: number, status: 1 | 2) => {
+const updateQuestionnaireStatus = (id: number, status: QuesStatus.DRAFT | QuesStatus.PUBLISH) => {
   useRequest(() => updateQuestionnaireStatusAPI({
     id: id,
     status: status
@@ -153,18 +160,41 @@ const delQuestionnaire = (id: number) => {
 const questionnaireURL = computed(
   () => {
     const Key = "JingHong";
-    const url = baseURL + "/View?id=" + CryptoJS.AES.encrypt(props.idName + "", Key).toString();
-    return url;
+    return baseURL + "/View?id=" + CryptoJS.AES.encrypt(props.idName + "", Key).toString();
   }
 );
 
-// 复制问卷url
+// 复制问卷url兼容http
 const copyShareCode = () => {
-  navigator.clipboard.writeText(questionnaireURL.value);
-  ElMessage({
-    message: "链接复制成功",
-    type: "success"
-  });
+  const clipboardCopy = async () => {
+    if (navigator.clipboard) {
+      // 如果支持 clipboard API
+      try {
+        await navigator.clipboard.writeText(questionnaireURL.value);
+        ElMessage({
+          message: "链接复制成功",
+          type: "success"
+        });
+      } catch (error) {
+        console.error("Clipboard copy failed: ", error);
+      }
+    } else {
+      // 不支持 clipboard API，使用 fallback 方法
+      const textarea = document.createElement("textarea");
+      textarea.value = questionnaireURL.value;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+
+      ElMessage({
+        message: "链接复制成功",
+        type: "success"
+      });
+    }
+  };
+
+  clipboardCopy();
 };
 
 // 二维码处理

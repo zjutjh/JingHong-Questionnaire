@@ -13,6 +13,7 @@
           :title="item.title"
           :id-name="item.id"
           :status="item.status"
+          :survey-type="item.survey_type"
           @update-list="() => getQuestionnaireList()"
         />
         <el-pagination
