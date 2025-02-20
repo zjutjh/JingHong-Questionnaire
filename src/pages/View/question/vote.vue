@@ -29,7 +29,7 @@
               alt="Preview"
               style="width: 100%"
             >
-            <span class="flex gap-8 items-center justify-center border-t-2 border-red-300 dark:border-0 bg-red-100 dark:bg-customGray_shallow" style="flex: 0.5">
+            <span class="flex gap-8 items-center justify-center border-red-300 dark:border-0 bg-red-100 dark:bg-customGray_shallow" :class="item.img ? 'border-t-2 ': ''" style="flex: 0.5">
               <input
                 v-model="answerArr"
                 type="checkbox"
@@ -99,22 +99,16 @@ const localOtherOption = ref<boolean>(props.otherOption);
 const localOptions = ref(props.options ? [...props.options] : []);
 const otherAnswer = ref<string>(optionStore.search(props.questionnaireID, props.serial_num));
 const answerArr = ref<string[]>(props.answer ? props.answer.split("┋") : []);
-// console.log(answerArr)
 const emits = defineEmits(["update:answer"]);
 const otherAnswerChecked = ref(false);
 const otherCheckbox = ref<HTMLInputElement | null>(null);
-
-// console.log(answerArr.value + ' '+ otherAnswer.value)
-
 onMounted(() => {
   if (answerArr.value.includes(otherAnswer.value)) {
-    // console.log("111")
     otherAnswerChecked.value = true;
   }
 }
 );
 
-// console.log(otherAnswerChecked.value)
 const deleteOldAnswer = () => {
   const otherIndex = answerArr.value.indexOf(otherAnswer.value);
   if (otherIndex !== -1) {
@@ -139,37 +133,10 @@ watch(filteredAnswerArr, () => {
   if (otherCheckbox.value && otherCheckbox.value.checked && !answerArr.value.includes(otherAnswer.value)) {
     answerArr.value.push(otherAnswer.value);
   }
-  // console.log(filteredAnswerArr.value)
-  // console.log(otherAnswerChecked.value)
   const combinedAnswers = filteredAnswerArr.value.join("┋");
   emits("update:answer", combinedAnswers);
 });
 
-watch(otherAnswer, (newOtherAnswer, oldOtherAnswer) => {
-  if (newOtherAnswer) {
-    optionStore.update(props.questionnaireID, props.serial_num, newOtherAnswer);
-  }
-  if (newOtherAnswer !== oldOtherAnswer && otherCheckbox.value && otherCheckbox.value.checked) {
-    const otherIndex = answerArr.value.indexOf(oldOtherAnswer);
-    if (otherIndex !== -1) {
-      answerArr.value.splice(otherIndex, 1);
-    }
-    answerArr.value.push(newOtherAnswer);
-  }
-});
-
-watch(otherAnswerChecked, () => {
-  if (otherAnswerChecked.value) {
-    if (!answerArr.value.includes(otherAnswer.value)) {
-      answerArr.value.push(otherAnswer.value);
-    }
-  }
-  if (!otherAnswerChecked.value) {
-    if (answerArr.value.includes(otherAnswer.value)) {
-      deleteOldAnswer();
-    }
-  }
-});
 </script>
 
 <style scoped>

@@ -1,4 +1,4 @@
-<template>
+ <template>
   <div class="rounded mx-5 mt-30">
     <div class="flex justify-between">
       <div class="flex-col">
