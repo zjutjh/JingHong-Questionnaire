@@ -165,11 +165,7 @@ export const useEditStore = defineStore("edit", () => {
 
 export const useActiveStore = defineStore("active",() => {
   const activeSerial = ref(-1);
-  const setActive = (serialNum: number) => {
-    activeSerial.value = serialNum;
-  };
   return {
     activeSerial,
-    setActive
   }
 })

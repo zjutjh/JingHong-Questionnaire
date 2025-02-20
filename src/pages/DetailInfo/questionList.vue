@@ -11,7 +11,7 @@
       <div
         v-for="q in question"
         :key="q.serialNum"
-        @click="setActive(q.serialNum)"
+        @click="activeSerial = q.serialNum"
       >
         <div v-if="q.quesSetting.questionType === QuesItemType.RADIO">
           <el-skeleton animated :loading="loading">
