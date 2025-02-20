@@ -117,6 +117,8 @@ import MenuPanel from "@/pages/DetailInfo/menuPanel.vue";
 import RightMenu from "@/pages/DetailInfo/rightMenu.vue";
 import QuestionList from "./questionList.vue";
 
+import { useActiveStore } from "@/stores/edit";
+
 const mode = ref("ques");
 const tempStore = useMainStore().useTempStore();
 const selectedOption = ref(1);
@@ -169,14 +171,6 @@ const addQuestion = (type: number) => {
   });
 };
 
-const activeSerial = ref(-1);
-const setActive = (serialNum: number) => {
-  console.log(serialNum);
-  activeSerial.value = serialNum;
-};
-
-provide("activeSerial",activeSerial)
-provide("setActive",setActive)
 
 provide("addQuestion", addQuestion);
 provide("submitData", submitData);
