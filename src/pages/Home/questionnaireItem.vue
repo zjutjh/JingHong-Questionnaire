@@ -3,6 +3,12 @@
   <div class="bg-neutral-100 dark:bg-customGray border border-neutral-700 rounded-lg p-20">
     <div class="relative h-30">
       <div class="absolute left-0">
+        <el-tag v-if="props.surveyType === SurveyType.QUES">
+          问卷
+        </el-tag>
+        <el-tag v-else type="success">
+          投票
+        </el-tag>
         {{ title }}
       </div>
       <div class="absolute right-5 flex flex-row gap-5">
@@ -30,7 +36,7 @@
         <div v-if="status===2" class="btn btn-sm btn-ghost" @click="() => showModal('QRcode')">
           查看分享二维码
         </div>
-        <div v-if="status===2" class="btn btn-sm btn-ghost" @click="() => copyShareCode()">
+        <div v-if="status===2" class="btn btn-sm btn-ghost" @click="handleCopy">
           复制分享链接
         </div>
         <div class="pt-4" :class="classMap[status]">
@@ -82,24 +88,47 @@
 
 <script setup lang="ts">
 import { modal, showModal } from "@/components";
-import { updateQuestionnaireStatusAPI, delQuestionnaireAPI } from "@/apis";
+import { delQuestionnaireAPI, updateQuestionnaireStatusAPI } from "@/apis";
 import { useRequest } from "vue-hooks-plus";
 import { ElNotification } from "element-plus";
 import router from "@/router";
 import { closeLoading, startLoading } from "@/utilities";
 import { useMainStore } from "@/stores";
 import CryptoJS from "crypto-js";
-import { ElMessage } from "element-plus";
 import { computed } from "vue";
 import { useQrCode } from "@/utilities/useQrCode";
-import { QuesStatus } from "@/utilities/constantMap.ts";
+import { QuesStatus, SurveyType } from "@/utilities/constantMap.ts";
+import { useClipboard } from "@vueuse/core";
+
 const baseURL = import.meta.env.VITE_COPY_LINK;
 const tempStore = useMainStore().useTempStore();
 const props = defineProps<{
   title: string,
   idName: number,
+  surveyType: SurveyType.VOTE | SurveyType.QUES,
   status: QuesStatus.DRAFT | QuesStatus.PUBLISH | QuesStatus.EXPIRED,
 }>();
+// 获取问卷url
+const questionnaireURL = computed(
+  () => {
+    const Key = "JingHong";
+    return baseURL + "/View?id=" + CryptoJS.AES.encrypt(props.idName + "", Key).toString();
+  }
+);
+
+const handleCopy = () => {
+  const { copy } = useClipboard({
+    source: questionnaireURL,
+    legacy: true
+  });
+  try {
+    copy(questionnaireURL.value);
+    ElNotification.success("复制成功");
+  } catch (e) {
+    ElNotification.error("复制失败" + e);
+  }
+
+};
 const statusMap = {
   [QuesStatus.DRAFT]: "草稿",
   [QuesStatus.PUBLISH]: "已发布",
@@ -118,7 +147,7 @@ const updateList = () => {
   emit("updateList");
 };
 
-const updateQuestionnaireStatus = (id: number, status: 1 | 2) => {
+const updateQuestionnaireStatus = (id: number, status: QuesStatus.DRAFT | QuesStatus.PUBLISH) => {
   useRequest(() => updateQuestionnaireStatusAPI({
     id: id,
     status: status
@@ -146,24 +175,6 @@ const delQuestionnaire = (id: number) => {
       }
     },
     onFinally: () => closeLoading()
-  });
-};
-
-// 获取问卷url
-const questionnaireURL = computed(
-  () => {
-    const Key = "JingHong";
-    const url = baseURL + "/View?id=" + CryptoJS.AES.encrypt(props.idName + "", Key).toString();
-    return url;
-  }
-);
-
-// 复制问卷url
-const copyShareCode = () => {
-  navigator.clipboard.writeText(questionnaireURL.value);
-  ElMessage({
-    message: "链接复制成功",
-    type: "success"
   });
 };
 
