@@ -126,6 +126,8 @@ import {QuesItemType} from "../../utilities/constMap"
 
 import { useActiveStore } from "@/stores/edit";
 
+import { storeToRefs } from "pinia";
+
 
 
 const props = defineProps<{
@@ -138,7 +140,8 @@ const question = schema.quesConfig.questionList;
 
 const emits = defineEmits(["update:question"]);
 
-const { activeSerial , setActive} = toRefs(useActiveStore());
+const { activeSerial } = storeToRefs(useActiveStore());
+
 
 watch(question, (newVal) => {
   emits("update:question", newVal);

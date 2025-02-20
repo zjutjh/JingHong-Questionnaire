@@ -67,6 +67,7 @@ import { useActiveStore } from "@/stores/edit";
 import { useEditStore } from "@/stores/edit";
 import { QuesItemType } from "@/utilities/constMap";
 import { basicReg } from "@/utilities/regs";
+import { storeToRefs } from "pinia";
 
 const typeChinese = {
   1:"单项选择题",
@@ -77,9 +78,11 @@ const typeChinese = {
 }
 
 
-const {activeSerial} = toRefs(useActiveStore())
+const {activeSerial} = storeToRefs(useActiveStore())
 
-const {questionList} = toRefs(useEditStore().schema.quesConfig)
+const editStore = storeToRefs(useEditStore())
+
+const {questionList} = toRefs(editStore.schema.value.quesConfig)
 
 // console.log(questionList.value)
 
