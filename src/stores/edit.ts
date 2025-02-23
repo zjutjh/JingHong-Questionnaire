@@ -119,9 +119,30 @@ function useQuestionListReducer(questionDataList: Ref<Question[]>) {
     });
   }
 
+  function moveQuestion(index:number, action: "up"|"down") {
+    const list = questionDataList.value;
+
+    if (action === "up" && index > 0) {
+      const temp = list[index];
+      list[index] = list[index - 1];
+      list[index - 1] = temp;
+      list[index].serialNum = index + 1;
+      list[index - 1].serialNum = index;
+
+    } else if (action === "down" && index < list.length - 1) {
+      const temp = list[index];
+      list[index] = list[index + 1];
+      list[index + 1] = temp;
+      list[index].serialNum = index + 1;
+      list[index + 1].serialNum = index + 2;
+    }
+  }
+
+
   return {
     addQuestion,
-    deleteQuestion
+    deleteQuestion,
+    moveQuestion
   };
 }
 
@@ -147,13 +168,14 @@ export const useEditStore = defineStore("edit", () => {
       await getSchemaFromRemote(); // 编辑问卷时，拉取远程数据
     }
   }
-  const { addQuestion, deleteQuestion } = useQuestionListReducer(
+  const { addQuestion, deleteQuestion, moveQuestion } = useQuestionListReducer(
     questionDataList
   );
 
   return {
     addQuestion,
     deleteQuestion,
+    moveQuestion,
     setSurveyId,
     init,
     schema,

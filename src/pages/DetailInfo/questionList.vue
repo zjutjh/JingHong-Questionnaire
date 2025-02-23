@@ -13,22 +13,23 @@
         :key="q.serialNum"
         @click="activeSerial = q.serialNum"
       >
-        <div v-if="q.quesSetting.questionType === QuesItemType.RADIO">
-          <el-skeleton animated :loading="loading">
-            <radio
-              v-model:title="q.subject"
-              v-model:options="q.options"
-              v-model:serialNum="q.serialNum"
-              v-model:unique="q.quesSetting.unique"
-              v-model:option-choose="q.quesSetting.required"
-              v-model:other-option="q.quesSetting.otherOption"
-              v-model:describe="q.description"
-              :is-active="q.serialNum === activeSerial"
-              @on-click="deleteQuestion(q.serialNum)"
-            />
-          </el-skeleton>
-        </div>
-        <div v-if="q.quesSetting.questionType === QuesItemType.CHECKBOX">
+        <div class="relative flex items-center gap-4 w-full" >
+          <div class="flex-grow w-full" v-if="q.quesSetting.questionType === QuesItemType.RADIO">
+            <el-skeleton animated :loading="loading">
+              <radio
+                v-model:title="q.subject"
+                v-model:options="q.options"
+                v-model:serialNum="q.serialNum"
+                v-model:unique="q.quesSetting.unique"
+                v-model:option-choose="q.quesSetting.required"
+                v-model:other-option="q.quesSetting.otherOption"
+                v-model:describe="q.description"
+                :is-active="q.serialNum === activeSerial"
+                @on-click="deleteQuestion(q.serialNum)"
+              />
+            </el-skeleton>
+          </div>
+        <div class="flex-grow w-full" v-if="q.quesSetting.questionType === QuesItemType.CHECKBOX">
           <el-skeleton animated :loading="loading">
             <template #template>
               <skeleton-card />
@@ -50,7 +51,7 @@
             </template>
           </el-skeleton>
         </div>
-        <div v-if="q.quesSetting.questionType === QuesItemType.INPUT">
+        <div class="flex-grow w-full" v-if="q.quesSetting.questionType === QuesItemType.INPUT">
           <el-skeleton animated :loading="loading">
             <template #template>
               <skeleton-card />
@@ -69,7 +70,7 @@
             </template>
           </el-skeleton>
         </div>
-        <div v-if="q.quesSetting.questionType === QuesItemType.TEXTAREA">
+        <div class="flex-grow w-full" v-if="q.quesSetting.questionType === QuesItemType.TEXTAREA">
           <el-skeleton :loading="loading">
             <template #template>
               <skeleton-card />
@@ -87,7 +88,7 @@
             </template>
           </el-skeleton>
         </div>
-        <div v-if="q.quesSetting.questionType === QuesItemType.PHOTO">
+        <div class="flex-grow w-full" v-if="q.quesSetting.questionType === QuesItemType.PHOTO">
           <el-skeleton animated :loading="loading">
             <template #template>
               <skeleton-card />
@@ -104,6 +105,30 @@
               />
             </template>
           </el-skeleton>
+        </div>
+
+          <div v-if="q.serialNum === activeSerial" class="flex flex-col gap-10">
+            <button 
+              @click="moveQuestion(activeSerial-1, 'up')" 
+              class="rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200"
+            >
+              ↑
+            </button>
+
+            <button 
+              @click="moveQuestion(activeSerial-1, 'down')" 
+              class="rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200"
+            >
+              ↓
+            </button>
+
+            <button 
+              @click="deleteQuestion(activeSerial-1)" 
+              class="rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200"
+            >
+              x
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -134,13 +159,14 @@ const props = defineProps<{
   loading: boolean
 }>();
 
-const {schema,deleteQuestion} = useEditStore()
+const {schema, deleteQuestion, moveQuestion} = useEditStore()
 
 const question = schema.quesConfig.questionList;
 
 const emits = defineEmits(["update:question"]);
 
 const { activeSerial } = storeToRefs(useActiveStore());
+
 
 
 watch(question, (newVal) => {

@@ -19,32 +19,6 @@
       <question-list v-if="mode === 'ques'" v-model:question="question" :loading="loading" />
     </div>
 
-    <!--        <div class="flex justify-center items-center gap-160 mt-20">-->
-    <!--          <button-->
-    <!--            v-show="isNew === 'false'"-->
-    <!--            class="btn btn-success dark:opacity-75 dark:text-white"-->
-    <!--            @click="showModal('SaveQuestionnaireSubmit')"-->
-    <!--          >-->
-    <!--            保存更改-->
-    <!--          </button>-->
-    <!--          <button-->
-    <!--            v-show="isNew === 'false'"-->
-    <!--            class="btn btn-error dark:opacity-75 dark:text-white"-->
-    <!--            @click="showModal('reverseQuestionnaireSubmit')"-->
-    <!--          >-->
-    <!--            放弃更改-->
-    <!--          </button>-->
-    <!--          <button v-show="isNew === 'true'" class="btn btn-success dark:opacity-75 dark:text-white" @click="submit(1)">-->
-    <!--            保存-->
-    <!--          </button>-->
-    <!--          <button-->
-    <!--            v-show="isNew === 'true'"-->
-    <!--            class="btn btn-primary dark:opacity-75 dark:text-white"-->
-    <!--            @click="showModal('NewQuestionnaireSubmit')"-->
-    <!--          >-->
-    <!--            发布-->
-    <!--          </button>-->
-    <!--        </div>-->
     <menu-panel v-show="mode === 'ques'">
       <right-menu />
     </menu-panel>
