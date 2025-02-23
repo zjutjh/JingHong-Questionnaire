@@ -20,6 +20,13 @@
           <el-checkbox v-model="questionList[activeSerial-1].quesSetting.unique" label="唯一" size="large" />
         </div>
 
+        
+
+        <!-- 有其他选项 -->
+        <div v-if="currentType===QuesItemType.CHECKBOX||currentType===QuesItemType.RADIO" class="pt-2">
+          <el-checkbox v-model="questionList[activeSerial-1].quesSetting.otherOption" label="有其他选项" size="large" />
+        </div>
+
         <div class="pt-16 text-sm font-medium">
           引导介绍文案
         </div>
@@ -40,6 +47,7 @@
           </div>
         </div>
 
+
         <!-- 多选特殊逻辑 -->
         <div v-if="currentType===QuesItemType.CHECKBOX" class="pt-24">
           <div class="text-sm font-medium">
@@ -55,6 +63,11 @@
               <el-input-number :min="questionList[activeSerial-1].quesSetting.minimumOption" v-model="questionList[activeSerial-1].quesSetting.maximumOption"/>
             </div>
           </div>
+        </div>
+
+        <!-- 选择操作 -->
+        <div v-if="currentType===QuesItemType.RADIO||currentType===QuesItemType.CHECKBOX" class="pt-24">
+          <el-button @click="addOption(activeSerial-1)">增加选项</el-button>
         </div>
       </div>
       
@@ -84,7 +97,7 @@ const editStore = storeToRefs(useEditStore())
 
 const {questionList} = toRefs(editStore.schema.value.quesConfig)
 
-// console.log(questionList.value)
+console.log(questionList.value)
 
 const currentType = computed<number>(() => {
   if(activeSerial.value===-1){
@@ -93,6 +106,15 @@ const currentType = computed<number>(() => {
     return(questionList.value[activeSerial.value-1].quesSetting.questionType)
   }
 })
+
+const addOption = (serialNum: number)  => {
+  questionList.value[serialNum].options.push({
+    serialNum: questionList.value[serialNum].options.length+1,
+    content: "",
+    img: "",
+    description: ""
+  })
+}
 
 </script>
 
