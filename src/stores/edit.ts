@@ -162,3 +162,10 @@ export const useEditStore = defineStore("edit", () => {
 }, {
   persist: true
 });
+
+export const useActiveStore = defineStore("active",() => {
+  const activeSerial = ref(-1);
+  return {
+    activeSerial,
+  }
+})

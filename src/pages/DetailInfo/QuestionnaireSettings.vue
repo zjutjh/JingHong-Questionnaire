@@ -1,75 +1,84 @@
 <template>
-  <div class="QustionnaireSettings flex justify-center items-center">
-
-    <div class="SectionCard bg-gray-100 dark:bg-gray-700">
-      <div class="SectionHeader">
-        <h3 class="SectionTitle">时间配置</h3>
+  <div class="flex flex-col items-center">
+    <div class="w-1/2 bg-gray-100 dark:bg-gray-700 border rounded-sm p-6 mb-20 shadow-md">
+      <div class="flex items-center mt-15 ml-5 mb-15 px-10">
+        <h3 class="text-lg font-bold">时间配置</h3>
       </div>
-      <div class="RedSectionIndicator"></div>
-      <div class="GraySectionIndicator"></div>
-      <div class="SettingContent">
-        <div class="SettingItem">
-          <span class="ItemTitle">答题有效期</span>
-          <el-date-picker
-            v-model="formData.base_config.start_time"
-            type="datetime"
-            placeholder="开始日期-时间"
-            value-format="YYYY - MM - DDTHH:mm:ssZ"
-          />
-          <span class="separator">至</span>
-          <el-date-picker
-            v-model="formData.base_config.end_time"
-            type="datetime"
-            placeholder="结束日期-时间"
-            value-format="YYYY - MM - DDTHH:mm:ssZ"
-          />
+      <div class="relative">
+        <div class="ml-15 w-[15%] h-6 bg-red-400"></div>
+        <div class=" mt-2 w-full h-2 bg-gray-200 dark:bg-gray-400 absolute bottom-0"></div>
+      </div>
+      <div class="w-full px-4">
+        <div class="flex items-center mt-20 mb-2.5 space-x-20">
+          <span class="ml-30 mt-10 mb-20 w-100">答题有效期</span>
+          <div class="flex items-center flex-1 space-x-4">
+            <el-date-picker
+              v-model="formData.base_config.start_time"
+              type="datetime"
+              placeholder="开始日期-时间"
+              value-format="YYYY-MM-DDTHH:mm:ssZ"
+            />
+            <span>至</span>
+            <el-date-picker
+              v-model="formData.base_config.end_time"
+              type="datetime"
+              placeholder="结束日期-时间"
+              value-format="YYYY-MM-DDTHH:mm:ssZ"
+            />
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="SectionCard bg-gray-100 dark:bg-gray-700">
-      <div class="SectionHeader">
-        <h3 class="SectionTitle">提交限制</h3>
+    <div class="w-1/2 bg-gray-100 dark:bg-gray-700 border rounded-sm p-6 mb-20 shadow-md">
+      <div class="flex items-center mt-15 ml-5 mb-15 px-10">
+        <h3 class="text-lg font-bold">提交限制</h3>
       </div>
-      <div class="RedSectionIndicator"></div>
-      <div class="GraySectionIndicator"></div>
-      <div class="SettingContent">
-        <div class="SettingItem">
-          <span class="ItemTitle">每日提交次数</span>
-          <el-input-number
-            v-model="formData.base_config.day_limit"
-            :min="0"
-            controls-position="right"
-          />
-          <el-tooltip content="设置为0表示不限制提交次数" placement="top">
-            <i class="el-icon-question ml-2 text-gray-400 cursor-help"></i>
-          </el-tooltip>
+      <div class="relative">
+        <div class="ml-15 w-[15%] h-6 bg-red-400"></div>
+        <div class="mt-2 w-full h-2 bg-gray-200 dark:bg-gray-400 absolute bottom-0"></div>
+      </div>
+      <div class="w-full px-4">
+        <div class="flex items-center mt-6 mb-2.5 space-x-8">
+          <span class="ml-30 mt-20 mb-20 mr-15 w-100">每日提交次数</span>
+          <div class="flex items-center space-x-4">
+            <el-input-number
+              v-model="formData.base_config.day_limit"
+              :min="0"
+              controls-position="right"
+              class="w-32"
+            />
+            <el-tooltip content="设置为0表示不限制提交次数" placement="top">
+              <i class="el-icon-question text-gray-400 cursor-help"></i>
+            </el-tooltip>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="SectionCard bg-gray-100 dark:bg-gray-700">
-      <div class="SectionHeader">
-        <h3 class="SectionTitle">作答限制</h3>
+    <div class="w-1/2 bg-gray-100 dark:bg-gray-700 border rounded-sm p-6 mb-5 shadow-md">
+      <div class="flex items-center mt-15 ml-5 mb-15 px-10">
+        <h3 class="text-lg font-bold">作答限制</h3>
       </div>
-      <div class="RedSectionIndicator"></div>
-      <div class="GraySectionIndicator"></div>
-      <div class="SettingContent">
-        <div class="SettingItem">
-          <span class="ItemTitle">正方教务认证</span>
-          <el-checkbox
-            v-model="formData.base_config.verify"
-          >需要认证</el-checkbox>
-          <el-tooltip
-            content="开启后，答题者需要通过正方教务认证才能填写问卷"
-            placement="top"
-          >
-            <i class="el-icon-question ml-2 text-gray-400 cursor-help"></i>
-          </el-tooltip>
+      <div class="relative">
+        <div class="ml-15 w-[15%] h-6 bg-red-400"></div>
+        <div class="mt-2 w-full h-2 bg-gray-200 dark:bg-gray-400 absolute bottom-0"></div>
+      </div>
+      <div class="w-full px-4">
+        <div class="flex items-center mt-6 mb-2.5 space-x-8">
+          <span class="ml-30 mt-20 mb-20 mr-15 w-100">正方教务认证</span>
+          <div class="flex items-center space-x-4">
+            <el-checkbox v-model="formData.base_config.verify">
+              需要认证
+            </el-checkbox>
+            <el-tooltip content="开启后，答题者需要通过正方教务认证才能填写问卷" placement="top">
+              <i class="el-icon-question text-gray-400 cursor-help"></i>
+            </el-tooltip>
+          </div>
         </div>
       </div>
     </div>
-  
+
     <div class="flex justify-center mt-6">
       <el-button type="danger" @click="saveSettings" :loading="save">
         保存设置
@@ -79,8 +88,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, defineEmits } from 'vue'
+import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
+import { QuesStatus, QuesType } from "../../utilities/constMap"
 
 interface BaseConfig {
   start_time: string
@@ -90,8 +100,8 @@ interface BaseConfig {
 }
 
 interface FormData {
-  status: number
-  survey_type: number
+  status: QuesStatus
+  survey_type: QuesType
   base_config: BaseConfig
   ques_config: {
     desc: string
@@ -101,8 +111,8 @@ interface FormData {
 }
 
 const formData = reactive<FormData>({
-  status: 1,
-  survey_type: 1,
+  status: QuesStatus.DRAFT,
+  survey_type: QuesType.SURVEY,
   base_config: {
     start_time: '',
     end_time: '',
@@ -117,13 +127,12 @@ const formData = reactive<FormData>({
 })
 
 const save = ref(false)
-const emit = defineEmits(['save-settings']);
 
 const saveSettings = async () => {
   try {
     save.value = true
 
-    if (!formData.base_config.start_time ||!formData.base_config.end_time) {
+    if (!formData.base_config.start_time || !formData.base_config.end_time) {
       ElMessage.error('请设置答题有效期')
       return
     }
@@ -132,9 +141,6 @@ const saveSettings = async () => {
       ElMessage.error('结束时间必须大于开始时间')
       return
     }
-
-    // Emit the save event with the updated settings
-    emit('save-settings', formData);
 
     ElMessage.success('设置保存成功')
   } catch (error) {
@@ -145,67 +151,3 @@ const saveSettings = async () => {
   }
 }
 </script>
-
-<style scoped>
-.QustionnaireSettings {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.SectionCard {
-  width: 50%;
-  border-width: 1px;
-  border-radius: 2px;
-  padding: 16px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.SectionHeader {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.SectionTitle {
-  font-size: 18px;
-  font-weight: bold;
-  margin: 5px;
-}
-
-.RedSectionIndicator {
-  width: 11%;
-  height: 4px;
-  background-color: #f87171;
-  margin-top: 5px;
-}
-
-.GraySectionIndicator {
-  width: 100%;
-  height: 2%;
-  @apply bg-gray-200 dark:bg-gray-200;
-}
-
-.SettingContent {
-  width: 100%;
-}
-
-.SettingItem {
-  display: flex;
-  align-items: center;
-  margin-top: 20px;
-  margin-bottom: 10px;
-}
-
-.ItemTitle {
-  width: 120px;
-  margin-left: 30px;
-  margin-right: 30px;
-}
-
-.separator {
-  margin: 0 10px;
-}
-</style>
-

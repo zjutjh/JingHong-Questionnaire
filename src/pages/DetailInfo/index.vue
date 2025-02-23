@@ -60,9 +60,7 @@
         <span class="flex items-center gap-10"><span>默认必答</span><input v-model="setting.isRequired" type="checkbox" class="checkbox  dark:bg-customGray_more_shallow"></span>
         <span class="flex items-center gap-10"><span>默认有"其他"选项</span><input v-model="setting.isOtherOptions" type="checkbox" class="checkbox  dark:bg-customGray_more_shallow"></span>
       </div>
-      <div class="flex justify-end p-10">
-        <button class="btn btn-success" @click="saveSettings(setting)">保存设置</button>
-      </div>
+    
     </template>
   </modal>
   <modal modal-id="NewQuestionnaireSubmit">
