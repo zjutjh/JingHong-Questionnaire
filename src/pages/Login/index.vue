@@ -42,7 +42,7 @@
             type="success"
             @click="send"
           >
-            登陆
+            登录
           </el-button>
           <el-button
             class="dark:opacity-80 shadow-lg hover:-translate-y-1 transform duration-800"
@@ -83,7 +83,7 @@ const send = () => {
     onBefore: () => startLoading(),
     onSuccess(res: any) {
       if (res.code === 200) {
-        ElNotification.success("登陆成功");
+        ElNotification.success("登录成功");
         loginStore.setLogin(true);
         router.push("/admin");
       } else {
