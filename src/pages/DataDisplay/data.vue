@@ -68,7 +68,7 @@
         删除答卷
       </template>
       <template #default>
-        将删除序号为{{ answerIndexToDel + 1 }}的答卷
+        将删除序号为<span class="text-red-500 px-3">{{ answerIndexToDel + 1 }}</span>的答卷
       </template>
       <template #action>
         <div class="btn btn-success w-80" @click="() => delAnswer(answerIds[answerIndexToDel])">
