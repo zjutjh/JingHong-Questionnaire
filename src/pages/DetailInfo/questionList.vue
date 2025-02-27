@@ -123,7 +123,7 @@
             </button>
 
             <button 
-              @click.stop="deleteQuestion(activeSerial-1)" 
+              @click.stop="activeDelete(activeSerial-1)" 
               class="rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200"
             >
               x
@@ -178,6 +178,11 @@ const activeMove = (index:number, action:'up'|'down') => {
   }else{
     activeSerial.value = activeSerial.value + 1
   }
+}
+
+const activeDelete = (index: number) => {
+  deleteQuestion(index)
+  activeSerial.value = -1
 }
 
 
