@@ -27,7 +27,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(t, index) in time">
+        <tr v-for="(t, index) in time" class="relative">
           <th>{{ index+1 }}</th>
           <th>{{ t }}</th>
           <th v-for="ans in answers">
@@ -43,6 +43,17 @@
               >
             </div>
           </th>
+          <th v-show="isDeleting" class="flex items-center absolute h-full py-0">
+            <div
+              class="btn hover:bg-red-500 hover:border-red-800 h-32 min-h-32 w-50 text-nowrap bg-red-400 border-red-500"
+              @click="() => {
+                answerIndexToDel = index;
+                showModal('delAnswerConfirmModal');
+              }"
+            >
+              删除
+            </div>
+          </th>
         </tr>
       </tbody>
     </table>
@@ -52,10 +63,26 @@
       :page-count="totalPageNum"
       @current-change="handleCurrentChange"
     />
+    <modal modal-id="delAnswerConfirmModal">
+      <template #title>
+        删除答卷
+      </template>
+      <template #default>
+        将删除序号为<span class="text-red-500 px-3">{{ answerIndexToDel + 1 }}</span>的答卷
+      </template>
+      <template #action>
+        <div class="btn btn-success w-80" @click="() => delAnswer(answerIds[answerIndexToDel])">
+          确认
+        </div>
+      </template>
+    </modal>
   </div>
 </template>
 
 <script setup lang="ts">
+import { modal, showModal } from "@/components";
+import { closeLoading, startLoading } from "@/utilities";
+import { delAnswerAPI } from "@/apis";
 import { ElNotification, ElPagination } from "element-plus";
 import { getAnswersAPI } from "@/apis";
 import { ref, watch } from "vue";
@@ -68,6 +95,7 @@ const tempStore = useMainStore().useTempStore();
 const props = defineProps<{
   keyText: string,
   isUnique: boolean,
+  isDeleting: boolean
 }>();
 
 const answersType = new Map([
@@ -87,6 +115,8 @@ const pageNum = ref(1);
 const totalPageNum = ref(2);
 const pageSize = ref(10);
 const answers = ref();
+const answerIds = ref();
+const answerIndexToDel = ref();
 const time = ref();
 
 const getAnswers = () => {
@@ -103,6 +133,7 @@ const getAnswers = () => {
         totalPageNum.value = res.data.total_page_num;
         answers.value = res.data.answers_data.question_answers;
         time.value = res.data.answers_data.time;
+        answerIds.value = res.data.answers_data.answer_ids;
       }
     },
     onError(e: any) {
@@ -113,6 +144,20 @@ const getAnswers = () => {
 getAnswers();
 
 watch(props, getAnswers);
+
+const delAnswer = (answer_id: string) => {
+  useRequest(() => delAnswerAPI({ answer_id: answer_id }), {
+    onBefore: () => startLoading(),
+    onSuccess(res: any) {
+      if (res.code === 200) {
+        ElNotification("删除成功");
+        getAnswers();
+        showModal("delAnswerConfirmModal", true);
+      }
+    },
+    onFinally: () => closeLoading()
+  });
+};
 
 // 控制完整图显示
 const imgVisible = ref(false);
