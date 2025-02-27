@@ -3,7 +3,7 @@ import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireDetailAPI } from "@/apis";
 import { closeLoading, startLoading } from "@/utilities";
 import { ElNotification } from "element-plus";
-import { defineStore } from "pinia";
+import { defineStore, storeToRefs } from "pinia";
 import { QuesItemType, QuesStatus, QuesType } from "@/utilities/constMap.ts";
 import { Question, Option } from "@/utilities/type.ts";
 import { quesSettingMap } from "@/utilities/quesSettingMap.ts";
@@ -128,7 +128,6 @@ function useQuestionListReducer(questionDataList: Ref<Question[]>) {
       list[index - 1] = temp;
       list[index].serialNum = index + 1;
       list[index - 1].serialNum = index;
-
     } else if (action === "down" && index < list.length - 1) {
       const temp = list[index];
       list[index] = list[index + 1];
