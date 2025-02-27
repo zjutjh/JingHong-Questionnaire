@@ -7,6 +7,8 @@ import { defineStore, storeToRefs } from "pinia";
 import { QuesItemType, QuesStatus, QuesType } from "@/utilities/constMap.ts";
 import { Question, Option } from "@/utilities/type.ts";
 import { quesSettingMap } from "@/utilities/quesSettingMap.ts";
+import { nextTick } from "vue";
+import { Console } from "node:console";
 
 /**
  * 返回默认的问卷 schema
@@ -58,6 +60,7 @@ function defaultSchema() {
 function useInitializeSchema(surveyId: Ref<number>) {
   const schema = ref(defaultSchema());
   const { run } = useRequest(() => getQuestionnaireDetailAPI({ id: surveyId.value }), {
+    manual: true,
     onBefore: () => startLoading(),
     onSuccess(res: any) {
       if (res.code === 200) {
@@ -161,6 +164,7 @@ export const useEditStore = defineStore("edit", () => {
     surveyId.value = id;
   }
   async function init() {
+    console.log("Initializing..."); 
     if (surveyId.value === -1) {
       resetSchema(); // 新建问卷时，重置 schema
     } else {

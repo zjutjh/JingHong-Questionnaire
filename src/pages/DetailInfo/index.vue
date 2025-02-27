@@ -91,8 +91,19 @@ import MenuPanel from "@/pages/DetailInfo/menuPanel.vue";
 import RightMenu from "@/pages/DetailInfo/rightMenu.vue";
 import QuestionList from "./questionList.vue";
 
+import { useEditStore } from "@/stores/edit";
+
+import { storeToRefs } from "pinia";
+
 import { useActiveStore } from "@/stores/edit";
 
+//初始化问卷
+
+const {init} = useEditStore()
+
+onMounted(() => {init()})
+
+//
 const mode = ref("ques");
 const tempStore = useMainStore().useTempStore();
 const selectedOption = ref(1);
@@ -111,42 +122,8 @@ const setting = reactive({
   isOtherOptions: false,
   isRequired: false
 });
-const addQuestion = (type: number) => {
-  question.value.push({
-    description: "",
-    img: "",
-    options: [{
-      content: "",
-      img: "",
-      serial_num: 1
-    },
-    {
-      content: "",
-      img: "",
-      serial_num: 2
-    }
-    ],
-    other_option: setting.isOtherOptions,
-    question_type: type,
-    reg: reg.value,
-    required: setting.isRequired,
-    serial_num: question.value.length + 1,
-    subject: "标题",
-    unique: setting.isUnique
-  });
-
-  question.value.forEach((q, index) => {
-    q.serial_num = index + 1;
-  });
-  nextTick(() => {
-    if (questionnaireContainer.value) {
-      questionnaireContainer.value!.scrollTop = questionnaireContainer.value!.scrollHeight;
-    }
-  });
-};
 
 
-provide("addQuestion", addQuestion);
 provide("submitData", submitData);
 
 const isNew = localStorage.getItem("isNew");
@@ -198,50 +175,6 @@ const deepCopy = (obj) => {
 //   reg.value = inputPattern.value;
 // };
 
-const getInfo = () => {
-  useRequest(() => getQuestionnaireDetailAPI({ id: id.value as number }), {
-    onBefore: () => startLoading(),
-    onSuccess(res) {
-      if (res.code === 200) {
-        // console.log(res.data);
-        const formDataCopy = deepCopy(res.data); // Use deep copy here
-        if (formDataCopy.questions) {
-          formDataCopy.questions.forEach((item) => {
-            delete item.id;
-          });
-        }
-        formData.value = formDataCopy;
-        submitData.value = deepCopy(formData.value); // Deep copy to avoid reference issues
-        title.value = submitData.value.title;
-        question.value = submitData.value.questions;
-        time.value = submitData.value.time;
-        loading.value = false;
-      } else {
-        ElNotification.error(res.msg);
-      }
-    },
-    onError(e) {
-      ElNotification.error("获取失败，请重试" + e);
-    },
-    onFinally: () => closeLoading()
-  });
-};
-
-const cleanReg = () => {
-  reg.value = "";
-};
-watch(selectedOption, cleanReg);
-
-const deleteQuestion = (serial_num: number) => {
-  // console.log(serial_num);
-  question.value = question.value.filter((item) => item.serial_num !== serial_num);
-  question.value.forEach((item) => {
-    if (item.serial_num > serial_num) {
-      item.serial_num -= 1;
-    }
-  });
-};
-provide("deleteQuetion", deleteQuestion);
 
 const dataReverse = () => {
   submitData.value = deepCopy(formData.value);
