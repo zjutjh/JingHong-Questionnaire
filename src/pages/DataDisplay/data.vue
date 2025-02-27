@@ -27,7 +27,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="relative" v-for="(t, index) in time">
+        <tr v-for="(t, index) in time" class="relative">
           <th>{{ index+1 }}</th>
           <th>{{ t }}</th>
           <th v-for="ans in answers">
