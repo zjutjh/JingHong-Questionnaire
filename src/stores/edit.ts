@@ -3,10 +3,12 @@ import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireDetailAPI } from "@/apis";
 import { closeLoading, startLoading } from "@/utilities";
 import { ElNotification } from "element-plus";
-import { defineStore } from "pinia";
+import { defineStore, storeToRefs } from "pinia";
 import { QuesItemType, QuesStatus, QuesType } from "@/utilities/constMap.ts";
 import { Question, Option } from "@/utilities/type.ts";
 import { quesSettingMap } from "@/utilities/quesSettingMap.ts";
+import { nextTick } from "vue";
+import { Console } from "node:console";
 
 /**
  * 返回默认的问卷 schema
@@ -58,6 +60,7 @@ function defaultSchema() {
 function useInitializeSchema(surveyId: Ref<number>) {
   const schema = ref(defaultSchema());
   const { run } = useRequest(() => getQuestionnaireDetailAPI({ id: surveyId.value }), {
+    manual: true,
     onBefore: () => startLoading(),
     onSuccess(res: any) {
       if (res.code === 200) {
@@ -119,9 +122,29 @@ function useQuestionListReducer(questionDataList: Ref<Question[]>) {
     });
   }
 
+  function moveQuestion(index:number, action: "up"|"down") {
+    const list = questionDataList.value;
+
+    if (action === "up" && index > 0) {
+      const temp = list[index];
+      list[index] = list[index - 1];
+      list[index - 1] = temp;
+      list[index].serialNum = index + 1;
+      list[index - 1].serialNum = index;
+    } else if (action === "down" && index < list.length - 1) {
+      const temp = list[index];
+      list[index] = list[index + 1];
+      list[index + 1] = temp;
+      list[index].serialNum = index + 1;
+      list[index + 1].serialNum = index + 2;
+    }
+  }
+
+
   return {
     addQuestion,
-    deleteQuestion
+    deleteQuestion,
+    moveQuestion
   };
 }
 
@@ -141,19 +164,21 @@ export const useEditStore = defineStore("edit", () => {
     surveyId.value = id;
   }
   async function init() {
+    console.log("Initializing..."); 
     if (surveyId.value === -1) {
       resetSchema(); // 新建问卷时，重置 schema
     } else {
       await getSchemaFromRemote(); // 编辑问卷时，拉取远程数据
     }
   }
-  const { addQuestion, deleteQuestion } = useQuestionListReducer(
+  const { addQuestion, deleteQuestion, moveQuestion } = useQuestionListReducer(
     questionDataList
   );
 
   return {
     addQuestion,
     deleteQuestion,
+    moveQuestion,
     setSurveyId,
     init,
     schema,
