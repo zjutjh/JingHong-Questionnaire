@@ -19,8 +19,7 @@
       <question-list v-if="mode === 'ques'" v-model:question="question" :loading="loading" />
       <questionnaire-settings v-if="mode === 'setting'" />
     </div>
-
-     <!--        <div class="flex justify-center items-center gap-160 mt-20">-->
+    <!--        <div class="flex justify-center items-center gap-160 mt-20">-->
     <!--          <button-->
     <!--            v-show="isNew === 'false'"-->
     <!--            class="btn btn-success dark:opacity-75 dark:text-white"-->
@@ -119,6 +118,19 @@ import RightMenu from "@/pages/DetailInfo/rightMenu.vue";
 import QuestionList from "./questionList.vue";
 import QuestionnaireSettings from "./QuestionnaireSettings.vue";
 
+import { useEditStore } from "@/stores/edit";
+
+import { storeToRefs } from "pinia";
+
+import { useActiveStore } from "@/stores/edit";
+
+//初始化问卷
+
+const {init} = useEditStore()
+
+onMounted(() => {init()})
+
+//
 const mode = ref("ques");
 const tempStore = useMainStore().useTempStore();
 const selectedOption = ref(1);
@@ -135,39 +147,6 @@ const setting = reactive({
   isOtherOptions: false,
   isRequired: false
 });
-const addQuestion = (type: number) => {
-  question.value.push({
-    description: "",
-    img: "",
-    options: [{
-      content: "",
-      img: "",
-      serial_num: 1
-    },
-    {
-      content: "",
-      img: "",
-      serial_num: 2
-    }
-    ],
-    other_option: setting.isOtherOptions,
-    question_type: type,
-    reg: reg.value,
-    required: setting.isRequired,
-    serial_num: question.value.length + 1,
-    subject: "标题",
-    unique: setting.isUnique
-  });
-
-  question.value.forEach((q, index) => {
-    q.serial_num = index + 1;
-  });
-  nextTick(() => {
-    if (questionnaireContainer.value) {
-      questionnaireContainer.value!.scrollTop = questionnaireContainer.value!.scrollHeight;
-    }
-  });
-};
 
 const activeSerial = ref(-1);
 const setActive = (serialNum: number) => {
@@ -178,7 +157,6 @@ const setActive = (serialNum: number) => {
 provide("activeSerial",activeSerial)
 provide("setActive",setActive)
 
-provide("addQuestion", addQuestion);
 provide("submitData", submitData);
 
 const isNew = localStorage.getItem("isNew");
