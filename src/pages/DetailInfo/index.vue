@@ -16,9 +16,8 @@
           <el-radio-button label="题目逻辑" value="logic" disabled />
         </el-radio-group>
       </div>
-      <!-- 根据mode的值切换显示问卷内容或问卷设置 -->
       <question-list v-if="mode === 'ques'" v-model:question="question" :loading="loading" />
-      <questionnaire-settings v-if="mode === 'setting'" :submit-data="submitData" />
+      <questionnaire-settings v-if="mode === 'setting'" />
     </div>
 
      <!--        <div class="flex justify-center items-center gap-160 mt-20">-->
@@ -181,13 +180,6 @@ provide("setActive",setActive)
 
 provide("addQuestion", addQuestion);
 provide("submitData", submitData);
-
-// 添加保存设置的方法
-// const saveSettings = (settings: any) => {
-//   // 在这里处理保存设置的逻辑
-//   console.log('保存设置:', settings);
-//   // 可以更新 submitData 或执行其他操作
-// };
 
 const isNew = localStorage.getItem("isNew");
 const calculateFutureDate = (): Date => {
