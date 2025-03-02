@@ -17,8 +17,34 @@
         </el-radio-group>
       </div>
       <question-list v-if="mode === 'ques'" v-model:question="question" :loading="loading" />
+      <questionnaire-settings v-if="mode === 'setting'" />
     </div>
-
+    <!--        <div class="flex justify-center items-center gap-160 mt-20">-->
+    <!--          <button-->
+    <!--            v-show="isNew === 'false'"-->
+    <!--            class="btn btn-success dark:opacity-75 dark:text-white"-->
+    <!--            @click="showModal('SaveQuestionnaireSubmit')"-->
+    <!--          >-->
+    <!--            保存更改-->
+    <!--          </button>-->
+    <!--          <button-->
+    <!--            v-show="isNew === 'false'"-->
+    <!--            class="btn btn-error dark:opacity-75 dark:text-white"-->
+    <!--            @click="showModal('reverseQuestionnaireSubmit')"-->
+    <!--          >-->
+    <!--            放弃更改-->
+    <!--          </button>-->
+    <!--          <button v-show="isNew === 'true'" class="btn btn-success dark:opacity-75 dark:text-white" @click="submit(1)">-->
+    <!--            保存-->
+    <!--          </button>-->
+    <!--          <button-->
+    <!--            v-show="isNew === 'true'"-->
+    <!--            class="btn btn-primary dark:opacity-75 dark:text-white"-->
+    <!--            @click="showModal('NewQuestionnaireSubmit')"-->
+    <!--          >-->
+    <!--            发布-->
+    <!--          </button>-->
+    <!--        </div>-->
     <menu-panel v-show="mode === 'ques'">
       <right-menu />
     </menu-panel>
@@ -33,6 +59,7 @@
         <span class="flex items-center gap-10"><span>默认必答</span><input v-model="setting.isRequired" type="checkbox" class="checkbox  dark:bg-customGray_more_shallow"></span>
         <span class="flex items-center gap-10"><span>默认有"其他"选项</span><input v-model="setting.isOtherOptions" type="checkbox" class="checkbox  dark:bg-customGray_more_shallow"></span>
       </div>
+    
     </template>
   </modal>
   <modal modal-id="NewQuestionnaireSubmit">
@@ -84,12 +111,12 @@ import { ElNotification } from "element-plus";
 import { modal, showModal } from "@/components";
 import router from "@/router";
 import { closeLoading, startLoading } from "@/utilities";
-// import { VueDraggableNext } from "vue-draggable-next";
 import { useMainStore } from "@/stores";
 import LeftMenu from "@/pages/DetailInfo/leftMenu.vue";
 import MenuPanel from "@/pages/DetailInfo/menuPanel.vue";
 import RightMenu from "@/pages/DetailInfo/rightMenu.vue";
 import QuestionList from "./questionList.vue";
+import QuestionnaireSettings from "./QuestionnaireSettings.vue";
 
 import { useEditStore } from "@/stores/edit";
 
@@ -107,14 +134,12 @@ onMounted(() => {init()})
 const mode = ref("ques");
 const tempStore = useMainStore().useTempStore();
 const selectedOption = ref(1);
-// const selectedNumber = ref(1);
 const formData = ref();
 const question = ref([]);
 const title = ref();
 const submitData = ref();
 const id = ref<number>();
 const reg = ref<string>("");
-// const regNum = ref("^[0-9]{1}$");
 const time = ref();
 const loading = ref(true);
 const setting = reactive({
@@ -123,6 +148,14 @@ const setting = reactive({
   isRequired: false
 });
 
+const activeSerial = ref(-1);
+const setActive = (serialNum: number) => {
+  console.log(serialNum);
+  activeSerial.value = serialNum;
+};
+
+provide("activeSerial",activeSerial)
+provide("setActive",setActive)
 
 provide("submitData", submitData);
 
@@ -135,7 +168,6 @@ const calculateFutureDate = (): Date => {
 };
 
 const startTime = ref(Date.now());
-// 用于获取问卷部分的容器元素
 const questionnaireContainer = ref<HTMLDivElement>();
 
 onMounted(() => {
@@ -158,12 +190,10 @@ onMounted(() => {
     loading.value = false;
   }
 });
-
 // Deep copy function
 const deepCopy = (obj) => {
   return JSON.parse(JSON.stringify(obj));
 };
-
 // 计算属性：动态生成正则表达式
 // const inputPattern = computed(() => {
 //   return `^[0-9]{${selectedNumber.value}}$`;
@@ -175,12 +205,55 @@ const deepCopy = (obj) => {
 //   reg.value = inputPattern.value;
 // };
 
+const getInfo = () => {
+  useRequest(() => getQuestionnaireDetailAPI({ id: id.value as number }), {
+    onBefore: () => startLoading(),
+    onSuccess(res) {
+      if (res.code === 200) {
+        const formDataCopy = deepCopy(res.data);
+        if (formDataCopy.questions) {
+          formDataCopy.questions.forEach((item) => {
+            delete item.id;
+          });
+        }
+        formData.value = formDataCopy;
+        submitData.value = deepCopy(formData.value);// Deep copy to avoid reference issues
+        title.value = submitData.value.title;
+        question.value = submitData.value.questions;
+        time.value = submitData.value.time;
+        loading.value = false;
+      } else {
+        ElNotification.error(res.msg);
+      }
+    },
+    onError(e) {
+      ElNotification.error("获取失败，请重试" + e);
+    },
+    onFinally: () => closeLoading()
+  });
+};
+
+const cleanReg = () => {
+  reg.value = "";
+};
+watch(selectedOption, cleanReg);
+
+const deleteQuestion = (serial_num: number) => {
+    // console.log(serial_num);
+  question.value = question.value.filter((item) => item.serial_num !== serial_num);
+  question.value.forEach((item) => {
+    if (item.serial_num > serial_num) {
+      item.serial_num -= 1;
+    }
+  });
+};
+provide("deleteQuetion", deleteQuestion);
 
 const dataReverse = () => {
   submitData.value = deepCopy(formData.value);
   question.value = deepCopy(formData.value.questions);
   time.value = submitData.value.time;
-  // console.log(question.value);
+    // console.log(question.value);
   ElNotification.success("成功放弃修改");
   showModal("reverseQuestionnaireSubmit", true);
   router.push("/admin");
@@ -235,7 +308,6 @@ const submit = (state: number) => {
     });
   }
 };
-
 // //调试 监听reg
 // watch(question, (newQuestions) => {
 //   newQuestions.forEach((q, index) => {
@@ -266,3 +338,4 @@ const submit = (state: number) => {
 }
 
 </style>
+

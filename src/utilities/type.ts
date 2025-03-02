@@ -1,4 +1,5 @@
 import { QuesItemType } from "@/utilities/constMap.ts";
+import { QuesStatus, QuesType } from "../../utilities/constMap"
 
 interface BaseConfig {
   dayLimit: number;
@@ -71,6 +72,17 @@ interface VoteQuesSetting extends BaseQuesSetting {
   minimumOption: number;
 }
 
+interface FormData {
+  status: QuesStatus
+  surveyType: QuesType
+  baseConfig: BaseConfig
+  quesConfig: {
+    desc: string
+    title: string
+    questionList: any[]
+  }
+}
+
 type QuesSetting = RadioQuesSetting | CheckboxQuesSetting | TextQuesSetting | VoteQuesSetting | BaseQuesSetting;
 
 export type {
@@ -80,5 +92,6 @@ export type {
   QuesConfig,
   BaseConfig,
   RadioQuestion,
-  CheckboxQuestion
+  CheckboxQuestion,
+  FormData
 };
