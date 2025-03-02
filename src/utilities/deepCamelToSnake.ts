@@ -1,14 +1,12 @@
-import _ from "lodash";
+import { isArray, isObject, mapKeys, mapValues, snakeCase } from "lodash-es";
 
-// 递归地将对象的所有键从小驼峰转换为蛇形命名
-export const deepCamelToSnake = (obj: Record<string, any>): Record<string, any> => {
-  return _.mapKeys(obj, (value, key) => {
-    const newKey = _.snakeCase(key);
-
-    if (_.isObject(value) && !_.isArray(value)) {
-      return [newKey, deepCamelToSnake(value)];
-    }
-
-    return [newKey, value];
-  });
+export const deepCamelToSnake = (obj: any): any => {
+  if (isArray(obj)) {
+    return obj.map((item: any) => deepCamelToSnake(item));
+  } else if (isObject(obj)) {
+    return mapKeys(mapValues(obj, (value: any) => deepCamelToSnake(value)), (_value: any, key: string) =>
+      snakeCase(key)
+    );
+  }
+  return obj;
 };
