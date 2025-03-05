@@ -5,8 +5,8 @@ enum QuesStatus {
 }
 
 enum QuesType {
-  SURVEY = 1,
-  VOTE = 2
+  SURVEY = 0,
+  VOTE = 1
 }
 
 enum QuesItemType {

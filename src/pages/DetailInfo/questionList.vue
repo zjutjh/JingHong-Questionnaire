@@ -1,7 +1,13 @@
 <template>
   <div class=" flex-1">
     <div v-if="mode === 'ques'" class="bg-base-200 dark:bg-customGray flex-1  overflow-y-auto h-[80vh]">
-{{ schema.quesConfig }}
+<!--      <div v-if="schema && schema.quesConfig" class="flex-col justify-center p-20 pb-0">-->
+<!--        <div class="flex justify-center items-center flex-col gap-10">-->
+<!--          <input v-model="schema.quesConfig.title" class="input bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-2xl w-[100%] text-center dark:bg-customGray" placeholder="投票标题">-->
+<!--          <textarea v-model="schema.quesConfig.desc" class=" textarea bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-md w-[100%] resize-none dark:bg-customGray" placeholder="投票描述" />-->
+<!--        </div>-->
+<!--      </div>-->
+      {{ schema }}
       <div class="divider" />
       <div v-if="schema && schema.quesConfig" class="flex flex-col gap-5 bg-base-100">
         <div
@@ -232,7 +238,7 @@ const props = defineProps<{
   loading: boolean
 }>();
 
-const { schema, deleteQuestion, moveQuestion, resetSchema, surveyId, init } = useEditStore();
+const { schema, deleteQuestion, moveQuestion, resetSchema, surveyId, init, getSchemaFromRemote } = useEditStore();
 
 
 const question = [];
