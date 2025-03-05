@@ -1,5 +1,5 @@
 <template>
-  <div class="border-gray-200 flex border-[1px]   flex-col items-center justify-center gap-6 h-80 w-80 cursor-pointer hover:bg-red-50 hover:border-red-300 transition-all" @click="addQues">
+  <div class="border-gray-200 flex border-[1px]   flex-col items-center justify-center gap-6 h-80 w-80 cursor-pointer hover:bg-red-50 hover:border-red-300 transition-all " @click="addQues">
     <slot />
     <div class="text-[12px]">
       {{ props.text }}
@@ -9,11 +9,11 @@
 
 <script setup lang="ts">
 import { useEditStore } from "@/stores/edit";
-import {computed} from "vue"
+import { computed } from "vue";
 
-const {addQuestion,schema} = useEditStore()
+const { addQuestion, schema } = useEditStore();
 
-const questionLens = computed(() => schema.quesConfig.questionList.length)
+const questionLens = computed(() => schema.quesConfig.questionList.length);
 
 const props = defineProps<{
   text: string
@@ -21,8 +21,8 @@ const props = defineProps<{
 }>();
 
 const addQues = () => {
-  addQuestion(questionLens.value,Number(props.type))
-  // console.log(schema)
+  addQuestion(questionLens.value, Number(props.type));
+  console.log(schema)
 };
 </script>
 

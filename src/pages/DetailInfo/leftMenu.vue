@@ -10,7 +10,7 @@
     </div>
     <div class="flex flex-col justify-center p-20">
       <add-ques-button-panel ques-sort="输入类题型">
-        <add-ques-button text="单行输入框" type="3">
+        <add-ques-button text="单行输入框" type="3" >
           <img src="@/assets/input.svg" class="h-25 w-25">
         </add-ques-button>
         <add-ques-button text="多行输入框" type="4">

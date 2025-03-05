@@ -1,142 +1,216 @@
 <template>
-  <div v-if="mode === 'ques'" class="bg-base-200 dark:bg-customGray flex-1 max-h-[80vh] overflow-y-auto">
-    <div v-if="submitData" class="flex-col justify-center p-20 pb-0">
-      <div class="flex justify-center items-center flex-col gap-10">
-        <input v-model="schema.quesConfig.title" class="input bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-2xl w-[100%] text-center dark:bg-customGray" placeholder="投票标题">
-        <textarea v-model="schema.quesConfig.desc" class=" textarea bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-md w-[100%] resize-none dark:bg-customGray" placeholder="投票描述" />
-      </div>
-    </div>
-    <div class="divider" />
-    <div class="flex flex-col gap-5 bg-base-100">
-      <div
-        v-for="q in question"
-        :key="q.serialNum"
-        @click="activeSerial = q.serialNum"
-      >
-        <div class="relative flex items-center gap-4 w-full" >
-          <div class="flex-grow w-full" v-if="q.quesSetting.questionType === QuesItemType.RADIO">
-            <el-skeleton animated :loading="loading">
-              <radio
-                v-model:title="q.subject"
-                v-model:options="q.options"
-                v-model:serialNum="q.serialNum"
-                v-model:unique="q.quesSetting.unique"
-                v-model:option-choose="q.quesSetting.required"
-                v-model:other-option="q.quesSetting.otherOption"
-                v-model:describe="q.description"
-                :is-active="q.serialNum === activeSerial"
-                @on-click="deleteQuestion(q.serialNum)"
-              />
-            </el-skeleton>
-          </div>
-          <div class="flex-grow w-full" v-if="q.quesSetting.questionType === QuesItemType.CHECKBOX">
-            <el-skeleton animated :loading="loading">
-              <template #template>
-                <skeleton-card />
-              </template>
-              <template #default>
-                <checkbox
+  <div class=" flex-1">
+    <div v-if="mode === 'ques'" class="bg-base-200 dark:bg-customGray flex-1  overflow-y-auto h-[80vh]">
+<!--      <div v-if="schema && schema.quesConfig" class="flex-col justify-center p-20 pb-0">-->
+<!--        <div class="flex justify-center items-center flex-col gap-10">-->
+<!--          <input v-model="schema.quesConfig.title" class="input bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-2xl w-[100%] text-center dark:bg-customGray" placeholder="投票标题">-->
+<!--          <textarea v-model="schema.quesConfig.desc" class=" textarea bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-md w-[100%] resize-none dark:bg-customGray" placeholder="投票描述" />-->
+<!--        </div>-->
+<!--      </div>-->
+      {{ schema }}
+      <div class="divider" />
+      <div v-if="schema && schema.quesConfig" class="flex flex-col gap-5 bg-base-100">
+        <div
+          v-for="q in schema.quesConfig.questionList"
+          :key="q.serialNum"
+          @click="activeSerial = q.serialNum"
+        >
+          <div class="relative flex items-center gap-4 w-full">
+            <div v-if="q.quesSetting.questionType === QuesItemType.RADIO" class="flex-grow w-full">
+              <el-skeleton animated :loading="loading">
+                <radio
                   v-model:title="q.subject"
                   v-model:options="q.options"
-                  v-model:serialNum="q.serialNum"
+                  v-model:serial-num="q.serialNum"
                   v-model:unique="q.quesSetting.unique"
                   v-model:option-choose="q.quesSetting.required"
                   v-model:other-option="q.quesSetting.otherOption"
                   v-model:describe="q.description"
-                  v-model:maximum_option="q.quesSetting.maximumOption"
-                  v-model:minimum_option="q.quesSetting.minimumOption"
                   :is-active="q.serialNum === activeSerial"
                   @on-click="deleteQuestion(q.serialNum)"
                 />
-              </template>
-            </el-skeleton>
-          </div>
-          <div class="flex-grow w-full" v-if="q.quesSetting.questionType === QuesItemType.INPUT">
-            <el-skeleton animated :loading="loading">
-              <template #template>
-                <skeleton-card />
-              </template>
-              <template #default>
-                <fill
-                  v-model:title="q.subject"
-                  v-model:serialNum="q.serialNum"
-                  v-model:reg="q.quesSetting.reg"
-                  v-model:unique="q.quesSetting.unique"
-                  v-model:option-choose="q.quesSetting.required"
-                  v-model:describe="q.description"
-                  :is-active="q.serialNum === activeSerial"
-                  @on-click="deleteQuestion(q.serialNum)"
-                />
-              </template>
-            </el-skeleton>
-          </div>
-          <div class="flex-grow w-full" v-if="q.quesSetting.questionType === QuesItemType.TEXTAREA">
-            <el-skeleton :loading="loading">
-              <template #template>
-                <skeleton-card />
-              </template>
-              <template #default>
-                <text-area
-                  v-model:title="q.subject"
-                  v-model:serialNum="q.serialNum"
-                  v-model:unique="q.quesSetting.unique"
-                  v-model:option-choose="q.quesSetting.required"
-                  v-model:describe="q.description"
-                  :is-active="q.serialNum === activeSerial"
-                  @on-click="deleteQuestion(q.serialNum)"
-                />
-              </template>
-            </el-skeleton>
-          </div>
-          <div class="flex-grow w-full" v-if="q.quesSetting.questionType === QuesItemType.PHOTO">
-            <el-skeleton animated :loading="loading">
-              <template #template>
-                <skeleton-card />
-              </template>
-              <template #default>
-                <file
-                  v-model:title="q.subject"
-                  v-model:serialNum="q.serialNum"
-                  v-model:unique="q.quesSetting.unique"
-                  v-model:option-choose="q.quesSetting.required"
-                  v-model:describe="q.description"
-                  :is-active="q.serialNum === activeSerial"
-                  @on-click="deleteQuestion(q.serialNum)"
-                />
-              </template>
-            </el-skeleton>
-          </div>
+              </el-skeleton>
+            </div>
+            <div v-if="q.quesSetting.questionType === QuesItemType.CHECKBOX" class="flex-grow w-full">
+              <el-skeleton animated :loading="loading">
+                <template #template>
+                  <skeleton-card />
+                </template>
+                <template #default>
+                  <checkbox
+                    v-model:title="q.subject"
+                    v-model:options="q.options"
+                    v-model:serial-num="q.serialNum"
+                    v-model:unique="q.quesSetting.unique"
+                    v-model:option-choose="q.quesSetting.required"
+                    v-model:other-option="q.quesSetting.otherOption"
+                    v-model:describe="q.description"
+                    v-model:maximum_option="q.quesSetting.maximumOption"
+                    v-model:minimum_option="q.quesSetting.minimumOption"
+                    :is-active="q.serialNum === activeSerial"
+                    @on-click="deleteQuestion(q.serialNum)"
+                  />
+                </template>
+              </el-skeleton>
+            </div>
+            <div v-if="q.quesSetting.questionType === QuesItemType.INPUT" class="flex-grow w-full">
+              <el-skeleton animated :loading="loading">
+                <template #template>
+                  <skeleton-card />
+                </template>
+                <template #default>
+                  <fill
+                    v-model:title="q.subject"
+                    v-model:serial-num="q.serialNum"
+                    v-model:reg="q.quesSetting.reg"
+                    v-model:unique="q.quesSetting.unique"
+                    v-model:option-choose="q.quesSetting.required"
+                    v-model:describe="q.description"
+                    :is-active="q.serialNum === activeSerial"
+                    @on-click="deleteQuestion(q.serialNum)"
+                  />
+                </template>
+              </el-skeleton>
+            </div>
+            <div v-if="q.quesSetting.questionType === QuesItemType.TEXTAREA" class="flex-grow w-full">
+              <el-skeleton :loading="loading">
+                <template #template>
+                  <skeleton-card />
+                </template>
+                <template #default>
+                  <text-area
+                    v-model:title="q.subject"
+                    v-model:serial-num="q.serialNum"
+                    v-model:unique="q.quesSetting.unique"
+                    v-model:option-choose="q.quesSetting.required"
+                    v-model:describe="q.description"
+                    :is-active="q.serialNum === activeSerial"
+                    @on-click="deleteQuestion(q.serialNum)"
+                  />
+                </template>
+              </el-skeleton>
+            </div>
+            <div v-if="q.quesSetting.questionType === QuesItemType.PHOTO" class="flex-grow w-full">
+              <el-skeleton animated :loading="loading">
+                <template #template>
+                  <skeleton-card />
+                </template>
+                <template #default>
+                  <file
+                    v-model:title="q.subject"
+                    v-model:serial-num="q.serialNum"
+                    v-model:unique="q.quesSetting.unique"
+                    v-model:option-choose="q.quesSetting.required"
+                    v-model:describe="q.description"
+                    :is-active="q.serialNum === activeSerial"
+                    @on-click="deleteQuestion(q.serialNum)"
+                  />
+                </template>
+              </el-skeleton>
+            </div>
 
-          <div v-if="q.serialNum === activeSerial" class="flex flex-col gap-10">
-            <button 
-              @click.stop="activeMove(activeSerial-1, 'up')" 
-              class="rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200"
-            >
-              ↑
-            </button>
+            <div v-if="q.serialNum === activeSerial" class="flex flex-col gap-10">
+              <button
+                class="rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200"
+                @click.stop="activeMove(activeSerial-1, 'up')"
+              >
+                ↑
+              </button>
 
-            <button 
-              @click.stop="activeMove(activeSerial-1, 'down')" 
-              class="rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200"
-            >
-              ↓
-            </button>
+              <button
+                class="rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200"
+                @click.stop="activeMove(activeSerial-1, 'down')"
+              >
+                ↓
+              </button>
 
-            <button 
-              @click.stop="activeDelete(activeSerial-1)" 
-              class="rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200"
-            >
-              x
-            </button>
+              <button
+                class="rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200"
+                @click.stop="activeDelete(activeSerial-1)"
+              >
+                x
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <div class="flex justify-center items-center gap-10 mt-10">
+      <button
+        v-show="isNew === 'false'"
+        class="btn btn-success dark:opacity-75 dark:text-white"
+        @click="showModal('SaveQuestionnaireSubmit')"
+      >
+        保存更改
+      </button>
+      <button
+        v-show="isNew === 'false'"
+        class="btn btn-error dark:opacity-75 dark:text-white"
+        @click="showModal('reverseQuestionnaireSubmit')"
+      >
+        放弃更改
+      </button>
+      <button
+        v-show="isNew === 'true'"
+        class="btn dark:opacity-75 dark:text-white btn-sm flex-1 bg-red-100 hover:bg-red-200 hover:border-red-300"
+        style="border-radius: 0"
+        @click="submit(1)"
+      >
+        保存
+      </button>
+      <button
+        v-show="isNew === 'true'"
+        class="btn btn-sm dark:opacity-75 dark:text-white flex-1 hover:bg-red-200 bg-red-100 hover:border-red-300"
+        style="border-radius: 0"
+        @click="showModal('NewQuestionnaireSubmit')"
+      >
+        发布
+      </button>
+    </div>
   </div>
+  <modal modal-id="NewQuestionnaireSubmit">
+    <template #title>
+      确认发布
+    </template>
+    <template #default>
+      该操作会直接发布问卷!请确认问卷无误
+    </template>
+    <template #action>
+      <button class="btn btn-success w-80" @click="submit(2)">
+        确认
+      </button>
+    </template>
+  </modal>
+  <modal modal-id="SaveQuestionnaireSubmit">
+    <template #title>
+      保存更改
+    </template>
+    <template #default>
+      确认要保存更改吗?
+    </template>
+    <template #action>
+      <button class="btn btn-success dark:opacity-75 w-80" @click="submit">
+        确认
+      </button>
+    </template>
+  </modal>
+  <modal modal-id="reverseQuestionnaireSubmit">
+    <template #title>
+      放弃更改
+    </template>
+    <template #default>
+      确认要放弃更改?
+    </template>
+    <template #action>
+      <button class="btn btn-error dark:opacity-75 w-80" @click="dataReverse">
+        确认
+      </button>
+    </template>
+  </modal>
 </template>
 
 <script setup lang="ts">
-import { ref, inject, watch, defineProps, defineEmits } from "vue";
+import { ref, inject, watch, defineProps, defineEmits, onMounted } from "vue";
 import Checkbox from "@/pages/DetailInfo/question/checkbox.vue";
 import Fill from "@/pages/DetailInfo/question/fill.vue";
 import TextArea from "@/pages/DetailInfo/question/textArea.vue";
@@ -147,45 +221,52 @@ import SkeletonCard from "@/pages/DetailInfo/skeletonCard.vue";
 
 import { useEditStore } from "@/stores/edit";
 
-import {QuesItemType} from "../../utilities/constMap"
+import { QuesItemType } from "@/utilities/constMap.ts";
 
 import { useActiveStore } from "@/stores/edit";
 
 import { storeToRefs } from "pinia";
-
-
+import { ElNotification } from "element-plus";
+import { showModal, modal } from "@/components";
+import router from "@/router";
+import { useRequest } from "vue-hooks-plus";
+import { setNewQuestionnaireDetailAPI, setQuestionnaireDetailAPI } from "@/apis";
+import { closeLoading, startLoading } from "@/utilities";
+import { deepCamelToSnake } from "@/utilities/deepCamelToSnake.ts";
 
 const props = defineProps<{
   loading: boolean
 }>();
 
-const {schema, deleteQuestion, moveQuestion} = useEditStore()
+const { schema, deleteQuestion, moveQuestion, resetSchema, surveyId, init, getSchemaFromRemote } = useEditStore();
 
-const question = schema.quesConfig.questionList;
 
+const question = [];
+console.log(surveyId);
+console.log(schema);
 const emits = defineEmits(["update:question"]);
-
+onMounted(() => {
+  init()
+});
 const { activeSerial } = storeToRefs(useActiveStore());
 
-watch(activeSerial,() => {
-  console.log(activeSerial.value)
-})
-
-const activeMove = (index:number, action:'up'|'down') => {
-  moveQuestion(index,action)
-  if(action==='up'){
-    activeSerial.value = activeSerial.value - 1
-  }else{
-    activeSerial.value = activeSerial.value + 1
+watch(activeSerial, () => {
+  console.log(activeSerial.value);
+});
+const isNew = "true";
+const activeMove = (index: number, action: "up" | "down") => {
+  moveQuestion(index, action);
+  if (action === "up") {
+    activeSerial.value = activeSerial.value - 1;
+  } else {
+    activeSerial.value = activeSerial.value + 1;
   }
-}
+};
 
 const activeDelete = (index: number) => {
-  deleteQuestion(index)
-  activeSerial.value = -1
-}
-
-
+  deleteQuestion(index);
+  activeSerial.value = -1;
+};
 
 watch(question, (newVal) => {
   emits("update:question", newVal);
@@ -194,4 +275,62 @@ watch(question, (newVal) => {
 const mode = ref("ques");
 
 const submitData = inject("submitData");
+
+const dataReverse = () => {
+  submitData.value = deepCopy(formData.value);
+  question.value = deepCopy(formData.value.questions);
+  time.value = submitData.value.time;
+  // console.log(question.value);
+  ElNotification.success("成功放弃修改");
+  showModal("reverseQuestionnaireSubmit", true);
+  router.push("/admin");
+};
+
+const submit = (state: number) => {
+  if (false) {
+    useRequest(() => setQuestionnaireDetailAPI(deepCamelToSnake(schema)), {
+      onBefore: () => startLoading(),
+      onSuccess(res) {
+        if (res.code === 200 && res.msg === "OK") {
+          ElNotification.success("保存成功");
+          router.push("/admin");
+        } else {
+          ElNotification.error(res.msg);
+        }
+      },
+      onError(e) {
+        ElNotification.error(e);
+      },
+      onFinally: () => {
+        showModal("SaveQuestionnaireSubmit", true);
+        closeLoading();
+      }
+    });
+  } else {
+    schema.status = state;
+    useRequest(() => setNewQuestionnaireDetailAPI(deepCamelToSnake(schema)), {
+      onBefore: () => startLoading(),
+      onSuccess(res) {
+        if (res.code === 200 && res.msg === "OK") {
+          if (state === 1) {
+            ElNotification.success("创建并保存为草稿成功");
+            resetSchema();
+          } else {
+            ElNotification.success("创建并发布成功");
+          }
+          router.push("/admin");
+        } else {
+          ElNotification.error(res.msg);
+        }
+      },
+      onError(e) {
+        ElNotification.error(e);
+      },
+      onFinally: () => {
+        showModal("SaveQuestionnaireSubmit", true);
+        closeLoading();
+      }
+    });
+  }
+};
 </script>

@@ -47,14 +47,14 @@
           style="height: 60px"
         >
           <template #default>
-            <div class="flex flex-col ">
+            <div v-if="showData" class="flex flex-col ">
               <div class="divider" />
               <div class="flex gap-20 my-10 justify-center">
-                <span class="text-4xl break-all px-50">{{ formData.title }}</span>
+                <span class="text-4xl break-all px-50">{{ showData.quesConfig.title }}</span>
               </div>
-              <div v-if="formData.desc !== ''" class="items-top my-10 items-start mx-20">
+              <div v-if="showData.quesConfig.desc !== ''" class="items-top my-10 items-start mx-20">
                 <div class="items-top my-10 items-start ">
-                  <pre class="text-gray-500 flex break-all text-xl dark:text-white dark:opacity-50">{{ formData.desc }}</pre>
+                  <pre class="text-gray-500 flex break-all text-xl dark:text-white dark:opacity-50">{{ showData.quesConfig.desc }}</pre>
                 </div>
               </div>
             </div>
@@ -62,32 +62,32 @@
               <span class="text-red-950 dark:text-red-400 dark:opacity-80">截止时间:</span>
               <span>{{ time }}</span>
             </div>
-            <div v-if="formData.daily_limit !== 0" class="flex gap-20 items-center my-10  ml-20 ">
-              <span class=" dark:opacity-80 text-gray-700 dark:text-gray-400">本问卷每天最多提交 <span class="text-red-950 dark:text-red-400 dark:opacity-80">{{ formData.daily_limit }} </span> 次</span>
+            <div v-if="showData.baseConfig.dayLimit !== 0" class="flex gap-20 items-center my-10  ml-20 ">
+              <span class=" dark:opacity-80 text-gray-700 dark:text-gray-400">本问卷每天最多提交 <span class="text-red-950 dark:text-red-400 dark:opacity-80">{{ showData.baseConfig.dayLimit }} </span> 次</span>
             </div>
             <div class="divider my-10" />
           </template>
         </el-skeleton>
       </div>
-      <div v-if="formData && formData.survey_type === 0" class="flex flex-col h-650 ">
-        <div v-for="q in question" :key="q.serial_num">
+      <div v-if="showData && showData.surveyType === 0" class="flex flex-col h-650 ">
+        <div v-for="q in showData.quesConfig.questionList" :key="q.serial_num">
           <!-- 根据问题类型渲染组件 -->
-          <div v-if="q.question_type === 1">
+          <div v-if="q.quesSetting.questionType === 1">
             <el-skeleton animated :loading="loading">
               <radio
                 v-model:answer="q.answer"
-                v-model:title="q.subject"
-                v-model:options="q.options"
-                v-model:serial_num="q.serial_num"
-                v-model:unique="q.unique"
-                v-model:required="q.required"
-                v-model:other-option="q.other_option"
-                v-model:describe="q.describe"
-                v-model:questionnaire-i-d="decryptedId"
+                :title="q.subject"
+                :options="q.options"
+                :serial_num="q.serial_num"
+                :unique="q.unique"
+                :required="q.required"
+                :other-option="q.other_option"
+                :describe="q.describe"
+                :questionnaire-i-d="decryptedId"
               />
             </el-skeleton>
           </div>
-          <div v-if="q.question_type === 2">
+          <div v-if="q.quesSetting.questionType === 2">
             <el-skeleton animated :loading="loading">
               <template #template>
                 <skeleton-card />
@@ -109,7 +109,7 @@
               </template>
             </el-skeleton>
           </div>
-          <div v-if="q.question_type === 3">
+          <div v-if="q.quesSetting.questionType === 3">
             <el-skeleton animated :loading="loading">
               <template #template>
                 <skeleton-card />
@@ -127,7 +127,7 @@
               </template>
             </el-skeleton>
           </div>
-          <div v-if="q.question_type === 4">
+          <div v-if="q.quesSetting.questionType === 4">
             <el-skeleton :loading="loading">
               <template #template>
                 <skeleton-card />
@@ -144,7 +144,7 @@
               </template>
             </el-skeleton>
           </div>
-          <div v-if="q.question_type === 5">
+          <div v-if="q.quesSetting.questionType === 5">
             <el-skeleton animated :loading="loading">
               <template #template>
                 <skeleton-card />
@@ -168,8 +168,8 @@
           </button>
         </div>
       </div>
-      <div v-if="formData && formData.survey_type === 1" class="flex flex-col h-650 ">
-        <div v-for="(q, index) in question" :key="index">
+      <div v-if="showData && showData.surveyType === 1" class="flex flex-col h-650 ">
+        <div v-for="(q, index) in showData.quesConfig.questionList" :key="index">
           <vote
             v-model:answer="q.answer"
             v-model:title="q.subject"
@@ -268,10 +268,17 @@ import { useDarkModeSwitch } from "@/utilities/darkModeSwitch";
 import verifyAPI from "@/apis/service/User/verifyApi.ts";
 import Vote from "@/pages/View/vote.vue";
 import getStatistic from "@/apis/service/User/getStatistic.ts";
+import { deepSnakeToCamel } from "@/utilities/deepSnakeToCamel.ts";
 const { darkModeStatus, switchDarkMode } = useDarkModeSwitch();
 const Key = "JingHong";
 const formData = ref();
-const question = ref<any[]>([]);
+const question = ref();
+const showData = ref();
+const ans = ref({
+  id: -1,
+  questionsList: [],
+  token: ""
+});
 const time = ref();
 const loading = ref(true);
 const submitData = ref({
@@ -307,12 +314,12 @@ onMounted(async () => {
     }
   }
   getQuestionnaireView();
-  try {
-    const res = await getStatistic({ id: Number(decryptedId.value) });
-    resultData.value = res.data.statistics[0].options;
-  } catch (e) {
-    ElNotification.error(e);
-  }
+  // try {
+  //   const res = await getStatistic({ id: Number(decryptedId.value) });
+  //   resultData.value = res.data.statistics[0].options;
+  // } catch (e) {
+  //   ElNotification.error(e);
+  // }
 });
 
 const tokenOutDate = computed(() => {
@@ -364,7 +371,7 @@ const decryptId = (encryptedId) => {
 const handleSubmit = () => {
   const nowDate = Date.now();
   const startTimestamp = new Date(startTime.value).getTime();
-  const showTime = startTime.value.replace("T", " ").split("+")[0].split(".")[0];
+  // const showTime = startTime.value.replace("T", " ").split("+")[0].split(".")[0];
   if (nowDate - startTimestamp < 0) {
     ElNotification.error(`问卷开始时间为 ${showTime}`);
   } else {
@@ -379,21 +386,32 @@ const getQuestionnaireView = () => {
         if (res.code === 200) {
           formData.value = res.data;
           question.value = formData.value.questions;
-          time.value = formData.value.time.replace("T", " ").split("+")[0].split(".")[0];
+
           submitData.value.id = res.data.id;
           startTime.value = res.data.start_time;
           // console.log("问卷id:"+submitData.value.id)
-          question.value.forEach(q => {
-            // 获取已存储的答案
-            const storedAnswer = questionnaireStore.searchAnswer(decryptedId.value, q.serial_num);
-            if (storedAnswer) {
-              q.answer = storedAnswer.answer;
-            } else if (q.question_type === 1) {
-              q.answer = " ";
-            } else {
-              q.answer = "";
-            }
+          showData.value = deepSnakeToCamel(res.data);
+
+          showData.value.quesConfig.questionList = showData.value.quesConfig.questionList.map(item => {
+            return {
+              ...item,
+              answer: ""
+            };
           });
+          console.log(showData.value.quesConfig.questionList);
+          time.value = showData.value.baseConfig.endTime.replace("T", " ").split("+")[0].split(".")[0];
+          ans.value.id = res.data.id;
+          // question.value.forEach(q => {
+          //   // 获取已存储的答案
+          //   const storedAnswer = questionnaireStore.searchAnswer(decryptedId.value, q.serial_num);
+          //   if (storedAnswer) {
+          //     q.answer = storedAnswer.answer;
+          //   } else if (q.question_type === 1) {
+          //     q.answer = " ";
+          //   } else {
+          //     q.answer = "";
+          //   }
+          // });
           loading.value = false;
         } else if (res.code === 200509) {
           isOutDate.value = true;
@@ -447,16 +465,19 @@ const checkAnswer = () => {
 };
 
 const submit = () => {
-  checkAnswer();
+  // checkAnswer();
   if (allowSend.value === false) {
     return;
   }
-  submitData.value.questions_list = question.value.map((q) => ({
-    question_id: q.id,
-    serial_num: q.serial_num,
-    answer: q.answer
-  }));
-  submitData.value.token = localStorage.getItem("token");
+  ans.value.token = localStorage.getItem("token");
+  ans.value.questionsList = showData.value.quesConfig.questionList.map((item) => {
+    return {
+      id: item.id,
+      answer: item.answer
+    };
+  });
+  console.log(ans.value);
+  return;
   useRequest(() => setUserSubmitAPI(submitData.value), {
     onBefore: () => startLoading(),
     async onSuccess(res) {
@@ -467,7 +488,7 @@ const submit = () => {
         imageStore.clearFiles();
         optionStore.deleteOption(decryptedId.value);
         if (formData.value.survey_type === 0) {
-          router.push("/Thank");
+          await router.push("/Thank");
         } else {
           try {
             const res = await getStatistic({ id: Number(decryptedId.value) });

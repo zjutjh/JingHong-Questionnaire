@@ -19,88 +19,22 @@
       <question-list v-if="mode === 'ques'" v-model:question="question" :loading="loading" />
       <questionnaire-settings v-if="mode === 'setting'" />
     </div>
-    <!--        <div class="flex justify-center items-center gap-160 mt-20">-->
-    <!--          <button-->
-    <!--            v-show="isNew === 'false'"-->
-    <!--            class="btn btn-success dark:opacity-75 dark:text-white"-->
-    <!--            @click="showModal('SaveQuestionnaireSubmit')"-->
-    <!--          >-->
-    <!--            保存更改-->
-    <!--          </button>-->
-    <!--          <button-->
-    <!--            v-show="isNew === 'false'"-->
-    <!--            class="btn btn-error dark:opacity-75 dark:text-white"-->
-    <!--            @click="showModal('reverseQuestionnaireSubmit')"-->
-    <!--          >-->
-    <!--            放弃更改-->
-    <!--          </button>-->
-    <!--          <button v-show="isNew === 'true'" class="btn btn-success dark:opacity-75 dark:text-white" @click="submit(1)">-->
-    <!--            保存-->
-    <!--          </button>-->
-    <!--          <button-->
-    <!--            v-show="isNew === 'true'"-->
-    <!--            class="btn btn-primary dark:opacity-75 dark:text-white"-->
-    <!--            @click="showModal('NewQuestionnaireSubmit')"-->
-    <!--          >-->
-    <!--            发布-->
-    <!--          </button>-->
-    <!--        </div>-->
     <menu-panel v-show="mode === 'ques'">
       <right-menu />
     </menu-panel>
   </div>
-  <modal modal-id="setting">
-    <template #title>
-      设置
-    </template>
-    <template #default>
-      <div class="flex gap-20 p-10">
-        <span class="flex items-center gap-10"><span>默认唯一</span><input v-model="setting.isUnique" type="checkbox" class="checkbox  dark:bg-customGray_more_shallow"></span>
-        <span class="flex items-center gap-10"><span>默认必答</span><input v-model="setting.isRequired" type="checkbox" class="checkbox  dark:bg-customGray_more_shallow"></span>
-        <span class="flex items-center gap-10"><span>默认有"其他"选项</span><input v-model="setting.isOtherOptions" type="checkbox" class="checkbox  dark:bg-customGray_more_shallow"></span>
-      </div>
-    
-    </template>
-  </modal>
-  <modal modal-id="NewQuestionnaireSubmit">
-    <template #title>
-      确认发布
-    </template>
-    <template #default>
-      该操作会直接发布问卷!请确认问卷无误
-    </template>
-    <template #action>
-      <button class="btn btn-success w-80" @click="submit(2)">
-        确认
-      </button>
-    </template>
-  </modal>
-  <modal modal-id="SaveQuestionnaireSubmit">
-    <template #title>
-      保存更改
-    </template>
-    <template #default>
-      确认要保存更改吗?
-    </template>
-    <template #action>
-      <button class="btn btn-success dark:opacity-75 w-80" @click="submit">
-        确认
-      </button>
-    </template>
-  </modal>
-  <modal modal-id="reverseQuestionnaireSubmit">
-    <template #title>
-      放弃更改
-    </template>
-    <template #default>
-      确认要放弃更改?
-    </template>
-    <template #action>
-      <button class="btn btn-error dark:opacity-75 w-80" @click="dataReverse">
-        确认
-      </button>
-    </template>
-  </modal>
+<!--  <modal modal-id="setting">-->
+<!--    <template #title>-->
+<!--      设置-->
+<!--    </template>-->
+<!--    <template #default>-->
+<!--      <div class="flex gap-20 p-10">-->
+<!--        <span class="flex items-center gap-10"><span>默认唯一</span><input v-model="setting.isUnique" type="checkbox" class="checkbox  dark:bg-customGray_more_shallow"></span>-->
+<!--        <span class="flex items-center gap-10"><span>默认必答</span><input v-model="setting.isRequired" type="checkbox" class="checkbox  dark:bg-customGray_more_shallow"></span>-->
+<!--        <span class="flex items-center gap-10"><span>默认有"其他"选项</span><input v-model="setting.isOtherOptions" type="checkbox" class="checkbox  dark:bg-customGray_more_shallow"></span>-->
+<!--      </div>-->
+<!--    </template>-->
+<!--  </modal>-->
 </template>
 
 <script setup lang="ts">
@@ -124,11 +58,9 @@ import { storeToRefs } from "pinia";
 
 import { useActiveStore } from "@/stores/edit";
 
-//初始化问卷
+// 初始化问卷
 
-const {init} = useEditStore()
-
-onMounted(() => {init()})
+const { init } = useEditStore();
 
 //
 const mode = ref("ques");
@@ -142,11 +74,6 @@ const id = ref<number>();
 const reg = ref<string>("");
 const time = ref();
 const loading = ref(true);
-const setting = reactive({
-  isUnique: false,
-  isOtherOptions: false,
-  isRequired: false
-});
 
 const activeSerial = ref(-1);
 const setActive = (serialNum: number) => {
@@ -154,8 +81,8 @@ const setActive = (serialNum: number) => {
   activeSerial.value = serialNum;
 };
 
-provide("activeSerial",activeSerial)
-provide("setActive",setActive)
+provide("activeSerial", activeSerial);
+provide("setActive", setActive);
 
 provide("submitData", submitData);
 
@@ -167,8 +94,6 @@ const calculateFutureDate = (): Date => {
   return futureDate;
 };
 
-const startTime = ref(Date.now());
-const questionnaireContainer = ref<HTMLDivElement>();
 
 onMounted(() => {
   time.value = calculateFutureDate();
@@ -239,7 +164,7 @@ const cleanReg = () => {
 watch(selectedOption, cleanReg);
 
 const deleteQuestion = (serial_num: number) => {
-    // console.log(serial_num);
+  // console.log(serial_num);
   question.value = question.value.filter((item) => item.serial_num !== serial_num);
   question.value.forEach((item) => {
     if (item.serial_num > serial_num) {
@@ -249,65 +174,6 @@ const deleteQuestion = (serial_num: number) => {
 };
 provide("deleteQuetion", deleteQuestion);
 
-const dataReverse = () => {
-  submitData.value = deepCopy(formData.value);
-  question.value = deepCopy(formData.value.questions);
-  time.value = submitData.value.time;
-    // console.log(question.value);
-  ElNotification.success("成功放弃修改");
-  showModal("reverseQuestionnaireSubmit", true);
-  router.push("/admin");
-};
-
-const submit = (state: number) => {
-  submitData.value.time = time.value;
-  submitData.value.start_time = new Date(startTime.value).toISOString();
-  submitData.value.questions = question.value;
-  if (isNew === "false") {
-    useRequest(() => setQuestionnaireDetailAPI(submitData.value), {
-      onBefore: () => startLoading(),
-      onSuccess(res) {
-        if (res.code === 200 && res.msg === "OK") {
-          ElNotification.success("保存成功");
-          router.push("/admin");
-        } else {
-          ElNotification.error(res.msg);
-        }
-      },
-      onError(e) {
-        ElNotification.error(e);
-      },
-      onFinally: () => {
-        showModal("SaveQuestionnaireSubmit", true);
-        closeLoading();
-      }
-    });
-  } else {
-    submitData.value.status = state;
-    useRequest(() => setNewQuestionnaireDetailAPI(submitData.value), {
-      onBefore: () => startLoading(),
-      onSuccess(res) {
-        if (res.code === 200 && res.msg === "OK") {
-          if (state === 1) {
-            ElNotification.success("创建并保存为草稿成功");
-          } else {
-            ElNotification.success("创建并发布成功");
-          }
-          router.push("/admin");
-        } else {
-          ElNotification.error(res.msg);
-        }
-      },
-      onError(e) {
-        ElNotification.error(e);
-      },
-      onFinally: () => {
-        showModal("SaveQuestionnaireSubmit", true);
-        closeLoading();
-      }
-    });
-  }
-};
 // //调试 监听reg
 // watch(question, (newQuestions) => {
 //   newQuestions.forEach((q, index) => {
