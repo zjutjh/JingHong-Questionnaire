@@ -78,11 +78,11 @@
                 v-model:answer="q.answer"
                 :title="q.subject"
                 :options="q.options"
-                :serial_num="q.serial_num"
-                :unique="q.unique"
-                :required="q.required"
-                :other-option="q.other_option"
-                :describe="q.describe"
+                :serial_num="q.serialNum"
+                :unique="q.quesSetting.unique"
+                :required="q.quesSetting.required"
+                :other-option="q.quesSetting.otherOption"
+                :describe="q.description"
                 :questionnaire-i-d="decryptedId"
               />
             </el-skeleton>
@@ -95,16 +95,16 @@
               <template #default>
                 <checkbox
                   v-model:answer="q.answer"
-                  v-model:title="q.subject"
-                  v-model:options="q.options"
-                  v-model:serial_num="q.serial_num"
-                  v-model:unique="q.unique"
-                  v-model:required="q.required"
-                  v-model:other-option="q.other_option"
-                  v-model:describe="q.describe"
-                  v-model:questionnaire-i-d="decryptedId as string"
-                  v-model:minimum_option="q.minimum_option"
-                  v-model:maximum_option="q.maximum_option"
+                  :title="q.subject"
+                  :options="q.options"
+                  :serial_num="q.serialNum"
+                  :unique="q.quesSetting.unique"
+                  :required="q.quesSetting.required"
+                  :other-option="q.quesSetting.otherOption"
+                  :describe="q.description"
+                  :questionnaire-i-d="decryptedId as string"
+                  :minimum_option="q.quesSetting.minimumOption"
+                  :maximum_option="q.quesSetting.maximumOption"
                 />
               </template>
             </el-skeleton>
@@ -117,12 +117,12 @@
               <template #default>
                 <fill
                   v-model:answer="q.answer"
-                  v-model:title="q.subject"
-                  v-model:serial_num="q.serial_num"
-                  v-model:reg="q.reg"
-                  v-model:unique="q.unique"
-                  v-model:required="q.required"
-                  v-model:describe="q.describe"
+                  :title="q.subject"
+                  :serial_num="q.serialNum"
+                  :reg="q.quesSetting.reg"
+                  :unique="q.quesSetting.unique"
+                  :required="q.quesSetting.required"
+                  :describe="q.description"
                 />
               </template>
             </el-skeleton>
@@ -135,11 +135,11 @@
               <template #default>
                 <text-area
                   v-model:answer="q.answer"
-                  v-model:title="q.subject"
-                  v-model:serial_num="q.serial_num"
-                  v-model:unique="q.unique"
-                  v-model:required="q.required"
-                  v-model:describe="q.describe"
+                  :title="q.subject"
+                  :serial_num="q.serialNum"
+                  :unique="q.quesSetting.unique"
+                  :required="q.quesSetting.required"
+                  :describe="q.description"
                 />
               </template>
             </el-skeleton>
@@ -152,11 +152,11 @@
               <template #default>
                 <file
                   v-model:answer="q.answer"
-                  v-model:title="q.subject"
-                  v-model:serial_num="q.serial_num"
-                  v-model:unique="q.unique"
-                  v-model:required="q.required"
-                  v-model:describe="q.describe"
+                  :title="q.subject"
+                  :serial_num="q.serialNum"
+                  :unique="q.quesSetting.unique"
+                  :required="q.quesSetting.required"
+                  :describe="q.description"
                 />
               </template>
             </el-skeleton>
@@ -172,19 +172,18 @@
         <div v-for="(q, index) in showData.quesConfig.questionList" :key="index">
           <vote
             v-model:answer="q.answer"
-            v-model:title="q.subject"
-            v-model:options="q.options"
-            v-model:serial_num="q.serial_num"
-            v-model:unique="q.unique"
-            v-model:required="q.required"
-            v-model:other-option="q.other_option"
-            v-model:describe="q.describe"
-            v-model:questionnaire-i-d="decryptedId"
-            v-model:minimum_option="q.minimum_option"
-            v-model:maximum_option="q.maximum_option"
+            :title="q.subject"
+            :options="q.options"
+            :serial_num="q.serialNum"
+            :unique="q.quesSetting.unique"
+            :required="q.quesSetting.required"
+            :other-option="q.quesSetting.otherOption"
+            :describe="q.describe"
+            :questionnaire-i-d="decryptedId"
+            :minimum_option="q.minimumOption"
+            :maximum_option="q.maximumOption"
             :count="resultData"
           >
-            <div />
           </vote>
         </div>
         <div class="flex justify-center items-center py-50">
@@ -199,7 +198,7 @@
           <span class="text-red-950 dark:text-red-500 ">提交问卷</span>
         </template>
 
-        <template v-if="formData && !formData.verify || tokenOutDate" #default>
+        <template v-if="showData && !showData.baseConfig.verify || tokenOutDate" #default>
           你确认要提交问卷吗?
         </template>
         <template v-else #default>
@@ -225,7 +224,7 @@
         </template>
         <template #action>
           <button
-            v-if="formData && !formData.verify || tokenOutDate"
+            v-if="showData && !showData.baseConfig.verify || tokenOutDate"
             class="btn bg-red-800 text-red-50 w-full hover:bg-red-600"
             style="margin-top: -10px"
             @click="submit"
@@ -269,6 +268,7 @@ import verifyAPI from "@/apis/service/User/verifyApi.ts";
 import Vote from "@/pages/View/vote.vue";
 import getStatistic from "@/apis/service/User/getStatistic.ts";
 import { deepSnakeToCamel } from "@/utilities/deepSnakeToCamel.ts";
+import {deepCamelToSnake} from "@/utilities/deepCamelToSnake.ts";
 const { darkModeStatus, switchDarkMode } = useDarkModeSwitch();
 const Key = "JingHong";
 const formData = ref();
@@ -429,29 +429,29 @@ const getQuestionnaireView = () => {
 };
 
 const checkAnswer = () => {
-  const hasUnansweredRequiredQuestion = question.value.some((q) => {
-    if (q.required && q.answer === "") {
+  const hasUnansweredRequiredQuestion = showData.value.quesConfig.questionList.some((q) => {
+    if (q.quesSetting.required && q.answer === "") {
       ElNotification.error("您有题目未完成作答.");
       return true;
     }
-    if (q.question_type === 1 && q.answer === " ") {
+    if (q.quesSetting.questionType === 1 && q.answer === " ") {
       ElNotification.error("您有单选题未完成作答.");
       return true;
     }
-    if (q.question_type === 2 && (q.answer.endsWith("┋") || q.answer.startsWith("┋"))) {
+    if (q.quesSetting.questionType === 2 && (q.answer.endsWith("┋") || q.answer.startsWith("┋"))) {
       ElNotification.error("您有多选题未完成作答.");
       return true;
     }
-    if (q.question_type === 2 && q.answer.split("┋").length > q.maximum_option || q.answer.split("┋").length < q.minimum_option) {
-      if (q.answer.split("┋").length > q.maximum_option) {
-        ElNotification.error(`该投票最多只能选择${q.maximum_option}个选项`);
-      } else if (q.answer.split("┋").length < q.minimum_option) {
-        ElNotification.error(`该投票最少需要选择${q.maximum_option}个选项`);
+    if (q.quesSetting.questionType === 2 && q.answer.split("┋").length > q.quesSetting.maximumOption || q.answer.split("┋").length < q.quesSetting.minimumOption) {
+      if (q.answer.split("┋").length > q.quesSetting.maximumOption) {
+        ElNotification.error(`该投票最多只能选择${q.quesSetting.maximumOption}个选项`);
+      } else if (q.answer.split("┋").length < q.quesSetting.minimumOption) {
+        ElNotification.error(`该投票最少需要选择${q.quesSetting.maximumOption}个选项`);
       }
       return true;
     }
 
-    if (q.question_type === 3 && q.answer !== "" && q.reg && !new RegExp(q.reg).test(q.answer)) {
+    if (q.quesSetting.questionType === 3 && q.answer !== "" && q.reg && !new RegExp(q.quesSetting.reg).test(q.answer)) {
       ElNotification.error(`第${q.serial_num}题的回答不符合要求.`);
       return true;
     }
@@ -465,20 +465,19 @@ const checkAnswer = () => {
 };
 
 const submit = () => {
-  // checkAnswer();
+  checkAnswer();
   if (allowSend.value === false) {
     return;
   }
-  ans.value.token = localStorage.getItem("token");
+  ans.value.token = localStorage.getItem("token") ?? "";
   ans.value.questionsList = showData.value.quesConfig.questionList.map((item) => {
     return {
-      id: item.id,
+      questionId: item.id,
       answer: item.answer
     };
   });
   console.log(ans.value);
-  return;
-  useRequest(() => setUserSubmitAPI(submitData.value), {
+  useRequest(() => setUserSubmitAPI(deepCamelToSnake(ans.value)), {
     onBefore: () => startLoading(),
     async onSuccess(res) {
       if (res.code === 200 && res.msg === "OK") {
