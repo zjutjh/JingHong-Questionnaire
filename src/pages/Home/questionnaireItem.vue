@@ -92,6 +92,8 @@ import CryptoJS from "crypto-js";
 import { ElMessage } from "element-plus";
 import { computed } from "vue";
 import { useQrCode } from "@/utilities/useQrCode";
+import {useEditStore} from "@/stores/edit.ts";
+import {storeToRefs} from "pinia";
 
 const baseURL = import.meta.env.VITE_COPY_LINK;
 const tempStore = useMainStore().useTempStore();
@@ -102,6 +104,8 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(["updateList"]);
+
+const { setSurveyId } = useEditStore();
 
 const updateList = () => {
   emit("updateList");
@@ -162,6 +166,7 @@ const { qrCodeURL, copyQrCode } = useQrCode(questionnaireURL.value);
 const DetailInfo = () => {
   localStorage.setItem("isNew", "false");
   localStorage.setItem("id", String(props.idName));
+  setSurveyId(props.idName)
   router.push("/admin/DetailInfo");
 };
 

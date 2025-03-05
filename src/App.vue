@@ -31,9 +31,7 @@
       </div>
     </div>
     <router-view v-slot="{ Component }" class="flex-1 dark:text-white">
-      <transition name="fade" mode="out-in">
-        <component :is="Component" />
-      </transition>
+      <component :is="Component" />
     </router-view>
   </div>
 </template>

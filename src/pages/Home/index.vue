@@ -58,6 +58,7 @@ import { onMounted, ref, watch } from "vue";
 import router from "@/router";
 import { closeLoading, startLoading } from "@/utilities";
 import { useMainStore } from "@/stores";
+import { useEditStore } from "@/stores/edit.ts";
 
 const tempStore = useMainStore().useTempStore();
 const loginStore = useMainStore().useLoginStore();
@@ -67,6 +68,7 @@ const totalPageNum = ref(1);
 const questionnaireList = ref();
 const loading = ref(true);
 const surveyType = ref(tempStore.surveyType);
+const { setSurveyId } = useEditStore();
 watch(surveyType, () => {
   tempStore.surveyType = surveyType;
 });
@@ -99,7 +101,8 @@ const handleCurrentChange = (val: number) => {
 
 const newQues = () => {
   localStorage.setItem("isNew", "true");
-  router.push({path:"/admin/DetailInfo",query:{"id": -1}});
+  setSurveyId(-1);
+  router.push("/admin/DetailInfo");
 };
 
 const addVote = () => {

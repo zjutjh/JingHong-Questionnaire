@@ -9,6 +9,7 @@ import { Question, Option } from "@/utilities/type.ts";
 import { quesSettingMap } from "@/utilities/quesSettingMap.ts";
 import { nextTick } from "vue";
 import { Console } from "node:console";
+import {deepSnakeToCamel} from "@/utilities/deepSnakeToCamel.ts";
 
 /**
  * 返回默认的问卷 schema
@@ -18,7 +19,7 @@ function defaultSchema() {
     status: QuesStatus.DRAFT,
     surveyType: QuesType.SURVEY,
     baseConfig: {
-      startTime: Date.now(),
+      startTime: "",
       endTime: "",
       dayLimit: 0,
       verify: false
@@ -64,7 +65,7 @@ function useInitializeSchema(surveyId: Ref<number>) {
     onBefore: () => startLoading(),
     onSuccess(res: any) {
       if (res.code === 200) {
-        schema.value = res.data;
+        schema.value = deepSnakeToCamel(res.data);
       } else {
         ElNotification.error(res.msg);
       }
@@ -122,7 +123,7 @@ function useQuestionListReducer(questionDataList: Ref<Question[]>) {
     });
   }
 
-  function moveQuestion(index:number, action: "up"|"down") {
+  function moveQuestion(index: number, action: "up" | "down") {
     const list = questionDataList.value;
 
     if (action === "up" && index > 0) {
@@ -139,7 +140,6 @@ function useQuestionListReducer(questionDataList: Ref<Question[]>) {
       list[index + 1].serialNum = index + 2;
     }
   }
-
 
   return {
     addQuestion,
@@ -164,9 +164,9 @@ export const useEditStore = defineStore("edit", () => {
     surveyId.value = id;
   }
   async function init() {
-    console.log("Initializing..."); 
+    console.log("Initializing...");
     if (surveyId.value === -1) {
-      resetSchema(); // 新建问卷时，重置 schema
+      // resetSchema(); // 新建问卷时，重置 schema
     } else {
       await getSchemaFromRemote(); // 编辑问卷时，拉取远程数据
     }
@@ -179,18 +179,20 @@ export const useEditStore = defineStore("edit", () => {
     addQuestion,
     deleteQuestion,
     moveQuestion,
+    resetSchema,
     setSurveyId,
     init,
     schema,
-    surveyId
+    surveyId,
+    getSchemaFromRemote
   };
 }, {
   persist: true
 });
 
-export const useActiveStore = defineStore("active",() => {
+export const useActiveStore = defineStore("active", () => {
   const activeSerial = ref(-1);
   return {
-    activeSerial,
-  }
-})
+    activeSerial
+  };
+});
