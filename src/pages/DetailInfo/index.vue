@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, nextTick, reactive, provide } from "vue";
+import { onMounted, ref, watch, nextTick, reactive, provide, onUnmounted } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireDetailAPI, setNewQuestionnaireDetailAPI, setQuestionnaireDetailAPI } from "@/apis";
 import { ElNotification } from "element-plus";
@@ -60,8 +60,10 @@ import { useActiveStore } from "@/stores/edit";
 
 // 初始化问卷
 
-const { init } = useEditStore();
-
+const { resetSchema } = useEditStore();
+onUnmounted(() => {
+  resetSchema();
+});
 //
 const mode = ref("ques");
 const tempStore = useMainStore().useTempStore();
@@ -93,7 +95,6 @@ const calculateFutureDate = (): Date => {
   futureDate.setDate(currentDate.getDate() + 7);
   return futureDate;
 };
-
 
 onMounted(() => {
   time.value = calculateFutureDate();

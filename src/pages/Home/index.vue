@@ -68,7 +68,7 @@ const totalPageNum = ref(1);
 const questionnaireList = ref();
 const loading = ref(true);
 const surveyType = ref(tempStore.surveyType);
-const { setSurveyId } = useEditStore();
+const { setSurveyId, init } = useEditStore();
 watch(surveyType, () => {
   tempStore.surveyType = surveyType;
 });
@@ -99,9 +99,10 @@ const handleCurrentChange = (val: number) => {
   getQuestionnaireList();
 };
 
-const newQues = () => {
+const newQues = async () => {
   localStorage.setItem("isNew", "true");
   setSurveyId(-1);
+  await init();
   router.push("/admin/DetailInfo");
 };
 
