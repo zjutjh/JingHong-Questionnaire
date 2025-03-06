@@ -209,7 +209,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, watch, defineProps, defineEmits, onMounted } from "vue";
+import { ref, inject, watch, defineProps, defineEmits, onMounted, onBeforeMount } from "vue";
 import Checkbox from "@/pages/DetailInfo/question/checkbox.vue";
 import Fill from "@/pages/DetailInfo/question/fill.vue";
 import TextArea from "@/pages/DetailInfo/question/textArea.vue";
@@ -237,16 +237,15 @@ const props = defineProps<{
   loading: boolean
 }>();
 
-const { schema, deleteQuestion, moveQuestion, resetSchema, surveyId, init, getSchemaFromRemote } = useEditStore();
+const { deleteQuestion, moveQuestion, resetSchema } = useEditStore();
 
+const { schema, surveyId } = storeToRefs(useEditStore());
 
 const question = [];
-console.log(surveyId);
-console.log(schema);
+console.log(surveyId.value);
+console.log(schema.value);
 const emits = defineEmits(["update:question"]);
-onMounted(() => {
-  init()
-});
+
 const { activeSerial } = storeToRefs(useActiveStore());
 
 watch(activeSerial, () => {

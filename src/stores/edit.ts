@@ -9,7 +9,7 @@ import { Question, Option } from "@/utilities/type.ts";
 import { quesSettingMap } from "@/utilities/quesSettingMap.ts";
 import { nextTick } from "vue";
 import { Console } from "node:console";
-import {deepSnakeToCamel} from "@/utilities/deepSnakeToCamel.ts";
+import { deepSnakeToCamel } from "@/utilities/deepSnakeToCamel.ts";
 
 /**
  * 返回默认的问卷 schema
@@ -65,6 +65,7 @@ function useInitializeSchema(surveyId: Ref<number>) {
     onBefore: () => startLoading(),
     onSuccess(res: any) {
       if (res.code === 200) {
+        console.log("valueChanged");
         schema.value = deepSnakeToCamel(res.data);
       } else {
         ElNotification.error(res.msg);
@@ -169,6 +170,7 @@ export const useEditStore = defineStore("edit", () => {
       // resetSchema(); // 新建问卷时，重置 schema
     } else {
       await getSchemaFromRemote(); // 编辑问卷时，拉取远程数据
+
     }
   }
   const { addQuestion, deleteQuestion, moveQuestion } = useQuestionListReducer(

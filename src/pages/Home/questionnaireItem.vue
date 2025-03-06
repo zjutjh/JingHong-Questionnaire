@@ -90,10 +90,10 @@ import { closeLoading, startLoading } from "@/utilities";
 import { useMainStore } from "@/stores";
 import CryptoJS from "crypto-js";
 import { ElMessage } from "element-plus";
-import { computed } from "vue";
+import { computed, nextTick } from "vue";
 import { useQrCode } from "@/utilities/useQrCode";
-import {useEditStore} from "@/stores/edit.ts";
-import {storeToRefs} from "pinia";
+import { useEditStore } from "@/stores/edit.ts";
+import { storeToRefs } from "pinia";
 
 const baseURL = import.meta.env.VITE_COPY_LINK;
 const tempStore = useMainStore().useTempStore();
@@ -105,7 +105,9 @@ const props = defineProps<{
 
 const emit = defineEmits(["updateList"]);
 
-const { setSurveyId } = useEditStore();
+const { setSurveyId, init } = useEditStore();
+
+const { schema } = storeToRefs(useEditStore());
 
 const updateList = () => {
   emit("updateList");
@@ -163,11 +165,13 @@ const copyShareCode = () => {
 // 二维码处理
 const { qrCodeURL, copyQrCode } = useQrCode(questionnaireURL.value);
 
-const DetailInfo = () => {
+const DetailInfo = async () => {
   localStorage.setItem("isNew", "false");
   localStorage.setItem("id", String(props.idName));
-  setSurveyId(props.idName)
+  setSurveyId(props.idName);
+  await init();
   router.push("/admin/DetailInfo");
+  //
 };
 
 const checkData = () => {
