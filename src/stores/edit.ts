@@ -1,4 +1,4 @@
-import { Ref, ref, toRef } from "vue";
+import { Ref, ref, toRef, computed } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireDetailAPI } from "@/apis";
 import { closeLoading, startLoading } from "@/utilities";
@@ -76,7 +76,7 @@ function useInitializeSchema(surveyId: Ref<number>) {
     },
     onFinally: () => closeLoading()
   });
-  async function getSchemaFromRemote() {
+  function getSchemaFromRemote() {
     if (surveyId.value === -1) return; // 新建问卷时不拉取远程数据
     run();
   }
@@ -152,7 +152,10 @@ function useQuestionListReducer(questionDataList: Ref<Question[]>) {
 export const useEditStore = defineStore("edit", () => {
   const surveyId = ref(-1);
   const { schema, getSchemaFromRemote } = useInitializeSchema(surveyId);
-  const questionDataList = toRef(schema.value.quesConfig, "questionList");
+  const questionDataList = computed({
+    get: () => schema.value.quesConfig.questionList,
+    set: (val) => schema.value.quesConfig.questionList = val
+  });
   /**
    * 重置 schema 以便用于新建问卷
    */
@@ -164,13 +167,12 @@ export const useEditStore = defineStore("edit", () => {
   function setSurveyId(id: number) {
     surveyId.value = id;
   }
-  async function init() {
+  function init() {
     console.log("Initializing...");
     if (surveyId.value === -1) {
       // resetSchema(); // 新建问卷时，重置 schema
     } else {
-      await getSchemaFromRemote(); // 编辑问卷时，拉取远程数据
-
+      getSchemaFromRemote(); // 编辑问卷时，拉取远程数据
     }
   }
   const { addQuestion, deleteQuestion, moveQuestion } = useQuestionListReducer(

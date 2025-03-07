@@ -99,17 +99,17 @@ const handleCurrentChange = (val: number) => {
   getQuestionnaireList();
 };
 
-const newQues = async () => {
+const newQues = () => {
   localStorage.setItem("isNew", "true");
   setSurveyId(-1);
-  schema.surveyType = 0
-  await init();
+  schema.surveyType = 0;
+  init();
   router.push("/admin/DetailInfo");
 };
 
 const addVote = () => {
   localStorage.setItem("isNew", "true");
-  schema.surveyType = 1
+  schema.surveyType = 1;
   router.push("/admin/addVote");
 };
 </script>
