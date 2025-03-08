@@ -64,7 +64,7 @@
 
       <!-- 选择操作 -->
       <div v-if="currentType===QuesItemType.RADIO||currentType===QuesItemType.CHECKBOX" class="pt-24">
-        <el-button @click="addOption(activeSerial-1)">
+        <el-button @click="addOption(activeSerial)">
           增加选项
         </el-button>
       </div>
@@ -92,7 +92,14 @@ const { activeSerial } = storeToRefs(useActiveStore());
 
 const editStore = storeToRefs(useEditStore());
 
-const { questionList } = toRefs(editStore.schema.value.quesConfig);
+const questionList = computed({
+  get: () => editStore.schema.value?.quesConfig?.questionList || [],
+  set: (val) => {
+    if (editStore.schema.value?.quesConfig) {
+      editStore.schema.value.quesConfig.questionList = val;
+    }
+  }
+});
 
 const currentType = computed<number>(() => {
   if (activeSerial.value === -1) {
@@ -103,12 +110,22 @@ const currentType = computed<number>(() => {
 });
 
 const addOption = (serialNum: number) => {
-  questionList.value[serialNum].options.push({
-    serialNum: questionList.value[serialNum].options.length + 1,
-    content: "",
-    img: "",
-    description: ""
+  const newList = questionList.value.map(q => {
+    if (q.serialNum === serialNum) {
+      const newOptions = [
+        ...q.options,
+        {
+          serialNum: q.options.length + 1,
+          content: "",
+          img: "",
+          description: ""
+        }
+      ];
+      return { ...q, options: newOptions };
+    }
+    return q;
   });
+  questionList.value = newList;
 };
 
 </script>
