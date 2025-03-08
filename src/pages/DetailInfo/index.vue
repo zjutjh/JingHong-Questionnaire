@@ -54,10 +54,6 @@ import QuestionnaireSettings from "./QuestionnaireSettings.vue";
 
 import { useEditStore } from "@/stores/edit";
 
-import { storeToRefs } from "pinia";
-
-import { useActiveStore } from "@/stores/edit";
-
 // 初始化问卷
 
 const { resetSchema } = useEditStore();
@@ -76,17 +72,6 @@ const id = ref<number>();
 const reg = ref<string>("");
 const time = ref();
 const loading = ref(true);
-
-const activeSerial = ref(-1);
-const setActive = (serialNum: number) => {
-  console.log(serialNum);
-  activeSerial.value = serialNum;
-};
-
-provide("activeSerial", activeSerial);
-provide("setActive", setActive);
-
-provide("submitData", submitData);
 
 const isNew = localStorage.getItem("isNew");
 const calculateFutureDate = (): Date => {

@@ -165,11 +165,11 @@ const copyShareCode = () => {
 // 二维码处理
 const { qrCodeURL, copyQrCode } = useQrCode(questionnaireURL.value);
 
-const DetailInfo = async () => {
+const DetailInfo = () => {
   localStorage.setItem("isNew", "false");
   localStorage.setItem("id", String(props.idName));
   setSurveyId(props.idName);
-  await init();
+  init();
   router.push("/admin/DetailInfo");
   //
 };

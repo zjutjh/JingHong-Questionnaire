@@ -9,11 +9,14 @@
 
 <script setup lang="ts">
 import { useEditStore } from "@/stores/edit";
+import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
-const { addQuestion, schema } = useEditStore();
+const { addQuestion } = useEditStore();
 
-const questionLens = computed(() => schema.quesConfig.questionList.length);
+const { schema } = storeToRefs(useEditStore());
+
+const questionLens = computed(() => schema.value.quesConfig.questionList.length);
 
 const props = defineProps<{
   text: string
@@ -22,7 +25,7 @@ const props = defineProps<{
 
 const addQues = () => {
   addQuestion(questionLens.value, Number(props.type));
-  console.log(schema)
+  console.log(schema);
 };
 </script>
 
