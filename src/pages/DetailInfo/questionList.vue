@@ -209,7 +209,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, watch, defineProps, defineEmits, onMounted, onBeforeMount } from "vue";
+import { ref, inject, watch, defineEmits, onMounted } from "vue";
 import Checkbox from "@/pages/DetailInfo/question/checkbox.vue";
 import Fill from "@/pages/DetailInfo/question/fill.vue";
 import TextArea from "@/pages/DetailInfo/question/textArea.vue";
@@ -233,24 +233,20 @@ import { setNewQuestionnaireDetailAPI, setQuestionnaireDetailAPI } from "@/apis"
 import { closeLoading, startLoading } from "@/utilities";
 import { deepCamelToSnake } from "@/utilities/deepCamelToSnake.ts";
 
-const props = defineProps<{
-  loading: boolean
-}>();
+const loading = ref(true);
 
-const { deleteQuestion, moveQuestion, resetSchema } = useEditStore();
+const { deleteQuestion, moveQuestion } = useEditStore();
 
 const { schema, surveyId } = storeToRefs(useEditStore());
 
-const question = [];
-console.log(surveyId.value);
-console.log(schema.value);
-const emits = defineEmits(["update:question"]);
+watch(schema, (newVal) => {
+  if (newVal) {
+    loading.value = false;
+  }
+}, { immediate: true });
 
 const { activeSerial } = storeToRefs(useActiveStore());
 
-watch(activeSerial, () => {
-  console.log(activeSerial.value);
-});
 const isNew = "true";
 const activeMove = (index: number, action: "up" | "down") => {
   moveQuestion(index, action);
@@ -266,69 +262,63 @@ const activeDelete = (index: number) => {
   activeSerial.value = -1;
 };
 
-watch(question, (newVal) => {
-  emits("update:question", newVal);
-});
-
 const mode = ref("ques");
 
-const submitData = inject("submitData");
-
-const dataReverse = () => {
-  submitData.value = deepCopy(formData.value);
-  question.value = deepCopy(formData.value.questions);
-  time.value = submitData.value.time;
-  // console.log(question.value);
-  ElNotification.success("成功放弃修改");
-  showModal("reverseQuestionnaireSubmit", true);
-  router.push("/admin");
-};
+// const dataReverse = () => {
+//   submitData.value = deepCopy(formData.value);
+//   question.value = deepCopy(formData.value.questions);
+//   time.value = submitData.value.time;
+//   // console.log(question.value);
+//   ElNotification.success("成功放弃修改");
+//   showModal("reverseQuestionnaireSubmit", true);
+//   router.push("/admin");
+// };
 
 const submit = (state: number) => {
-  if (false) {
-    useRequest(() => setQuestionnaireDetailAPI(deepCamelToSnake(schema)), {
-      onBefore: () => startLoading(),
-      onSuccess(res) {
-        if (res.code === 200 && res.msg === "OK") {
-          ElNotification.success("保存成功");
-          router.push("/admin");
-        } else {
-          ElNotification.error(res.msg);
-        }
-      },
-      onError(e) {
-        ElNotification.error(e);
-      },
-      onFinally: () => {
-        showModal("SaveQuestionnaireSubmit", true);
-        closeLoading();
-      }
-    });
-  } else {
-    schema.status = state;
-    useRequest(() => setNewQuestionnaireDetailAPI(deepCamelToSnake(schema)), {
-      onBefore: () => startLoading(),
-      onSuccess(res) {
-        if (res.code === 200 && res.msg === "OK") {
-          if (state === 1) {
-            ElNotification.success("创建并保存为草稿成功");
-            resetSchema();
-          } else {
-            ElNotification.success("创建并发布成功");
-          }
-          router.push("/admin");
-        } else {
-          ElNotification.error(res.msg);
-        }
-      },
-      onError(e) {
-        ElNotification.error(e);
-      },
-      onFinally: () => {
-        showModal("SaveQuestionnaireSubmit", true);
-        closeLoading();
-      }
-    });
-  }
+  // if (false) {
+  //   useRequest(() => setQuestionnaireDetailAPI(deepCamelToSnake(schema)), {
+  //     onBefore: () => startLoading(),
+  //     onSuccess(res) {
+  //       if (res.code === 200 && res.msg === "OK") {
+  //         ElNotification.success("保存成功");
+  //         router.push("/admin");
+  //       } else {
+  //         ElNotification.error(res.msg);
+  //       }
+  //     },
+  //     onError(e) {
+  //       ElNotification.error(e);
+  //     },
+  //     onFinally: () => {
+  //       showModal("SaveQuestionnaireSubmit", true);
+  //       closeLoading();
+  //     }
+  //   });
+  // } else {
+  //   schema.value.status = state;
+  //   useRequest(() => setNewQuestionnaireDetailAPI(deepCamelToSnake(schema)), {
+  //     onBefore: () => startLoading(),
+  //     onSuccess(res: any) {
+  //       if (res.code === 200 && res.msg === "OK") {
+  //         if (state === 1) {
+  //           ElNotification.success("创建并保存为草稿成功");
+  //           resetSchema();
+  //         } else {
+  //           ElNotification.success("创建并发布成功");
+  //         }
+  //         router.push("/admin");
+  //       } else {
+  //         ElNotification.error(res.msg);
+  //       }
+  //     },
+  //     onError(e) {
+  //       ElNotification.error(e);
+  //     },
+  //     onFinally: () => {
+  //       showModal("SaveQuestionnaireSubmit", true);
+  //       closeLoading();
+  //     }
+  //   });
+  // }
 };
 </script>
