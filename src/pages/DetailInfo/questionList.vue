@@ -136,20 +136,6 @@
     </div>
     <div class="flex justify-center items-center gap-10 mt-10">
       <button
-        v-show="isNew === 'false'"
-        class="btn btn-success dark:opacity-75 dark:text-white"
-        @click="showModal('SaveQuestionnaireSubmit')"
-      >
-        保存更改
-      </button>
-      <button
-        v-show="isNew === 'false'"
-        class="btn btn-error dark:opacity-75 dark:text-white"
-        @click="showModal('reverseQuestionnaireSubmit')"
-      >
-        放弃更改
-      </button>
-      <button
         v-show="isNew === 'true'"
         class="btn dark:opacity-75 dark:text-white btn-sm flex-1 bg-red-100 hover:bg-red-200 hover:border-red-300"
         style="border-radius: 0"
@@ -193,23 +179,10 @@
       </button>
     </template>
   </modal>
-  <modal modal-id="reverseQuestionnaireSubmit">
-    <template #title>
-      放弃更改
-    </template>
-    <template #default>
-      确认要放弃更改?
-    </template>
-    <template #action>
-      <button class="btn btn-error dark:opacity-75 w-80" @click="dataReverse">
-        确认
-      </button>
-    </template>
-  </modal>
 </template>
 
 <script setup lang="ts">
-import { ref, inject, watch, defineEmits, onMounted } from "vue";
+import { ref, watch } from "vue";
 import Checkbox from "@/pages/DetailInfo/question/checkbox.vue";
 import Fill from "@/pages/DetailInfo/question/fill.vue";
 import TextArea from "@/pages/DetailInfo/question/textArea.vue";
@@ -235,7 +208,7 @@ import { deepCamelToSnake } from "@/utilities/deepCamelToSnake.ts";
 
 const loading = ref(true);
 
-const { deleteQuestion, moveQuestion } = useEditStore();
+const { deleteQuestion, moveQuestion, resetSchema } = useEditStore();
 
 const { schema, surveyId } = storeToRefs(useEditStore());
 
@@ -264,61 +237,30 @@ const activeDelete = (index: number) => {
 
 const mode = ref("ques");
 
-// const dataReverse = () => {
-//   submitData.value = deepCopy(formData.value);
-//   question.value = deepCopy(formData.value.questions);
-//   time.value = submitData.value.time;
-//   // console.log(question.value);
-//   ElNotification.success("成功放弃修改");
-//   showModal("reverseQuestionnaireSubmit", true);
-//   router.push("/admin");
-// };
-
 const submit = (state: number) => {
-  // if (false) {
-  //   useRequest(() => setQuestionnaireDetailAPI(deepCamelToSnake(schema)), {
-  //     onBefore: () => startLoading(),
-  //     onSuccess(res) {
-  //       if (res.code === 200 && res.msg === "OK") {
-  //         ElNotification.success("保存成功");
-  //         router.push("/admin");
-  //       } else {
-  //         ElNotification.error(res.msg);
-  //       }
-  //     },
-  //     onError(e) {
-  //       ElNotification.error(e);
-  //     },
-  //     onFinally: () => {
-  //       showModal("SaveQuestionnaireSubmit", true);
-  //       closeLoading();
-  //     }
-  //   });
-  // } else {
-  //   schema.value.status = state;
-  //   useRequest(() => setNewQuestionnaireDetailAPI(deepCamelToSnake(schema)), {
-  //     onBefore: () => startLoading(),
-  //     onSuccess(res: any) {
-  //       if (res.code === 200 && res.msg === "OK") {
-  //         if (state === 1) {
-  //           ElNotification.success("创建并保存为草稿成功");
-  //           resetSchema();
-  //         } else {
-  //           ElNotification.success("创建并发布成功");
-  //         }
-  //         router.push("/admin");
-  //       } else {
-  //         ElNotification.error(res.msg);
-  //       }
-  //     },
-  //     onError(e) {
-  //       ElNotification.error(e);
-  //     },
-  //     onFinally: () => {
-  //       showModal("SaveQuestionnaireSubmit", true);
-  //       closeLoading();
-  //     }
-  //   });
-  // }
+  schema.value.status = state;
+  useRequest(() => setNewQuestionnaireDetailAPI(deepCamelToSnake(schema.value)), {
+    onBefore: () => startLoading(),
+    onSuccess(res: any) {
+      if (res.code === 200 && res.msg === "OK") {
+        if (state === 1) {
+          ElNotification.success("创建并保存为草稿成功");
+          resetSchema();
+        } else {
+          ElNotification.success("创建并发布成功");
+        }
+        router.push("/admin");
+      } else {
+        ElNotification.error(res.msg);
+      }
+    },
+    onError(e) {
+      ElNotification.error(e);
+    },
+    onFinally: () => {
+      showModal("SaveQuestionnaireSubmit", true);
+      closeLoading();
+    }
+  });
 };
 </script>
