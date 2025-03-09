@@ -59,10 +59,14 @@
               </div>
             </div>
             <div class="flex gap-20 items-center my-10  ml-20 ">
+              <span class="text-red-950 dark:text-red-400 dark:opacity-80">开始时间:</span>
+              <span>{{ startTime }}</span>
+            </div>
+            <div class="flex gap-20 items-center my-10  ml-20 ">
               <span class="text-red-950 dark:text-red-400 dark:opacity-80">截止时间:</span>
               <span>{{ time }}</span>
             </div>
-            <div v-if="showData.baseConfig.dayLimit !== 0" class="flex gap-20 items-center my-10  ml-20 ">
+            <div v-if="showData.baseConfig.dayLimit !== 0 && showData.baseConfig.verify" class="flex gap-20 items-center my-10  ml-20 ">
               <span class=" dark:opacity-80 text-gray-700 dark:text-gray-400">本问卷每天最多提交 <span class="text-red-950 dark:text-red-400 dark:opacity-80">{{ showData.baseConfig.dayLimit }} </span> 次</span>
             </div>
             <div class="divider my-10" />
@@ -180,8 +184,8 @@
             :other-option="q.quesSetting.otherOption"
             :describe="q.describe"
             :questionnaire-i-d="decryptedId"
-            :minimum_option="q.minimumOption"
-            :maximum_option="q.maximumOption"
+            :minimum_option="q.quesSetting.minimumOption"
+            :maximum_option="q.quesSetting.maximumOption"
             :count="resultData"
           >
           </vote>
@@ -369,14 +373,7 @@ const decryptId = (encryptedId) => {
 };
 
 const handleSubmit = () => {
-  const nowDate = Date.now();
-  const startTimestamp = new Date(startTime.value).getTime();
-  // const showTime = startTime.value.replace("T", " ").split("+")[0].split(".")[0];
-  if (nowDate - startTimestamp < 0) {
-    ElNotification.error(`问卷开始时间为 ${showTime}`);
-  } else {
     showModal("QuestionnaireSubmit");
-  }
 };
 const getQuestionnaireView = () => {
   if (decryptedId.value) {
@@ -388,7 +385,6 @@ const getQuestionnaireView = () => {
           question.value = formData.value.questions;
 
           submitData.value.id = res.data.id;
-          startTime.value = res.data.start_time;
           // console.log("问卷id:"+submitData.value.id)
           showData.value = deepSnakeToCamel(res.data);
 
@@ -400,6 +396,7 @@ const getQuestionnaireView = () => {
           });
           console.log(showData.value.quesConfig.questionList);
           time.value = showData.value.baseConfig.endTime.replace("T", " ").split("+")[0].split(".")[0];
+          startTime.value = showData.value.baseConfig.startTime.replace("T", " ").split("+")[0].split(".")[0];
           ans.value.id = res.data.id;
           // question.value.forEach(q => {
           //   // 获取已存储的答案
@@ -451,8 +448,8 @@ const checkAnswer = () => {
       return true;
     }
 
-    if (q.quesSetting.questionType === 3 && q.answer !== "" && q.reg && !new RegExp(q.quesSetting.reg).test(q.answer)) {
-      ElNotification.error(`第${q.serial_num}题的回答不符合要求.`);
+    if (q.quesSetting.questionType === 3 && q.answer !== "" && q.quesSetting.reg && !new RegExp(q.quesSetting.reg).test(q.answer)) {
+      ElNotification.error(`第${q.serialNum}题的回答不符合要求.`);
       return true;
     }
   });

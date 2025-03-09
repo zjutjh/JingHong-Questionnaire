@@ -38,14 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, nextTick, reactive, provide, onUnmounted } from "vue";
-import { useRequest } from "vue-hooks-plus";
-import { getQuestionnaireDetailAPI, setNewQuestionnaireDetailAPI, setQuestionnaireDetailAPI } from "@/apis";
-import { ElNotification } from "element-plus";
-import { modal, showModal } from "@/components";
-import router from "@/router";
-import { closeLoading, startLoading } from "@/utilities";
-import { useMainStore } from "@/stores";
+import { onMounted, ref, watch, provide, onUnmounted } from "vue";
 import LeftMenu from "@/pages/DetailInfo/leftMenu.vue";
 import MenuPanel from "@/pages/DetailInfo/menuPanel.vue";
 import RightMenu from "@/pages/DetailInfo/rightMenu.vue";
@@ -53,8 +46,7 @@ import QuestionList from "./questionList.vue";
 import QuestionnaireSettings from "./QuestionnaireSettings.vue";
 
 import { useEditStore } from "@/stores/edit";
-import { QuesItemType, QuesType } from "@/utilities/constMap.ts";
-import { lowerFirst } from "lodash-es";
+
 
 // 初始化问卷
 

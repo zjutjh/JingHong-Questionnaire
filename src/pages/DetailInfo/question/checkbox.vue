@@ -111,21 +111,7 @@ const handleFileChange = async (event, serialNum: number) => {
     }
   });
 };
-// Watchers to sync local state with props
 
-const addOption = () => {
-  localOptions.value.push({
-    content: "",
-    img: "",
-    serialNum: localOptions.value.length + 1
-  });
-
-  nextTick(() => {
-    if (scrollContainer.value) {
-      scrollContainer.value!.scrollTop = scrollContainer.value!.scrollHeight;
-    }
-  });
-};
 
 const deleteOption = (serialNum: number) => {
   localOptions.value = localOptions.value.filter(item => item.serialNum !== serialNum);

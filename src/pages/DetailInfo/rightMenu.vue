@@ -46,7 +46,7 @@
       </div>
 
       <!-- 多选特殊逻辑 -->
-      <div v-if="currentType===QuesItemType.CHECKBOX || currentType === QuesItemType.VOTE" class="pt-24">
+      <div v-if="currentType===QuesItemType.CHECKBOX" class="pt-24">
         <div class="text-sm font-medium">
           选项配置
         </div>

@@ -18,6 +18,7 @@
           :title="item.title"
           :id-name="item.id"
           :status="item.status"
+          :survey-type="item.survey_type"
           @update-list="() => getQuestionnaireList()"
         />
         <el-pagination
@@ -83,7 +84,6 @@ const handleCurrentChange = (val: number) => {
 
 const newQues = () => {
   localStorage.setItem("isNew", "true");
-  localStorage.setItem("type", "ques");
   setSurveyId(-1);
   init();
   router.push("/admin/DetailInfo");
@@ -91,9 +91,6 @@ const newQues = () => {
 
 const addVote = () => {
   localStorage.setItem("isNew", "true");
-  resetSchema();
-  setSurveyId(-1);
-  localStorage.setItem("type", "vote");
-  router.push("/admin/DetailInfo");
+  router.push("/admin/addVote");
 };
 </script>
