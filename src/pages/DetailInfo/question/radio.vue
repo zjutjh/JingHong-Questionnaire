@@ -100,20 +100,6 @@ const handleFileChange = async (event, serialNum: number) => {
   });
 };
 
-const addOption = () => {
-  localOptions.value.push({
-    content: "",
-    img: "",
-    serialNum: localOptions.value.length + 1
-  });
-  nextTick(() => {
-    if (scrollContainer.value) {
-      scrollContainer.value!.scrollTop = scrollContainer.value!.scrollHeight;
-    }
-  });
-  emits("update:options", localOptions);
-};
-
 const deleteOption = (serialNum: number) => {
   localOptions.value = localOptions.value.filter(item => item.serialNum !== serialNum);
   localOptions.value.forEach((item) => {

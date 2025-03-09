@@ -18,6 +18,7 @@
           :title="item.title"
           :id-name="item.id"
           :status="item.status"
+          :survey-type="item.survey_type"
           @update-list="() => getQuestionnaireList()"
         />
         <el-pagination
@@ -28,24 +29,6 @@
         />
       </el-skeleton>
     </div>
-    <modal :modal-id="'select'">
-      <template #title>
-        创建问卷
-      </template>
-      <template #default>
-        <span class="flex items-center">请选择创建问卷的类型
-          <el-radio-group v-model="surveyType" style="margin-left: 30px">
-            <el-radio-button value="0" size="middle" label="调研问卷" />
-            <el-radio-button value="1" size="middle" label="投票问卷" />
-          </el-radio-group>
-        </span>
-      </template>
-      <template #action>
-        <div class="btn btn-success dark:opacity-70 dark:text-white w-80" @click="newQues">
-          创建
-        </div>
-      </template>
-    </modal>
   </div>
 </template>
 
@@ -68,7 +51,7 @@ const totalPageNum = ref(1);
 const questionnaireList = ref();
 const loading = ref(true);
 const surveyType = ref(tempStore.surveyType);
-const { setSurveyId, init, schema } = useEditStore();
+const { setSurveyId, init, setType, resetSchema } = useEditStore();
 watch(surveyType, () => {
   tempStore.surveyType = surveyType;
 });
@@ -102,14 +85,12 @@ const handleCurrentChange = (val: number) => {
 const newQues = () => {
   localStorage.setItem("isNew", "true");
   setSurveyId(-1);
-  schema.surveyType = 0;
   init();
   router.push("/admin/DetailInfo");
 };
 
 const addVote = () => {
   localStorage.setItem("isNew", "true");
-  schema.surveyType = 1;
   router.push("/admin/addVote");
 };
 </script>

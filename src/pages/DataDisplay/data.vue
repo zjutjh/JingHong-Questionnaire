@@ -20,7 +20,12 @@
           </th>
           <th v-for="ans in answers" class="dark:text-white">
             {{ ans.title }}
-            <el-tag type="primary" size="small" class="ml-3">
+            <el-tag
+              v-if="type === QuesType.SURVEY"
+              type="primary"
+              size="small"
+              class="ml-3"
+            >
               {{ answersType.get(ans.question_type) }}
             </el-tag>
           </th>
@@ -62,6 +67,7 @@ import { ref, watch } from "vue";
 import { useMainStore } from "@/stores";
 import { useRequest } from "vue-hooks-plus";
 import overflowPanel from "./overflowPanel.vue";
+import { QuesType } from "@/utilities/constMap.ts";
 
 const tempStore = useMainStore().useTempStore();
 
@@ -88,6 +94,7 @@ const totalPageNum = ref(2);
 const pageSize = ref(10);
 const answers = ref();
 const time = ref();
+const type = ref(QuesType.SURVEY);
 
 const getAnswers = () => {
   useRequest(() => getAnswersAPI({
@@ -103,6 +110,7 @@ const getAnswers = () => {
         totalPageNum.value = res.data.total_page_num;
         answers.value = res.data.answers_data.question_answers;
         time.value = res.data.answers_data.time;
+        type.value = res.data.question_type;
       }
     },
     onError(e: any) {

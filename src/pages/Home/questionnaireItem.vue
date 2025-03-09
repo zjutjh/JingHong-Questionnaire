@@ -16,7 +16,7 @@
     </div>
     <div class="relative h-30">
       <div class="absolute left-0 flex flex-row gap-5">
-        <div class="btn btn-sm btn-ghost" @click="DetailInfo">
+        <div v-if="status === 1" class="btn btn-sm btn-ghost" @click="DetailInfo">
           编辑/设计问卷
         </div>
         <div class="btn btn-sm btn-ghost" @click="() => showModal('statusConfirmModal'+idName)">
@@ -82,18 +82,19 @@
 
 <script setup lang="ts">
 import { modal, showModal } from "@/components";
-import { updateQuestionnaireStatusAPI, delQuestionnaireAPI } from "@/apis";
+import { delQuestionnaireAPI, updateQuestionnaireStatusAPI } from "@/apis";
 import { useRequest } from "vue-hooks-plus";
-import { ElNotification } from "element-plus";
+import { ElMessage, ElNotification } from "element-plus";
 import router from "@/router";
 import { closeLoading, startLoading } from "@/utilities";
 import { useMainStore } from "@/stores";
 import CryptoJS from "crypto-js";
-import { ElMessage } from "element-plus";
-import { computed, nextTick } from "vue";
+import { computed, onMounted } from "vue";
 import { useQrCode } from "@/utilities/useQrCode";
 import { useEditStore } from "@/stores/edit.ts";
 import { storeToRefs } from "pinia";
+import { QuesType } from "@/utilities/constMap.ts";
+import { useEditVoteStore } from "@/stores/voteEdit.ts";
 
 const baseURL = import.meta.env.VITE_COPY_LINK;
 const tempStore = useMainStore().useTempStore();
@@ -101,13 +102,14 @@ const props = defineProps<{
   title: string,
   idName: number,
   status: 1 | 2,
+  surveyType: QuesType
 }>();
 
 const emit = defineEmits(["updateList"]);
 
 const { setSurveyId, init } = useEditStore();
 
-const { schema } = storeToRefs(useEditStore());
+const { setVoteId, initVote } = useEditVoteStore();
 
 const updateList = () => {
   emit("updateList");
@@ -166,11 +168,17 @@ const copyShareCode = () => {
 const { qrCodeURL, copyQrCode } = useQrCode(questionnaireURL.value);
 
 const DetailInfo = () => {
-  localStorage.setItem("isNew", "false");
-  localStorage.setItem("id", String(props.idName));
-  setSurveyId(props.idName);
-  init();
-  router.push("/admin/DetailInfo");
+  if (props.surveyType === QuesType.SURVEY) {
+    setSurveyId(props.idName);
+    init();
+    router.push("/admin/DetailInfo");
+  } else {
+
+    setVoteId(props.idName);
+    initVote();
+    router.push("/admin/addVote");
+  }
+
   //
 };
 

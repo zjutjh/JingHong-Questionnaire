@@ -85,8 +85,9 @@ const typeChinese = {
   2: "多项选择题",
   3: "单行输入框",
   4: "多行输入框",
-  5: "图片"
-};
+  5: "图片",
+  6: "投票"
+} as const;
 
 const { activeSerial } = storeToRefs(useActiveStore());
 

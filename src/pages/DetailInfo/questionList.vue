@@ -110,6 +110,7 @@
 
             <div v-if="q.serialNum === activeSerial" class="flex flex-col gap-10">
               <button
+                v-if="q.serialNum !== 1"
                 class="rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200"
                 @click.stop="activeMove(activeSerial-1, 'up')"
               >
@@ -117,6 +118,7 @@
               </button>
 
               <button
+                v-if="q.serialNum !== schema.quesConfig.questionList.length"
                 class="rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200"
                 @click.stop="activeMove(activeSerial-1, 'down')"
               >

@@ -38,14 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, nextTick, reactive, provide, onUnmounted } from "vue";
-import { useRequest } from "vue-hooks-plus";
-import { getQuestionnaireDetailAPI, setNewQuestionnaireDetailAPI, setQuestionnaireDetailAPI } from "@/apis";
-import { ElNotification } from "element-plus";
-import { modal, showModal } from "@/components";
-import router from "@/router";
-import { closeLoading, startLoading } from "@/utilities";
-import { useMainStore } from "@/stores";
+import { onMounted, ref, watch, provide, onUnmounted } from "vue";
 import LeftMenu from "@/pages/DetailInfo/leftMenu.vue";
 import MenuPanel from "@/pages/DetailInfo/menuPanel.vue";
 import RightMenu from "@/pages/DetailInfo/rightMenu.vue";
@@ -53,6 +46,7 @@ import QuestionList from "./questionList.vue";
 import QuestionnaireSettings from "./QuestionnaireSettings.vue";
 
 import { useEditStore } from "@/stores/edit";
+
 
 // 初始化问卷
 
@@ -62,49 +56,16 @@ onUnmounted(() => {
 });
 //
 const mode = ref("ques");
-const tempStore = useMainStore().useTempStore();
+
 const selectedOption = ref(1);
-const formData = ref();
+
 const question = ref([]);
-const title = ref();
-const submitData = ref();
-const id = ref<number>();
+
 const reg = ref<string>("");
-const time = ref();
+
 const loading = ref(true);
 
-const isNew = localStorage.getItem("isNew");
-const calculateFutureDate = (): Date => {
-  const currentDate = new Date();
-  const futureDate = new Date(currentDate);
-  futureDate.setDate(currentDate.getDate() + 7);
-  return futureDate;
-};
-
-onMounted(() => {
-  time.value = calculateFutureDate();
-  if (isNew === "false") {
-    id.value = Number(localStorage.getItem("id"));
-    getInfo();
-  } else {
-    submitData.value = {
-      desc: "为了给您提供更好的服务，希望您能抽出几分钟时间，将您的感受和建议告诉我们，期待您的参与！",
-      img: "",
-      questions: [],
-      status: -1,
-      time: "",
-      title: "投票标题",
-      day_limit: 0,
-      survey_type: Number(tempStore.surveyType),
-      verify: false
-    };
-    loading.value = false;
-  }
-});
 // Deep copy function
-const deepCopy = (obj) => {
-  return JSON.parse(JSON.stringify(obj));
-};
 // 计算属性：动态生成正则表达式
 // const inputPattern = computed(() => {
 //   return `^[0-9]{${selectedNumber.value}}$`;
@@ -115,35 +76,9 @@ const deepCopy = (obj) => {
 //   regNum.value = inputPattern.value;
 //   reg.value = inputPattern.value;
 // };
+onMounted(() => {
 
-const getInfo = () => {
-  useRequest(() => getQuestionnaireDetailAPI({ id: id.value as number }), {
-    onBefore: () => startLoading(),
-    onSuccess(res) {
-      if (res.code === 200) {
-        const formDataCopy = deepCopy(res.data);
-        if (formDataCopy.questions) {
-          formDataCopy.questions.forEach((item) => {
-            delete item.id;
-          });
-        }
-        formData.value = formDataCopy;
-        submitData.value = deepCopy(formData.value);// Deep copy to avoid reference issues
-        title.value = submitData.value.title;
-        question.value = submitData.value.questions;
-        time.value = submitData.value.time;
-        loading.value = false;
-      } else {
-        ElNotification.error(res.msg);
-      }
-    },
-    onError(e) {
-      ElNotification.error("获取失败，请重试" + e);
-    },
-    onFinally: () => closeLoading()
-  });
-};
-
+});
 const cleanReg = () => {
   reg.value = "";
 };
