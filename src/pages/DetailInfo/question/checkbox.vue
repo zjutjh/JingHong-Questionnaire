@@ -1,69 +1,51 @@
 <template>
-  <div class="bg-base-300 dark:bg-customGray_shallow p-30 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform duration-700 my-30">
+  <div class="bg-base-200 dark:bg-customGray_shallow p-30 hover:shadow-md " :class="isActive? 'bg-base-300' : ''">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
-          <span>{{ serial_num }}</span>
+          <span>{{ serialNum }}</span>
           <input
+            v-if="isActive"
             v-model="localTitle"
             type="text"
             placeholder="Question"
-            class="dark:bg-customGray_more_shallow input input-bordered shadow-md w-350"
+            class="rounded-none focus:outline-none dark:bg-customGray_more_shallow input input-bordered shadow-md w-350"
           >
-        </div>
-        <div class="flex items-center gap-20 my-10">
-          <span class="w-50">问题描述</span>
-          <textarea
-            v-model="localDescribe"
-            type="text"
-            placeholder="Describe"
-            class="dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-70 "
-          />
-        </div>
-        <span class="my-10 flex justify-between">
-          <span>最大多选数<input v-model.number="localMax" type="text" class="dark:bg-customGray_more_shallow input  shadow-md w-55 h-40 ml-10"></span>
-          <span>最小多选数<input v-model.number="localMin" type="text" class="dark:bg-customGray_more_shallow input  shadow-md w-55 h-40 ml-10"></span>
-        </span>
-      </div>
-      <div class="flex-col justify-center items-center">
-        <div class="flex gap-10">
-          <span>必答</span>
-          <input v-model="localOptionChoose" type="checkbox" class="checkbox-sm">
-        </div>
-        <div class="flex gap-10">
-          <span>唯一</span>
-          <input v-model="localUnique" type="checkbox" class="checkbox-sm">
+          <div v-else class="w-350">
+            {{ localTitle }}
+          </div>
         </div>
       </div>
     </div>
     <div class="divider" />
-    <span class="flex items-center justify-end gap-10">
-      <span>有"其他"选项</span>
-      <input v-model="localOtherOption" type="checkbox" class="checkbox-sm">
-    </span>
     <div ref="scrollContainer" class="flex-col p-5 overflow-y-auto h-180 mt-10" style="scroll-behavior: smooth;">
-      <div v-for="item in localOptions" :key="item.serial_num" class="my-5">
+      <div v-for="item in localOptions" :key="item.serialNum" class="my-5">
         <div class="flex items-center gap-10">
-          <input type="checkbox" :name="item.serial_num" class="checkbox-sm my-5">
+          <input type="checkbox" :name="item.serialNum" class="checkbox-sm my-5">
           <input
             v-model="item.content"
             type="text"
-            class="dark:bg-customGray_more_shallow input input-bordered h-40 shadow-md"
+            class="rounded-none focus:outline-none dark:bg-customGray_more_shallow input input-bordered h-40 shadow-md"
             placeholder="option"
           >
           <div class="ml-10 flex items-center gap-20">
             <div v-if="item.img" class="mt-4">
               <img :src="item.img" alt="Preview" style="max-width: 50px; max-height: 50px;">
             </div>
-            <input type="file" class="dark:bg-customGray_more_shallow file-input file-input-bordered file-input-sm w-7/12" @change="handleFileChange($event, item.serial_num)">
+            <input
+              v-if="isActive"
+              type="file"
+              class="dark:bg-customGray_more_shallow file-input file-input-bordered file-input-sm w-7/12"
+              @change="handleFileChange($event, item.serialNum)"
+            >
           </div>
-          <button class="btn dark:bg-customGray_more_shallow dark:text-white btn-sm shadow-md" @click="deleteOption(item.serial_num)">
+          <button v-if="isActive" class="btn dark:bg-customGray_more_shallow dark:text-white btn-sm shadow-md" @click="deleteOption(item.serialNum)">
             删除
           </button>
         </div>
       </div>
     </div>
-    <div class="divider" />
+    <!-- <div class="divider" />
     <div class="mt-20 flex justify-evenly items-center">
       <button class="btn btn-accent dark:opacity-75 shadow-md dark:text-white" @click="addOption">
         新增选项
@@ -71,7 +53,7 @@
       <button class="btn btn-error dark:opacity-75 shadow-md dark:text-white" @click="$emit('on-click')">
         删除题目
       </button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -82,7 +64,8 @@ import { saveImgAPI } from "@/apis";
 import { ElNotification } from "element-plus";
 
 const props = defineProps<{
-  serial_num: number,
+  isActive: boolean,
+  serialNum: number,
   title?: string,
   optionChoose: boolean,
   unique: boolean,
@@ -93,7 +76,7 @@ const props = defineProps<{
   options?: {
     content: string;
     img: string;
-    serial_num: number;
+    serialNum: number;
   }[]
 }>();
 
@@ -110,14 +93,14 @@ const localOptions = ref(props.options);
 const localMax = ref(props.maximum_option);
 const localMin = ref(props.minimum_option);
 
-const handleFileChange = async (event, serial_num: number) => {
+const handleFileChange = async (event, serialNum: number) => {
   const file = event.target.files[0];
   if (!file) return;
   const formData = new FormData();
   formData.append("img", file);
   useRequest(() => saveImgAPI(formData), {
     onSuccess(res) {
-      const option = localOptions.value.find(item => item.serial_num === serial_num);
+      const option = localOptions.value.find(item => item.serialNum === serialNum);
       if (option) {
         option.img = res.data;
       }
@@ -128,27 +111,13 @@ const handleFileChange = async (event, serial_num: number) => {
     }
   });
 };
-// Watchers to sync local state with props
 
-const addOption = () => {
-  localOptions.value.push({
-    content: "",
-    img: "",
-    serial_num: localOptions.value.length + 1
-  });
 
-  nextTick(() => {
-    if (scrollContainer.value) {
-      scrollContainer.value!.scrollTop = scrollContainer.value!.scrollHeight;
-    }
-  });
-};
-
-const deleteOption = (serial_num: number) => {
-  localOptions.value = localOptions.value.filter(item => item.serial_num !== serial_num);
+const deleteOption = (serialNum: number) => {
+  localOptions.value = localOptions.value.filter(item => item.serialNum !== serialNum);
   localOptions.value.forEach((item) => {
-    if (item.serial_num > serial_num) {
-      item.serial_num -= 1;
+    if (item.serialNum > serialNum) {
+      item.serialNum -= 1;
     }
   });
   emits("update:options", localOptions.value);

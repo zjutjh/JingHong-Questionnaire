@@ -47,47 +47,51 @@
           style="height: 60px"
         >
           <template #default>
-            <div class="flex flex-col ">
+            <div v-if="showData" class="flex flex-col ">
               <div class="divider" />
               <div class="flex gap-20 my-10 justify-center">
-                <span class="text-4xl break-all px-50">{{ formData.title }}</span>
+                <span class="text-4xl break-all px-50">{{ showData.quesConfig.title }}</span>
               </div>
-              <div v-if="formData.desc !== ''" class="items-top my-10 items-start mx-20">
+              <div v-if="showData.quesConfig.desc !== ''" class="items-top my-10 items-start mx-20">
                 <div class="items-top my-10 items-start ">
-                  <pre class="text-gray-500 flex break-all text-xl dark:text-white dark:opacity-50">{{ formData.desc }}</pre>
+                  <pre class="text-gray-500 flex break-all text-xl dark:text-white dark:opacity-50">{{ showData.quesConfig.desc }}</pre>
                 </div>
               </div>
+            </div>
+            <div class="flex gap-20 items-center my-10  ml-20 ">
+              <span class="text-red-950 dark:text-red-400 dark:opacity-80">开始时间:</span>
+              <span>{{ startTime }}</span>
             </div>
             <div class="flex gap-20 items-center my-10  ml-20 ">
               <span class="text-red-950 dark:text-red-400 dark:opacity-80">截止时间:</span>
               <span>{{ time }}</span>
             </div>
-            <div v-if="formData.daily_limit !== 0" class="flex gap-20 items-center my-10  ml-20 ">
-              <span class=" dark:opacity-80 text-gray-700 dark:text-gray-400">本问卷每天最多提交 <span class="text-red-950 dark:text-red-400 dark:opacity-80">{{ formData.daily_limit }} </span> 次</span>
+            <div v-if="showData.baseConfig.dayLimit !== 0 && showData.baseConfig.verify" class="flex gap-20 items-center my-10  ml-20 ">
+              <span class=" dark:opacity-80 text-gray-700 dark:text-gray-400">本问卷每天最多提交 <span class="text-red-950 dark:text-red-400 dark:opacity-80">{{ showData.baseConfig.dayLimit }} </span> 次</span>
             </div>
             <div class="divider my-10" />
           </template>
         </el-skeleton>
       </div>
-      <div v-if="formData && formData.survey_type === 0" class="flex flex-col h-650 ">
-        <div v-for="q in question" :key="q.serial_num">
+      <div v-if="showData && showData.surveyType === 0" class="flex flex-col h-650 ">
+        <div v-for="q in showData.quesConfig.questionList" :key="q.serial_num">
           <!-- 根据问题类型渲染组件 -->
-          <div v-if="q.question_type === 1">
+          <div v-if="q.quesSetting.questionType === 1">
             <el-skeleton animated :loading="loading">
               <radio
                 v-model:answer="q.answer"
-                v-model:title="q.subject"
-                v-model:options="q.options"
-                v-model:serial_num="q.serial_num"
-                v-model:unique="q.unique"
-                v-model:required="q.required"
-                v-model:other-option="q.other_option"
-                v-model:describe="q.describe"
-                v-model:questionnaire-i-d="decryptedId"
+                :title="q.subject"
+                :options="q.options"
+                :serial_num="q.serialNum"
+                :unique="q.quesSetting.unique"
+                :required="q.quesSetting.required"
+                :other-option="q.quesSetting.otherOption"
+                :describe="q.description"
+                :questionnaire-i-d="decryptedId"
               />
             </el-skeleton>
           </div>
-          <div v-if="q.question_type === 2">
+          <div v-if="q.quesSetting.questionType === 2">
             <el-skeleton animated :loading="loading">
               <template #template>
                 <skeleton-card />
@@ -95,21 +99,21 @@
               <template #default>
                 <checkbox
                   v-model:answer="q.answer"
-                  v-model:title="q.subject"
-                  v-model:options="q.options"
-                  v-model:serial_num="q.serial_num"
-                  v-model:unique="q.unique"
-                  v-model:required="q.required"
-                  v-model:other-option="q.other_option"
-                  v-model:describe="q.describe"
-                  v-model:questionnaire-i-d="decryptedId as string"
-                  v-model:minimum_option="q.minimum_option"
-                  v-model:maximum_option="q.maximum_option"
+                  :title="q.subject"
+                  :options="q.options"
+                  :serial_num="q.serialNum"
+                  :unique="q.quesSetting.unique"
+                  :required="q.quesSetting.required"
+                  :other-option="q.quesSetting.otherOption"
+                  :describe="q.description"
+                  :questionnaire-i-d="decryptedId as string"
+                  :minimum_option="q.quesSetting.minimumOption"
+                  :maximum_option="q.quesSetting.maximumOption"
                 />
               </template>
             </el-skeleton>
           </div>
-          <div v-if="q.question_type === 3">
+          <div v-if="q.quesSetting.questionType === 3">
             <el-skeleton animated :loading="loading">
               <template #template>
                 <skeleton-card />
@@ -117,17 +121,17 @@
               <template #default>
                 <fill
                   v-model:answer="q.answer"
-                  v-model:title="q.subject"
-                  v-model:serial_num="q.serial_num"
-                  v-model:reg="q.reg"
-                  v-model:unique="q.unique"
-                  v-model:required="q.required"
-                  v-model:describe="q.describe"
+                  :title="q.subject"
+                  :serial_num="q.serialNum"
+                  :reg="q.quesSetting.reg"
+                  :unique="q.quesSetting.unique"
+                  :required="q.quesSetting.required"
+                  :describe="q.description"
                 />
               </template>
             </el-skeleton>
           </div>
-          <div v-if="q.question_type === 4">
+          <div v-if="q.quesSetting.questionType === 4">
             <el-skeleton :loading="loading">
               <template #template>
                 <skeleton-card />
@@ -135,16 +139,16 @@
               <template #default>
                 <text-area
                   v-model:answer="q.answer"
-                  v-model:title="q.subject"
-                  v-model:serial_num="q.serial_num"
-                  v-model:unique="q.unique"
-                  v-model:required="q.required"
-                  v-model:describe="q.describe"
+                  :title="q.subject"
+                  :serial_num="q.serialNum"
+                  :unique="q.quesSetting.unique"
+                  :required="q.quesSetting.required"
+                  :describe="q.description"
                 />
               </template>
             </el-skeleton>
           </div>
-          <div v-if="q.question_type === 5">
+          <div v-if="q.quesSetting.questionType === 5">
             <el-skeleton animated :loading="loading">
               <template #template>
                 <skeleton-card />
@@ -152,11 +156,11 @@
               <template #default>
                 <file
                   v-model:answer="q.answer"
-                  v-model:title="q.subject"
-                  v-model:serial_num="q.serial_num"
-                  v-model:unique="q.unique"
-                  v-model:required="q.required"
-                  v-model:describe="q.describe"
+                  :title="q.subject"
+                  :serial_num="q.serialNum"
+                  :unique="q.quesSetting.unique"
+                  :required="q.quesSetting.required"
+                  :describe="q.description"
                 />
               </template>
             </el-skeleton>
@@ -168,23 +172,22 @@
           </button>
         </div>
       </div>
-      <div v-if="formData && formData.survey_type === 1" class="flex flex-col h-650 ">
-        <div v-for="(q, index) in question" :key="index">
+      <div v-if="showData && showData.surveyType === 1" class="flex flex-col h-650 ">
+        <div v-for="(q, index) in showData.quesConfig.questionList" :key="index">
           <vote
             v-model:answer="q.answer"
-            v-model:title="q.subject"
-            v-model:options="q.options"
-            v-model:serial_num="q.serial_num"
-            v-model:unique="q.unique"
-            v-model:required="q.required"
-            v-model:other-option="q.other_option"
-            v-model:describe="q.describe"
-            v-model:questionnaire-i-d="decryptedId"
-            v-model:minimum_option="q.minimum_option"
-            v-model:maximum_option="q.maximum_option"
+            :title="q.subject"
+            :options="q.options"
+            :serial_num="q.serialNum"
+            :unique="q.quesSetting.unique"
+            :required="q.quesSetting.required"
+            :other-option="q.quesSetting.otherOption"
+            :describe="q.describe"
+            :questionnaire-i-d="decryptedId"
+            :minimum_option="q.quesSetting.minimumOption"
+            :maximum_option="q.quesSetting.maximumOption"
             :count="resultData"
           >
-            <div />
           </vote>
         </div>
         <div class="flex justify-center items-center py-50">
@@ -199,7 +202,7 @@
           <span class="text-red-950 dark:text-red-500 ">提交问卷</span>
         </template>
 
-        <template v-if="formData && !formData.verify || tokenOutDate" #default>
+        <template v-if="showData && !showData.baseConfig.verify || tokenOutDate" #default>
           你确认要提交问卷吗?
         </template>
         <template v-else #default>
@@ -225,7 +228,7 @@
         </template>
         <template #action>
           <button
-            v-if="formData && !formData.verify || tokenOutDate"
+            v-if="showData && !showData.baseConfig.verify || tokenOutDate"
             class="btn bg-red-800 text-red-50 w-full hover:bg-red-600"
             style="margin-top: -10px"
             @click="submit"
@@ -268,10 +271,18 @@ import { useDarkModeSwitch } from "@/utilities/darkModeSwitch";
 import verifyAPI from "@/apis/service/User/verifyApi.ts";
 import Vote from "@/pages/View/vote.vue";
 import getStatistic from "@/apis/service/User/getStatistic.ts";
+import { deepSnakeToCamel } from "@/utilities/deepSnakeToCamel.ts";
+import {deepCamelToSnake} from "@/utilities/deepCamelToSnake.ts";
 const { darkModeStatus, switchDarkMode } = useDarkModeSwitch();
 const Key = "JingHong";
 const formData = ref();
-const question = ref<any[]>([]);
+const question = ref();
+const showData = ref();
+const ans = ref({
+  id: -1,
+  questionsList: [],
+  token: ""
+});
 const time = ref();
 const loading = ref(true);
 const submitData = ref({
@@ -307,12 +318,12 @@ onMounted(async () => {
     }
   }
   getQuestionnaireView();
-  try {
-    const res = await getStatistic({ id: Number(decryptedId.value) });
-    resultData.value = res.data.statistics[0].options;
-  } catch (e) {
-    ElNotification.error(e);
-  }
+  // try {
+  //   const res = await getStatistic({ id: Number(decryptedId.value) });
+  //   resultData.value = res.data.statistics[0].options;
+  // } catch (e) {
+  //   ElNotification.error(e);
+  // }
 });
 
 const tokenOutDate = computed(() => {
@@ -362,14 +373,7 @@ const decryptId = (encryptedId) => {
 };
 
 const handleSubmit = () => {
-  const nowDate = Date.now();
-  const startTimestamp = new Date(startTime.value).getTime();
-  const showTime = startTime.value.replace("T", " ").split("+")[0].split(".")[0];
-  if (nowDate - startTimestamp < 0) {
-    ElNotification.error(`问卷开始时间为 ${showTime}`);
-  } else {
     showModal("QuestionnaireSubmit");
-  }
 };
 const getQuestionnaireView = () => {
   if (decryptedId.value) {
@@ -379,21 +383,32 @@ const getQuestionnaireView = () => {
         if (res.code === 200) {
           formData.value = res.data;
           question.value = formData.value.questions;
-          time.value = formData.value.time.replace("T", " ").split("+")[0].split(".")[0];
+
           submitData.value.id = res.data.id;
-          startTime.value = res.data.start_time;
           // console.log("问卷id:"+submitData.value.id)
-          question.value.forEach(q => {
-            // 获取已存储的答案
-            const storedAnswer = questionnaireStore.searchAnswer(decryptedId.value, q.serial_num);
-            if (storedAnswer) {
-              q.answer = storedAnswer.answer;
-            } else if (q.question_type === 1) {
-              q.answer = " ";
-            } else {
-              q.answer = "";
-            }
+          showData.value = deepSnakeToCamel(res.data);
+
+          showData.value.quesConfig.questionList = showData.value.quesConfig.questionList.map(item => {
+            return {
+              ...item,
+              answer: ""
+            };
           });
+          console.log(showData.value.quesConfig.questionList);
+          time.value = showData.value.baseConfig.endTime.replace("T", " ").split("+")[0].split(".")[0];
+          startTime.value = showData.value.baseConfig.startTime.replace("T", " ").split("+")[0].split(".")[0];
+          ans.value.id = res.data.id;
+          // question.value.forEach(q => {
+          //   // 获取已存储的答案
+          //   const storedAnswer = questionnaireStore.searchAnswer(decryptedId.value, q.serial_num);
+          //   if (storedAnswer) {
+          //     q.answer = storedAnswer.answer;
+          //   } else if (q.question_type === 1) {
+          //     q.answer = " ";
+          //   } else {
+          //     q.answer = "";
+          //   }
+          // });
           loading.value = false;
         } else if (res.code === 200509) {
           isOutDate.value = true;
@@ -411,30 +426,30 @@ const getQuestionnaireView = () => {
 };
 
 const checkAnswer = () => {
-  const hasUnansweredRequiredQuestion = question.value.some((q) => {
-    if (q.required && q.answer === "") {
+  const hasUnansweredRequiredQuestion = showData.value.quesConfig.questionList.some((q) => {
+    if (q.quesSetting.required && q.answer === "") {
       ElNotification.error("您有题目未完成作答.");
       return true;
     }
-    if (q.question_type === 1 && q.answer === " ") {
+    if (q.quesSetting.questionType === 1 && q.answer === " ") {
       ElNotification.error("您有单选题未完成作答.");
       return true;
     }
-    if (q.question_type === 2 && (q.answer.endsWith("┋") || q.answer.startsWith("┋"))) {
+    if (q.quesSetting.questionType === 2 && (q.answer.endsWith("┋") || q.answer.startsWith("┋"))) {
       ElNotification.error("您有多选题未完成作答.");
       return true;
     }
-    if (q.question_type === 2 && q.answer.split("┋").length > q.maximum_option || q.answer.split("┋").length < q.minimum_option) {
-      if (q.answer.split("┋").length > q.maximum_option) {
-        ElNotification.error(`该投票最多只能选择${q.maximum_option}个选项`);
-      } else if (q.answer.split("┋").length < q.minimum_option) {
-        ElNotification.error(`该投票最少需要选择${q.maximum_option}个选项`);
+    if (q.quesSetting.questionType === 2 && q.answer.split("┋").length > q.quesSetting.maximumOption || q.answer.split("┋").length < q.quesSetting.minimumOption) {
+      if (q.answer.split("┋").length > q.quesSetting.maximumOption) {
+        ElNotification.error(`该投票最多只能选择${q.quesSetting.maximumOption}个选项`);
+      } else if (q.answer.split("┋").length < q.quesSetting.minimumOption) {
+        ElNotification.error(`该投票最少需要选择${q.quesSetting.maximumOption}个选项`);
       }
       return true;
     }
 
-    if (q.question_type === 3 && q.answer !== "" && q.reg && !new RegExp(q.reg).test(q.answer)) {
-      ElNotification.error(`第${q.serial_num}题的回答不符合要求.`);
+    if (q.quesSetting.questionType === 3 && q.answer !== "" && q.quesSetting.reg && !new RegExp(q.quesSetting.reg).test(q.answer)) {
+      ElNotification.error(`第${q.serialNum}题的回答不符合要求.`);
       return true;
     }
   });
@@ -451,13 +466,15 @@ const submit = () => {
   if (allowSend.value === false) {
     return;
   }
-  submitData.value.questions_list = question.value.map((q) => ({
-    question_id: q.id,
-    serial_num: q.serial_num,
-    answer: q.answer
-  }));
-  submitData.value.token = localStorage.getItem("token");
-  useRequest(() => setUserSubmitAPI(submitData.value), {
+  ans.value.token = localStorage.getItem("token") ?? "";
+  ans.value.questionsList = showData.value.quesConfig.questionList.map((item) => {
+    return {
+      questionId: item.id,
+      answer: item.answer
+    };
+  });
+  console.log(ans.value);
+  useRequest(() => setUserSubmitAPI(deepCamelToSnake(ans.value)), {
     onBefore: () => startLoading(),
     async onSuccess(res) {
       if (res.code === 200 && res.msg === "OK") {
@@ -467,7 +484,7 @@ const submit = () => {
         imageStore.clearFiles();
         optionStore.deleteOption(decryptedId.value);
         if (formData.value.survey_type === 0) {
-          router.push("/Thank");
+          await router.push("/Thank");
         } else {
           try {
             const res = await getStatistic({ id: Number(decryptedId.value) });
