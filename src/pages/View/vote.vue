@@ -1,22 +1,5 @@
 <template>
-  <div class="rounded mx-5 mt-30">
-    <div class="flex justify-between">
-      <div class="flex-col">
-        <div class="flex items-center gap-20">
-          <span class="lg:text-xl md:text-md">{{ props.serial_num }}</span>
-          <span class="lg:text-xl md:text-md flex gap-5 items-center">{{ props.title }}
-            <el-tag type="primary" class="ml-5">投票</el-tag>
-            <el-tag v-if="!required" type="warning">选答</el-tag>
-            <el-tag v-if="localUnique" type="danger">唯一</el-tag>
-          </span>
-        </div>
-        <div class="flex items-center mt-15 ml-10">
-          <pre class="text-sm text-gray-500 break-all">{{ props.describe }}</pre>
-        </div>
-      </div>
-      <div class="flex-col justify-center items-center" />
-    </div>
-    <div class="divider my-5" />
+  <div class="rounded mx-5">
     <span v-if="props.minimum_option !== 0" class="dark:opacity-80 text-gray-700 dark:text-gray-400 text-sm my-5">最少选 {{ props.minimum_option }} 个&ensp;</span>
     <span v-if="props.maximum_option !== 0" class="dark:opacity-80 text-gray-700 dark:text-gray-400 text-sm my-5">最多选 {{ props.maximum_option }} 个</span>
     <div class="flex p-5 h-auto flex-wrap">
@@ -29,7 +12,7 @@
               alt="Preview"
               style="width: 100%"
             >
-            <span class="flex gap-8 items-center justify-center border-t-2 border-red-300 dark:border-0 bg-red-100 dark:bg-customGray_shallow" style="flex: 0.5">
+            <span class="flex gap-8 items-center justify-center border-red-300 dark:border-0 bg-red-100 dark:bg-customGray_shallow" :class="{ 'border-t-2': item.img !== '' }" style="flex: 0.5">
               <input
                 v-model="answerArr"
                 type="checkbox"

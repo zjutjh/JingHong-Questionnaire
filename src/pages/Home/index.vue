@@ -1,8 +1,13 @@
 <template>
   <div class="p-40 flex mt-60">
     <div class="basis-1/4 p-20 pl-0 flex justify-center gap-10">
-      <div class="btn btn-success dark:opacity-75 dark:text-white" style="width: 80%;" @click="addNewQuestionnaire">
-        + 新建问卷
+      <div class="flex flex-col gap-20" style="width: 80%">
+        <div class="btn btn-success dark:opacity-75 dark:text-white " @click="newQues">
+          + 新建问卷
+        </div>
+        <div class="btn btn-info dark:opacity-65 dark:text-white " @click="addVote">
+          + 新建投票
+        </div>
       </div>
     </div>
     <div class="basis-3/4 flex flex-col gap-8">
@@ -13,6 +18,7 @@
           :title="item.title"
           :id-name="item.id"
           :status="item.status"
+          :survey-type="item.survey_type"
           @update-list="() => getQuestionnaireList()"
         />
         <el-pagination
@@ -23,29 +29,11 @@
         />
       </el-skeleton>
     </div>
-    <modal :modal-id="'select'">
-      <template #title>
-        创建问卷
-      </template>
-      <template #default>
-        <span class="flex items-center">请选择创建问卷的类型
-          <el-radio-group v-model="surveyType" style="margin-left: 30px">
-            <el-radio-button value="0" size="middle" label="调研问卷" />
-            <el-radio-button value="1" size="middle" label="投票问卷" />
-          </el-radio-group>
-        </span>
-      </template>
-      <template #action>
-        <div class="btn btn-success dark:opacity-70 dark:text-white w-80" @click="newQues">
-          创建
-        </div>
-      </template>
-    </modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { modal, showModal } from "@/components";
+import { modal } from "@/components";
 import questionnaireItem from "./questionnaireItem.vue";
 import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireListAPI } from "@/apis";
@@ -53,6 +41,7 @@ import { onMounted, ref, watch } from "vue";
 import router from "@/router";
 import { closeLoading, startLoading } from "@/utilities";
 import { useMainStore } from "@/stores";
+import { useEditStore } from "@/stores/edit.ts";
 
 const tempStore = useMainStore().useTempStore();
 const loginStore = useMainStore().useLoginStore();
@@ -62,6 +51,7 @@ const totalPageNum = ref(1);
 const questionnaireList = ref();
 const loading = ref(true);
 const surveyType = ref(tempStore.surveyType);
+const { setSurveyId, init, setType, resetSchema } = useEditStore();
 watch(surveyType, () => {
   tempStore.surveyType = surveyType;
 });
@@ -92,13 +82,15 @@ const handleCurrentChange = (val: number) => {
   getQuestionnaireList();
 };
 
-const addNewQuestionnaire = () => {
-  showModal("select");
+const newQues = () => {
+  localStorage.setItem("isNew", "true");
+  setSurveyId(-1);
+  init();
+  router.push("/admin/DetailInfo");
 };
 
-const newQues = () => {
-  showModal("select", true);
+const addVote = () => {
   localStorage.setItem("isNew", "true");
-  router.push("/admin/DetailInfo");
+  router.push("/admin/addVote");
 };
 </script>

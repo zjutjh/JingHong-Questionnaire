@@ -27,6 +27,13 @@
         >
           展示近期
         </div>
+        <div
+          class="btn btn-sm btn-accent dark:opacity-75"
+          :class="isDeleting ? 'btn-neutral' : 'btn-accent'"
+          @click="switchDeleting"
+        >
+          删除答卷
+        </div>
         <span v-show="!isCount">搜索</span><input
           v-show="!isCount"
           v-model="keyText"
@@ -35,7 +42,12 @@
         >
       </div>
       <div style="margin-bottom: 30vh;">
-        <data-table v-show="!isCount" :key-text="keyText" :is-unique="isUnique" />
+        <data-table
+          v-show="!isCount"
+          :key-text="keyText"
+          :is-unique="isUnique"
+          :is-deleting="isDeleting"
+        />
         <statics v-show="isCount" />
       </div>
     </div>
@@ -55,6 +67,7 @@ const tempStore = useMainStore().useTempStore();
 
 const isCount = ref(false);
 const isUnique = ref(false);
+const isDeleting = ref(false);
 const keyText = ref("");
 
 const back = () => {
@@ -75,6 +88,10 @@ const downloadDatatable = () => {
 
 const switchCount = () => {
   isCount.value = !isCount.value;
+};
+
+const switchDeleting = () => {
+  isDeleting.value = !isDeleting.value;
 };
 
 const changeUnique = () => {

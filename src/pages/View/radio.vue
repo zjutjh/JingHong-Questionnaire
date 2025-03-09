@@ -88,7 +88,7 @@ const localAnswer = ref(props.answer);
 watch([localAnswer, otherAnswer], ([newLocalAnswer, newOtherAnswer]) => {
   if (newOtherAnswer) {
     optionStore.update(props.questionnaireID, props.serial_num, newOtherAnswer);
-  }// 更新optionStore
+  }
   if (localOtherOption.value && newLocalAnswer === newOtherAnswer) {
     emits("update:answer", newOtherAnswer);
   } else {

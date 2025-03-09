@@ -4,6 +4,12 @@ enum QuesStatus {
   EXPIRED = 3
 }
 
+enum SurveyType {
+  QUES = 0,
+  VOTE = 1
+}
 export {
-  QuesStatus
+  QuesStatus,
+  SurveyType
 };
+

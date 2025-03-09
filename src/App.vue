@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-y-scroll h-screen bg-base-100">
+  <div class=" h-[100vh] bg-base-100 flex flex-col ">
     <div v-if="loginStore.showHeader" class="navbar bg-base-100 shadow-lg">
       <div class="flex-1">
         <a class="btn btn-ghost text-xl">JH Questionnaire Survey System</a>
@@ -16,7 +16,7 @@
       <div class="flex-none">
         <ul class="menu menu-horizontal px-1">
           <li v-show="!loginStore.loginSession" @click="router.push('/login')">
-            <a>登陆</a>
+            <a>登录</a>
           </li>
           <li v-show="loginStore.loginSession" @click="router.push('/')">
             <a>问卷列表</a>
@@ -30,10 +30,8 @@
         </ul>
       </div>
     </div>
-    <router-view v-slot="{ Component }">
-      <transition name="fade" mode="out-in">
-        <component :is="Component" />
-      </transition>
+    <router-view v-slot="{ Component }" class="flex-1 dark:text-white">
+      <component :is="Component" />
     </router-view>
   </div>
 </template>
