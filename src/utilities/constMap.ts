@@ -14,8 +14,7 @@ enum QuesItemType {
   CHECKBOX = 2,
   INPUT = 3,
   TEXTAREA = 4,
-  PHOTO = 5,
-  VOTE = 6
+  PHOTO = 5
 }
 
 export {
