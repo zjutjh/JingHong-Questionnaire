@@ -33,7 +33,6 @@
 </template>
 
 <script setup lang="ts">
-import { modal } from "@/components";
 import questionnaireItem from "./questionnaireItem.vue";
 import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireListAPI } from "@/apis";
@@ -51,7 +50,7 @@ const totalPageNum = ref(1);
 const questionnaireList = ref();
 const loading = ref(true);
 const surveyType = ref(tempStore.surveyType);
-const { setSurveyId, init, setType, resetSchema } = useEditStore();
+const { setSurveyId, init } = useEditStore();
 watch(surveyType, () => {
   tempStore.surveyType = surveyType;
 });

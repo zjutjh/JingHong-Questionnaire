@@ -36,7 +36,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import { useEditVoteStore } from "@/stores/voteEdit.ts";
 import { useRequest } from "vue-hooks-plus";
 import { saveImgAPI } from "@/apis";

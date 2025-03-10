@@ -1,5 +1,5 @@
 import { QuesItemType } from "@/utilities/constMap.ts";
-import { QuesStatus, QuesType } from "../../utilities/constMap"
+import { QuesStatus, QuesType } from "../../utilities/constMap";
 
 interface BaseConfig {
   dayLimit: number;

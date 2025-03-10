@@ -90,19 +90,16 @@
 import { modal, showModal } from "@/components";
 import { delQuestionnaireAPI, updateQuestionnaireStatusAPI } from "@/apis";
 import { useRequest } from "vue-hooks-plus";
-import { ElMessage, ElNotification } from "element-plus";
+import { ElNotification } from "element-plus";
 import router from "@/router";
 import { closeLoading, startLoading } from "@/utilities";
 import { useMainStore } from "@/stores";
 import CryptoJS from "crypto-js";
-import { computed, onMounted } from "vue";
-import { useQrCode } from "@/utilities/useQrCode";
-import { useEditStore } from "@/stores/edit.ts";
-import { storeToRefs } from "pinia";
-import { QuesType } from "@/utilities/constMap.ts";
-import { useEditVoteStore } from "@/stores/voteEdit.ts";
 import { computed } from "vue";
 import { useQrCode } from "@/utilities/useQrCode";
+import { useEditStore } from "@/stores/edit.ts";
+import { QuesType } from "@/utilities/constMap.ts";
+import { useEditVoteStore } from "@/stores/voteEdit.ts";
 import { QuesStatus, SurveyType } from "@/utilities/constantMap.ts";
 import { useClipboard } from "@vueuse/core";
 

@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col items-center">
-    <div class="w-700 bg-gray-100 dark:bg-gray-700 border rounded-sm p-6 mb-20 shadow-md">
+    <div class="w-900 bg-gray-100 dark:bg-gray-700 border rounded-sm p-6 mb-20 shadow-md">
       <div class="flex items-center mt-15 ml-5 mb-15 px-10">
         <h3 class="text-lg font-bold">
           时间配置
@@ -32,7 +32,7 @@
       </div>
     </div>
 
-    <div class="w-700 bg-gray-100 dark:bg-gray-700 border rounded-sm p-6 mb-5 shadow-md">
+    <div class="w-900 bg-gray-100 dark:bg-gray-700 border rounded-sm p-6 mb-5 shadow-md">
       <div class="flex items-center mt-15 ml-5 mb-15 px-10">
         <h3 class="text-lg font-bold">
           作答限制
@@ -73,7 +73,7 @@
       </div>
     </div>
 
-    <div class="w-700 bg-gray-100 dark:bg-gray-700 border rounded-sm p-6 mt-20 shadow-md" v-if="schema.baseConfig.verify">
+    <div v-if="schema.baseConfig.verify" class="w-900 bg-gray-100 dark:bg-gray-700 border rounded-sm p-6 mt-20 shadow-md">
       <div class="flex items-center mt-15 ml-5 mb-15 px-10">
         <h3 class="text-lg font-bold">
           提交限制
@@ -88,10 +88,10 @@
           <span class="ml-30 mt-20 mb-20 mr-15 w-100">每日提交次数</span>
           <div class="flex items-center space-x-4">
             <el-input-number
-                v-model="schema.baseConfig.dayLimit"
-                :min="0"
-                controls-position="right"
-                class="w-32"
+              v-model="schema.baseConfig.dayLimit"
+              :min="0"
+              controls-position="right"
+              class="w-32"
             />
             <el-tooltip content="设置为0表示不限制提交次数" placement="top">
               <i class="el-icon-question text-gray-400 cursor-help" />
@@ -100,7 +100,6 @@
         </div>
       </div>
     </div>
-
   </div>
 </template>
 

@@ -89,6 +89,5 @@
 
 <script setup lang="ts">
 import { useEditStore } from "@/stores/edit";
-import { storeToRefs } from "pinia";
 const { schema } = useEditStore();
 </script>

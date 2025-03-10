@@ -40,7 +40,12 @@
         </div>
         <div class="pt-16">
           <el-select v-model="questionList[activeSerial-1].quesSetting.reg" style="width: 240px">
-            <el-option v-for="item in basicReg" :label="item.label" :value="item.value" />
+            <el-option
+              v-for="item in basicReg"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </div>
       </div>
@@ -73,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRefs } from "vue";
+import { computed } from "vue";
 import { useActiveStore } from "@/stores/edit";
 import { useEditStore } from "@/stores/edit";
 import { QuesItemType } from "@/utilities/constMap";
