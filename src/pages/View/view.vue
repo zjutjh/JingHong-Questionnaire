@@ -187,8 +187,7 @@
             :minimum_option="q.quesSetting.minimumOption"
             :maximum_option="q.quesSetting.maximumOption"
             :count="resultData"
-          >
-          </vote>
+          />
         </div>
         <div class="flex justify-center items-center py-50">
           <button v-if="decryptedId !== '' && !isOutDate" class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75 hover:bg-red-600" @click=" handleSubmit">
@@ -272,7 +271,8 @@ import verifyAPI from "@/apis/service/User/verifyApi.ts";
 import Vote from "@/pages/View/vote.vue";
 import getStatistic from "@/apis/service/User/getStatistic.ts";
 import { deepSnakeToCamel } from "@/utilities/deepSnakeToCamel.ts";
-import {deepCamelToSnake} from "@/utilities/deepCamelToSnake.ts";
+import { deepCamelToSnake } from "@/utilities/deepCamelToSnake.ts";
+import { QuesType } from "@/utilities/constMap.ts";
 const { darkModeStatus, switchDarkMode } = useDarkModeSwitch();
 const Key = "JingHong";
 const formData = ref();
@@ -318,12 +318,7 @@ onMounted(async () => {
     }
   }
   getQuestionnaireView();
-  // try {
-  //   const res = await getStatistic({ id: Number(decryptedId.value) });
-  //   resultData.value = res.data.statistics[0].options;
-  // } catch (e) {
-  //   ElNotification.error(e);
-  // }
+
 });
 
 const tokenOutDate = computed(() => {
@@ -373,55 +368,50 @@ const decryptId = (encryptedId) => {
 };
 
 const handleSubmit = () => {
-    showModal("QuestionnaireSubmit");
+  showModal("QuestionnaireSubmit");
 };
-const getQuestionnaireView = () => {
+const getQuestionnaireView = async () => {
   if (decryptedId.value) {
-    useRequest(() => getUserAPI({ id: decryptedId.value as number }), {
-      onBefore: () => startLoading(),
-      onSuccess(res) {
-        if (res.code === 200) {
-          formData.value = res.data;
-          question.value = formData.value.questions;
+    startLoading();
+    try {
+      const res = await getUserAPI({ id: decryptedId.value as number }); // 直接 `await` API 请求
+      if (res.code === 200) {
+        formData.value = res.data;
+        question.value = formData.value.questions;
+        submitData.value.id = res.data.id;
+        showData.value = deepSnakeToCamel(res.data);
 
-          submitData.value.id = res.data.id;
-          // console.log("问卷id:"+submitData.value.id)
-          showData.value = deepSnakeToCamel(res.data);
+        showData.value.quesConfig.questionList = showData.value.quesConfig.questionList.map(item => ({
+          ...item,
+          answer: ""
+        }));
 
-          showData.value.quesConfig.questionList = showData.value.quesConfig.questionList.map(item => {
-            return {
-              ...item,
-              answer: ""
-            };
-          });
-          console.log(showData.value.quesConfig.questionList);
-          time.value = showData.value.baseConfig.endTime.replace("T", " ").split("+")[0].split(".")[0];
-          startTime.value = showData.value.baseConfig.startTime.replace("T", " ").split("+")[0].split(".")[0];
-          ans.value.id = res.data.id;
-          // question.value.forEach(q => {
-          //   // 获取已存储的答案
-          //   const storedAnswer = questionnaireStore.searchAnswer(decryptedId.value, q.serial_num);
-          //   if (storedAnswer) {
-          //     q.answer = storedAnswer.answer;
-          //   } else if (q.question_type === 1) {
-          //     q.answer = " ";
-          //   } else {
-          //     q.answer = "";
-          //   }
-          // });
-          loading.value = false;
-        } else if (res.code === 200509) {
-          isOutDate.value = true;
-          ElNotification.error(res.msg);
-        } else {
-          ElNotification.error(res.msg);
+        console.log(showData.value);
+
+        if (showData.value.surveyType === QuesType.VOTE) {
+          try {
+            const statRes = await getStatistic({ id: Number(decryptedId.value) });
+            resultData.value = statRes.data.statistics[0].options;
+          } catch (e) {
+            ElNotification.error(e);
+          }
         }
-      },
-      onError(e) {
-        ElNotification.error("获取失败，请重试" + e);
-      },
-      onFinally: () => closeLoading()
-    });
+
+        time.value = showData.value.baseConfig.endTime.replace("T", " ").split("+")[0].split(".")[0];
+        startTime.value = showData.value.baseConfig.startTime.replace("T", " ").split("+")[0].split(".")[0];
+        ans.value.id = res.data.id;
+        loading.value = false;
+      } else if (res.code === 200509) {
+        isOutDate.value = true;
+        ElNotification.error(res.msg);
+      } else {
+        ElNotification.error(res.msg);
+      }
+    } catch (e) {
+      ElNotification.error("获取失败，请重试" + e);
+    } finally {
+      closeLoading();
+    }
   }
 };
 

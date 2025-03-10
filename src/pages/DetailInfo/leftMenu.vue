@@ -25,9 +25,9 @@
         <add-ques-button text="多项选择" type="2">
           <img src="@/assets/checkbox.svg" class="h-25 w-25">
         </add-ques-button>
-<!--        <add-ques-button text="投票" type="6">-->
-<!--          <img src="@/assets/vote.svg" class="h-25 w-25">-->
-<!--        </add-ques-button>-->
+        <!--        <add-ques-button text="投票" type="6">-->
+        <!--          <img src="@/assets/vote.svg" class="h-25 w-25">-->
+        <!--        </add-ques-button>-->
       </add-ques-button-panel>
       <el-divider />
       <add-ques-button-panel ques-sort="上传类题型">

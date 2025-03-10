@@ -1,12 +1,10 @@
-import { Ref, ref, toRef, computed } from "vue";
+import { Ref, ref, computed } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireDetailAPI } from "@/apis";
 import { closeLoading, startLoading } from "@/utilities";
 import { ElNotification } from "element-plus";
-import { defineStore, storeToRefs } from "pinia";
-import { QuesItemType, QuesStatus, QuesType } from "@/utilities/constMap.ts";
-import { Question, Option } from "@/utilities/type.ts";
-import { quesSettingMap } from "@/utilities/quesSettingMap.ts";
+import { defineStore } from "pinia";
+import { QuesStatus, QuesType } from "@/utilities/constMap.ts";
 import { deepSnakeToCamel } from "@/utilities/deepSnakeToCamel.ts";
 
 const VOTE = 1;

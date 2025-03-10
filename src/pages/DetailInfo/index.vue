@@ -47,7 +47,6 @@ import QuestionnaireSettings from "./QuestionnaireSettings.vue";
 
 import { useEditStore } from "@/stores/edit";
 
-
 // 初始化问卷
 
 const { resetSchema } = useEditStore();

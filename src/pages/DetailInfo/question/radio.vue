@@ -31,7 +31,12 @@
           <div v-if="item.img" class="mt-4">
             <img :src="item.img" alt="Preview" style="max-width: 50px; max-height: 50px;">
           </div>
-          <input v-if="isActive" type="file" class="dark:bg-customGray_more_shallow file-input file-input-bordered file-input-sm w-7/12" @change="handleFileChange($event, item.serialNum)">
+          <input
+            v-if="isActive"
+            type="file"
+            class="dark:bg-customGray_more_shallow file-input file-input-bordered file-input-sm w-7/12"
+            @change="handleFileChange($event, item.serialNum)"
+          >
         </div>
         <button v-if="isActive" class="btn btn-sm dark:bg-customGray_more_shallow dark:text-white shadow-md" @click="deleteOption(item.serialNum);">
           删除
@@ -51,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits, nextTick } from "vue";
+import { ref, watch, defineProps, defineEmits } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { saveImgAPI } from "@/apis";
 import { ElNotification } from "element-plus";

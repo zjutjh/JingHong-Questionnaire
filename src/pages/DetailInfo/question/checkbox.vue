@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits, nextTick } from "vue";
+import { ref, watch, defineProps, defineEmits } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { saveImgAPI } from "@/apis";
 import { ElNotification } from "element-plus";
@@ -111,7 +111,6 @@ const handleFileChange = async (event, serialNum: number) => {
     }
   });
 };
-
 
 const deleteOption = (serialNum: number) => {
   localOptions.value = localOptions.value.filter(item => item.serialNum !== serialNum);

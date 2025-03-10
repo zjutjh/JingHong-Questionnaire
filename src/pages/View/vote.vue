@@ -77,7 +77,6 @@ const props = defineProps<{
   }[]
 }>();
 
-const localUnique = ref<boolean>(props.unique);
 const localOtherOption = ref<boolean>(props.otherOption);
 const localOptions = ref(props.options ? [...props.options] : []);
 const otherAnswer = ref<string>(optionStore.search(props.questionnaireID, props.serial_num));

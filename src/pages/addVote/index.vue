@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeMount, onMounted, ref, watch} from "vue";
+import { onBeforeMount, ref } from "vue";
 import Vote from "./vote.vue";
 import { useEditVoteStore } from "@/stores/voteEdit.ts";
 import { useRequest } from "vue-hooks-plus";
@@ -37,14 +37,12 @@ import { closeLoading, startLoading } from "@/utilities";
 import { ElNotification } from "element-plus";
 import router from "@/router";
 import VoteSetting from "@/pages/addVote/voteSetting.vue";
-import {storeToRefs} from "pinia";
 
 const { resetSchema, schema } = useEditVoteStore();
 const state = ref("edit");
 
 const submit = (state: number) => {
   schema.status = state;
-  console.log(schema)
   useRequest(() => setNewQuestionnaireDetailAPI(deepCamelToSnake(schema)), {
     onBefore: () => startLoading(),
     onSuccess(res: any) {
