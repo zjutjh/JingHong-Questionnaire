@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, provide, onUnmounted } from "vue";
+import { ref, onUnmounted } from "vue";
 import LeftMenu from "@/pages/DetailInfo/leftMenu.vue";
 import MenuPanel from "@/pages/DetailInfo/menuPanel.vue";
 import RightMenu from "@/pages/DetailInfo/rightMenu.vue";
@@ -46,7 +46,6 @@ import QuestionList from "./questionList.vue";
 import QuestionnaireSettings from "./QuestionnaireSettings.vue";
 
 import { useEditStore } from "@/stores/edit";
-
 
 // 初始化问卷
 
@@ -57,62 +56,9 @@ onUnmounted(() => {
 //
 const mode = ref("ques");
 
-const selectedOption = ref(1);
-
 const question = ref([]);
 
-const reg = ref<string>("");
-
 const loading = ref(true);
-
-// Deep copy function
-// 计算属性：动态生成正则表达式
-// const inputPattern = computed(() => {
-//   return `^[0-9]{${selectedNumber.value}}$`;
-// });
-
-// 监听选项变化，更新输入框的验证规则
-// const updateInputPattern = () => {
-//   regNum.value = inputPattern.value;
-//   reg.value = inputPattern.value;
-// };
-onMounted(() => {
-
-});
-const cleanReg = () => {
-  reg.value = "";
-};
-watch(selectedOption, cleanReg);
-
-const deleteQuestion = (serial_num: number) => {
-  // console.log(serial_num);
-  question.value = question.value.filter((item) => item.serial_num !== serial_num);
-  question.value.forEach((item) => {
-    if (item.serial_num > serial_num) {
-      item.serial_num -= 1;
-    }
-  });
-};
-provide("deleteQuetion", deleteQuestion);
-
-// //调试 监听reg
-// watch(question, (newQuestions) => {
-//   newQuestions.forEach((q, index) => {
-//     // 监听每个问题的 reg 值
-//     watch(() => q.reg, (newReg) => {
-//       console.log(`问题 ${index + 1} 的正则表达式变化为: ${newReg}`);
-//       // 在这里添加处理逻辑，比如更新状态或执行其他操作
-//     });
-//   });
-// }, { deep: true });
-
-// 修改serial_numquestion.value =[...question.value]
-// const updateQuestionSerialNumbers = () => {
-//   // console.log(question.value)
-//   question.value.forEach((q, index) => {
-//     q.serial_num = index + 1;
-//   });
-// };
 
 </script>
 

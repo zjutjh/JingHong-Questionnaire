@@ -204,7 +204,7 @@ import { ElNotification } from "element-plus";
 import { showModal, modal } from "@/components";
 import router from "@/router";
 import { useRequest } from "vue-hooks-plus";
-import { setNewQuestionnaireDetailAPI, setQuestionnaireDetailAPI } from "@/apis";
+import { setNewQuestionnaireDetailAPI } from "@/apis";
 import { closeLoading, startLoading } from "@/utilities";
 import { deepCamelToSnake } from "@/utilities/deepCamelToSnake.ts";
 
@@ -212,7 +212,7 @@ const loading = ref(true);
 
 const { deleteQuestion, moveQuestion, resetSchema } = useEditStore();
 
-const { schema, surveyId } = storeToRefs(useEditStore());
+const { schema } = storeToRefs(useEditStore());
 
 watch(schema, (newVal) => {
   if (newVal) {
