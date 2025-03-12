@@ -1,9 +1,9 @@
 <template>
   <div class="fixed inset-0 flex items-center justify-center bg-red-300 text-red-950 dark:text-white dark:bg-black">
-    <div class="bg-red-50 dark:bg-customGray flex-col overflow-auto w-full sm:w-1/2 lg:w-6/12 p-30 h-full  shadow-lg">
+    <div class="bg-red-50 dark:bg-customGray flex-col overflow-auto w-full sm:w-1/2  py-30 sm:px-15 px-10 h-full  shadow-lg">
       <div class="flex-col justify-center relative">
         <div class="flex justify-center">
-          <div class="absolute top-0 right-4 z-10">
+          <div class="absolute top-0 right-10 z-10 mr-10">
             <button
               class="flex items-center justify-center w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-800 transition-colors duration-300"
               @click="switchDarkMode"

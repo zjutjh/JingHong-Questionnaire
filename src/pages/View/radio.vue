@@ -14,16 +14,14 @@
     </div>
     <div class="divider my-5" />
     <div class="flex-col p-5 h-auto">
-      <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
-        <input
+      <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center h-40 my-2">
+        <el-radio
           v-model="localAnswer"
-          type="radio"
           :name="props.serial_num"
-          class="my-5"
-          style="zoom: 140%"
           :value="item.content"
-        >
-        <span v-if="item.content" class="text-sm ">{{ item.content }}</span>
+          :label="item.content"
+          style="zoom: 110%"
+        />
         <div class="ml-10 flex items-center gap-20">
           <div v-if="item.img" class="mt-4">
             <img
