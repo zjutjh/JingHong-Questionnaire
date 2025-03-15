@@ -13,8 +13,8 @@
       <div class="flex-col justify-center items-center" />
     </div>
     <div class="divider my-5" />
-    <div class="flex-col p-5 h-auto">
-      <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center h-40 my-2">
+    <div class="flex-col px-5 h-auto">
+      <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center h-40 ">
         <el-radio
           v-model="localAnswer"
           :name="props.serial_num"

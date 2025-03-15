@@ -28,6 +28,7 @@
           style="zoom: 110%"
           :value="item.content"
           :label="item.content"
+          :disabled="isOptionDisabled && !answerArr.includes(item.content)"
         />
         <div class="ml-10 flex items-center gap-20">
           <div v-if="item.img" class="mt-4">
@@ -52,7 +53,7 @@
         <input
           v-model="otherAnswer"
           type="text"
-          class="input-sm w-150"
+          class="input-sm w-150 border border-gray-300"
           placeholder="其他"
           @input="updateOtherAnswer"
         >
@@ -160,6 +161,13 @@ watch(otherAnswerChecked, () => {
       deleteOldAnswer();
     }
   }
+});
+const totalSelectedCount = computed(() => {
+  return answerArr.value.length;
+});
+
+const isOptionDisabled = computed(() => {
+  return props.maximum_option !== 0 && totalSelectedCount.value >= props.maximum_option;
 });
 </script>
 

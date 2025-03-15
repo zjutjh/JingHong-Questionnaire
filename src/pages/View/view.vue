@@ -1,6 +1,6 @@
 <template>
-  <div class="fixed inset-0 flex items-center justify-center bg-red-300 text-red-950 dark:text-white dark:bg-black">
-    <div class="bg-red-50 dark:bg-customGray flex-col overflow-auto w-full sm:w-1/2  py-30 sm:px-15 px-10 h-full  shadow-lg">
+  <div class="fixed inset-0 flex items-center justify-center bg-red-50 text-red-950 dark:text-white dark:bg-black">
+    <div class="bg-white  dark:bg-customGray flex-col overflow-auto w-full sm:w-1/2  py-30 sm:px-15 px-10 h-full  shadow-lg">
       <div class="flex-col justify-center relative">
         <div class="flex justify-center">
           <div class="absolute top-0 right-10 z-10 mr-10">
@@ -50,23 +50,23 @@
             <div v-if="showData" class="flex flex-col ">
               <div class="divider" />
               <div class="flex gap-20 my-10 justify-center">
-                <span class="text-4xl break-all px-50">{{ showData.quesConfig.title }}</span>
+                <span class="text-4xl break-all md:px-50 px-20">{{ showData.quesConfig.title }}</span>
               </div>
-              <div v-if="showData.quesConfig.desc !== ''" class="items-top my-10 items-start mx-20">
+              <div v-if="showData.quesConfig.desc !== ''" class="items-top my-10 items-start md:mx-20 mx-10">
                 <div class="items-top my-10 items-start ">
                   <pre class="text-gray-500 flex break-all text-xl dark:text-white dark:opacity-50">{{ showData.quesConfig.desc }}</pre>
                 </div>
               </div>
             </div>
-            <div class="flex gap-20 items-center my-10  ml-20 ">
+            <div class="flex gap-20 items-center my-10  md:ml-20 ml-10">
               <span class="text-red-950 dark:text-red-400 dark:opacity-80">开始时间:</span>
               <span>{{ startTime }}</span>
             </div>
-            <div class="flex gap-20 items-center my-10  ml-20 ">
+            <div class="flex gap-20 items-center my-10  md:ml-20 ml-10">
               <span class="text-red-950 dark:text-red-400 dark:opacity-80">截止时间:</span>
               <span>{{ time }}</span>
             </div>
-            <div v-if="showData.baseConfig.dayLimit !== 0 && showData.baseConfig.verify" class="flex gap-20 items-center my-10  ml-20 ">
+            <div v-if="showData.baseConfig.dayLimit !== 0 && showData.baseConfig.verify" class="flex gap-20 items-center my-10  md:ml-20 ml-10">
               <span class=" dark:opacity-80 text-gray-700 dark:text-gray-400">本问卷每天最多提交 <span class="text-red-950 dark:text-red-400 dark:opacity-80">{{ showData.baseConfig.dayLimit }} </span> 次</span>
             </div>
             <div class="divider my-10" />
