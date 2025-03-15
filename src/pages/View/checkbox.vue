@@ -21,15 +21,15 @@
       <span v-if="props.minimum_option !== 0" class="dark:opacity-80 text-gray-700 dark:text-gray-400 text-sm my-5">最少选 {{ props.minimum_option }} 个&ensp;</span>
       <span v-if="props.maximum_option !== 0" class="dark:opacity-80 text-gray-700 dark:text-gray-400 text-sm my-5">最多选 {{ props.maximum_option }} 个</span>
       <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
-        <input
+        <el-checkbox
           v-model="answerArr"
-          type="checkbox"
           :name="props.serial_num"
           class="my-5"
-          style="zoom: 140%"
+          style="zoom: 110%"
           :value="item.content"
-        >
-        <span v-if="item.content" class="text-sm">{{ item.content }}</span>
+          :label="item.content"
+          :disabled="isOptionDisabled && !answerArr.includes(item.content)"
+        />
         <div class="ml-10 flex items-center gap-20">
           <div v-if="item.img" class="mt-4">
             <img
@@ -41,20 +41,19 @@
           </div>
         </div>
       </div>
-      <div v-if="localOtherOption" class="flex gap-10 mt-10">
-        <input
+      <div v-if="localOtherOption" class="flex gap-10 items-center">
+        <el-checkbox
           ref="otherCheckbox"
           v-model="otherAnswerChecked"
-          type="checkbox"
           :name="props.serial_num"
           class="my-5"
-          style="zoom: 140%"
+          style="zoom: 110%"
           :value="otherAnswer"
-        >
+        />
         <input
           v-model="otherAnswer"
           type="text"
-          class="input-sm w-150"
+          class="input-sm w-150 border border-gray-300"
           placeholder="其他"
           @input="updateOtherAnswer"
         >
@@ -163,7 +162,15 @@ watch(otherAnswerChecked, () => {
     }
   }
 });
+const totalSelectedCount = computed(() => {
+  return answerArr.value.length;
+});
+
+const isOptionDisabled = computed(() => {
+  return props.maximum_option !== 0 && totalSelectedCount.value >= props.maximum_option;
+});
 </script>
 
 <style scoped>
+
 </style>
