@@ -20,7 +20,7 @@
           :name="props.serial_num"
           :value="item.content"
           :label="item.content"
-          style="zoom: 110%"
+          style="zoom: 110% ; width: 100%"
         />
         <div class="ml-10 flex items-center gap-20">
           <div v-if="item.img" class="mt-4">

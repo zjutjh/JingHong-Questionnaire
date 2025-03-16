@@ -1,6 +1,6 @@
 <template>
   <div class="fixed inset-0 flex items-center justify-center bg-red-50 text-red-950 dark:text-white dark:bg-black">
-    <div class="bg-white  dark:bg-customGray flex-col overflow-auto w-full sm:w-1/2  py-30 sm:px-15 px-10 h-full  shadow-lg">
+    <div class="bg-white  dark:bg-customGray flex-col overflow-auto lg:w-1/2 w-full sm:w-2/3  py-30 sm:px-15 px-10 h-full  shadow-lg">
       <div class="flex-col justify-center relative">
         <div class="flex justify-center">
           <div class="absolute top-0 right-10 z-10 mr-10">

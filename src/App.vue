@@ -15,9 +15,6 @@
       </div>
       <div class="flex-none">
         <ul class="menu menu-horizontal px-1">
-          <li v-show="!loginStore.loginSession" @click="router.push('/login')">
-            <a>登录</a>
-          </li>
           <li v-show="loginStore.loginSession" @click="router.push('/')">
             <a>问卷列表</a>
           </li>

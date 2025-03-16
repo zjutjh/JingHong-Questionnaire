@@ -1,6 +1,6 @@
 <template>
-  <div class="fixed inset-0 flex items-center justify-center bg-red-300 dark:bg-black">
-    <div class="flex flex-col bg-white w-full sm:w-1/2 lg:w-1/3 p-6 h-full justify-between shadow-lg dark:bg-customGray">
+  <div class="fixed inset-0 flex items-center justify-center dark:bg-black bg-red-50">
+    <div class="flex flex-col bg-white lg:w-1/2 p-6 h-full justify-between shadow-lg dark:bg-customGray   w-full sm:w-2/3  py-30 sm:px-15 px-10 ">
       <div>
         <div class="flex justify-center mt-50">
           <el-image class="h-250" src="https://img.lonesome.cn/jhwl/project/questionnaire/thank.webp" />
