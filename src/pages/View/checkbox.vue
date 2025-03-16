@@ -25,7 +25,7 @@
           v-model="answerArr"
           :name="props.serial_num"
           class="my-5"
-          style="zoom: 110%"
+          style="zoom: 110%; width: 100%"
           :value="item.content"
           :label="item.content"
           :disabled="isOptionDisabled && !answerArr.includes(item.content)"

@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { login, home, detailInfo, datadisplay, view, thank, addVote } from "@/pages";
 import pinia from "@/stores/createPinia";
 import { useMainStore } from "@/stores";
-
+import { nextTick } from "vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -51,18 +51,14 @@ const router = createRouter({
   ]
 });
 
+
+
 router.beforeEach((to, from, next) => {
-  const loginStore = useMainStore(pinia).useLoginStore(pinia);
-  if (
-    to.path !== "/admin/Login" &&
-    to.path !== "/View" &&
-    to.path !== "/Thank" &&
-    !loginStore.loginSession
-  ) {
-    next("/admin/Login");
-  } else {
-    next();
-  }
+  const loginStore = useMainStore().useLoginStore();
+  nextTick(() => {
+    loginStore.setShowHeader(to.path.startsWith("/admin/"));
+  });
+  next();
 });
 
 export default router;
