@@ -141,26 +141,17 @@ watch(otherAnswer, (newOtherAnswer, oldOtherAnswer) => {
   if (newOtherAnswer) {
     optionStore.update(props.questionnaireID, props.serial_num, newOtherAnswer);
   }
-  if (newOtherAnswer !== oldOtherAnswer && otherCheckbox.value && otherCheckbox.value.checked) {
-    const otherIndex = answerArr.value.indexOf(oldOtherAnswer);
-    if (otherIndex !== -1) {
-      answerArr.value.splice(otherIndex, 1);
-    }
+
+  const otherIndex = answerArr.value.indexOf(oldOtherAnswer);
+  if (otherIndex !== -1) {
+    answerArr.value.splice(otherIndex, 1);
+  }
+
+  if (otherAnswerChecked.value && newOtherAnswer) {
     answerArr.value.push(newOtherAnswer);
   }
-});
 
-watch(otherAnswerChecked, () => {
-  if (otherAnswerChecked.value) {
-    if (!answerArr.value.includes(otherAnswer.value)) {
-      answerArr.value.push(otherAnswer.value);
-    }
-  }
-  if (!otherAnswerChecked.value) {
-    if (answerArr.value.includes(otherAnswer.value)) {
-      deleteOldAnswer();
-    }
-  }
+  emits("update:answer", answerArr.value.join("┋"));
 });
 const totalSelectedCount = computed(() => {
   return answerArr.value.length;
