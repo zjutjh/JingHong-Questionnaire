@@ -167,7 +167,7 @@
           </div>
         </div>
         <div class="flex justify-center items-center py-50">
-          <button v-if="decryptedId !== '' && !isOutDate" class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75 hover:bg-red-600" @click="showModal('QuestionnaireSubmit')">
+          <button v-if="decryptedId !== '' && !isOutDate" class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75 hover:bg-red-600" @click="handleSubmit">
             提交问卷
           </button>
         </div>
@@ -368,7 +368,10 @@ const decryptId = (encryptedId) => {
 };
 
 const handleSubmit = () => {
-  showModal("QuestionnaireSubmit");
+  checkAnswer();
+  if (allowSend.value) {
+    showModal("QuestionnaireSubmit");
+  }
 };
 const getQuestionnaireView = async () => {
   if (decryptedId.value) {
