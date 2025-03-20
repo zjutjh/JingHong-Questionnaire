@@ -45,6 +45,7 @@
         <el-checkbox
           ref="otherCheckbox"
           v-model="otherAnswerChecked"
+          :disabled="!otherAnswer"
           :name="props.serial_num"
           class="my-5"
           style="zoom: 110%"
