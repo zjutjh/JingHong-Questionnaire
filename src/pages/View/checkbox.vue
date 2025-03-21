@@ -45,7 +45,7 @@
         <el-checkbox
           ref="otherCheckbox"
           v-model="otherAnswerChecked"
-          :disabled="!otherAnswer"
+          :disabled="!otherAnswer || (!otherAnswerChecked && isOptionDisabled)"
           :name="props.serial_num"
           class="my-5"
           style="zoom: 110%"
@@ -56,6 +56,7 @@
           type="text"
           class="input-sm w-150 border border-gray-300"
           placeholder="其他"
+          :disabled="otherAnswerChecked"
           @input="updateOtherAnswer"
         >
       </div>
@@ -125,7 +126,11 @@ const updateOtherAnswer = (event: Event) => {
 };
 
 const filteredAnswerArr = computed(() => {
-  return answerArr.value.filter(answer => answer !== "");
+  const answers = [...answerArr.value];
+  if (otherAnswer.value && otherAnswerChecked.value) {
+    answers.push(otherAnswer.value);
+  }
+  return answers.filter(answer => answer !== "");
 });
 
 watch(filteredAnswerArr, () => {
@@ -159,7 +164,8 @@ const totalSelectedCount = computed(() => {
 });
 
 const isOptionDisabled = computed(() => {
-  return props.maximum_option !== 0 && totalSelectedCount.value >= props.maximum_option;
+  const totalCount = filteredAnswerArr.value.length;
+  return props.maximum_option !== 0 && totalCount >= props.maximum_option;
 });
 </script>
 
