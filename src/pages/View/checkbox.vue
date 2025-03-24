@@ -159,9 +159,6 @@ watch(otherAnswer, (newOtherAnswer, oldOtherAnswer) => {
 
   emits("update:answer", answerArr.value.join("┋"));
 });
-const totalSelectedCount = computed(() => {
-  return answerArr.value.length;
-});
 
 const isOptionDisabled = computed(() => {
   const totalCount = filteredAnswerArr.value.length;
