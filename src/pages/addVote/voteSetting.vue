@@ -98,6 +98,20 @@
             </el-tooltip>
           </div>
         </div>
+        <div class="flex items-center mt-6 mb-2.5 space-x-8">
+          <span class="ml-30 mt-20 mb-20 mr-15 w-100">总提交次数</span>
+          <div class="flex items-center space-x-4">
+            <el-input-number
+              v-model="schema.baseConfig.sumLimit"
+              :min="0"
+              controls-position="right"
+              class="w-32"
+            />
+            <el-tooltip content="设置为0表示不限制提交次数" placement="top">
+              <i class="el-icon-question text-gray-400 cursor-help" />
+            </el-tooltip>
+          </div>
+        </div>
       </div>
     </div>
   </div>

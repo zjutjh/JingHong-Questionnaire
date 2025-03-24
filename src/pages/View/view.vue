@@ -50,11 +50,11 @@
             <div v-if="showData" class="flex flex-col ">
               <div class="divider" />
               <div class="flex gap-20 my-10 justify-center">
-                <span class="text-4xl break-all md:px-50 px-20">{{ showData.quesConfig.title }}</span>
+                <span class="text-[1.5rem] break-all md:px-50 px-20">{{ showData.quesConfig.title }}</span>
               </div>
               <div v-if="showData.quesConfig.desc !== ''" class="items-top my-10 items-start md:mx-20 mx-10">
                 <div class="items-top my-10 items-start ">
-                  <pre class="text-gray-500 flex break-all text-xl dark:text-white dark:opacity-50">{{ showData.quesConfig.desc }}</pre>
+                  <pre class="text-gray-500 flex break-all text-[1rem] dark:text-white dark:opacity-50">{{ showData.quesConfig.desc }}</pre>
                 </div>
               </div>
             </div>
@@ -68,6 +68,9 @@
             </div>
             <div v-if="showData.baseConfig.dayLimit !== 0 && showData.baseConfig.verify" class="flex gap-20 items-center my-10  md:ml-20 ml-10">
               <span class=" dark:opacity-80 text-gray-700 dark:text-gray-400">本问卷每天最多提交 <span class="text-red-950 dark:text-red-400 dark:opacity-80">{{ showData.baseConfig.dayLimit }} </span> 次</span>
+            </div>
+            <div v-if="showData.baseConfig.sumLimit !== 0 && showData.baseConfig.verify" class="flex gap-20 items-center my-10  md:ml-20 ml-10">
+              <span class=" dark:opacity-80 text-gray-700 dark:text-gray-400">本问卷总共最多提交 <span class="text-red-950 dark:text-red-400 dark:opacity-80">{{ showData.baseConfig.sumLimit }} </span> 次</span>
             </div>
             <div class="divider my-10" />
           </template>
@@ -172,7 +175,7 @@
           </button>
         </div>
       </div>
-      <div v-if="showData && showData.surveyType === 1" class="flex flex-col h-650 ">
+      <div v-if="showData && showData.surveyType === 1" class="flex flex-col  ">
         <div v-for="(q, index) in showData.quesConfig.questionList" :key="index">
           <vote
             v-model:answer="q.answer"
@@ -189,16 +192,20 @@
             :count="resultData"
           />
         </div>
-        <div class="flex justify-center items-center py-50">
-          <button v-if="decryptedId !== '' && !isOutDate" class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75 hover:bg-red-600" @click=" handleSubmit">
+        <div class="flex justify-center items-center py-30 mx-10">
+          <button v-if="decryptedId !== '' && !isOutDate" class="btn w-full bg-red-800 text-red-50 dark:opacity-75 hover:bg-red-600 rounded-none" @click=" handleSubmit">
             提交问卷
           </button>
         </div>
       </div>
-
-      <modal modal-id="QuestionnaireSubmit">
+      <modal
+        modal-id="QuestionnaireSubmit"
+        white
+        un-rounded
+        no-pb
+      >
         <template #title>
-          <span class="text-red-950 dark:text-red-500 ">提交问卷</span>
+          <span class="text-red-950 dark:text-red-500 text-[1.5rem]">提交问卷</span>
         </template>
 
         <template v-if="showData && !showData.baseConfig.verify || tokenOutDate" #default>
@@ -207,41 +214,37 @@
         <template v-else #default>
           <div class="flex-col">
             <div class="text-sm">
-              该问卷仅限校内师生作答,提交前需要先进行<span class="font-bold">统一身份认证</span>
+              该问卷仅限校内本科生作答,提交前需要先进行<span class="font-bold">统一身份认证</span>
             </div>
-            <div class="flex-col my-10">
-              <span>职工号/学号 <input v-model="verifyData.stu_id" class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10" style="width: 100%"></span><br>
-              <span>密码 <br><input
+            <div class="flex-col gap-10 mt-10">
+              <span class="flex gap-10 text-sm items-center"><span class="w-110 flex justify-end">职工号/学号</span> <el-input v-model="verifyData.stu_id" /></span>
+              <span class="text-sm flex gap-10 mt-10 items-center"><span class="w-110 flex justify-end">密码 </span><el-input
                 v-model="verifyData.password"
-                class="dark:bg-customGray_more_shallow input input-bordered shadow-md h-35 my-10 "
-                style="width: 100%"
                 type="password"
-              ></span>
+              /></span>
             </div>
             <div class="flex justify-end">
-              <a href="https://oauth.zjut.edu.cn/im/V3/securitycenter/findPwd/index.zf" style=" text-decoration: underline;;" class="text-sm my-5 text-blue-500 dark:text-white">
+              <a href="https://oauth.zjut.edu.cn/im/V3/securitycenter/findPwd/index.zf" style=" text-decoration: underline;" class="text-sm my-5 text-blue-500 dark:text-white ">
                 忘记密码?
               </a>
             </div>
           </div>
-        </template>
-        <template #action>
-          <button
-            v-if="showData && !showData.baseConfig.verify || tokenOutDate"
-            class="btn bg-red-800 text-red-50 w-full hover:bg-red-600"
-            style="margin-top: -10px"
-            @click="submit"
-          >
-            确认
-          </button>
-          <button
-            v-else
-            class="btn bg-red-800 text-red-50 w-full hover:bg-red-600"
-            style="margin-top: -10px"
-            @click="verify"
-          >
-            确认
-          </button>
+          <div>
+            <button
+              v-if="showData && !showData.baseConfig.verify || tokenOutDate"
+              class="btn bg-red-800 text-red-50 w-full hover:bg-red-600 rounded-none h-40 min-h-0"
+              @click="submit"
+            >
+              确认
+            </button>
+            <button
+              v-else
+              class="btn bg-red-800 text-red-50 w-full hover:bg-red-600 rounded-none h-40 min-h-0"
+              @click="verify"
+            >
+              确认
+            </button>
+          </div>
         </template>
       </modal>
     </div>

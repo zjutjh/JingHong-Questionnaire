@@ -18,8 +18,9 @@ function defaultSchema() {
     baseConfig: {
       startTime: "",
       endTime: "",
-      dayLimit: 0,
-      verify: false
+      dayLimit: 1,
+      verify: false,
+      sumLimit: 1
     },
     quesConfig: {
       title: "投票标题",

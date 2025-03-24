@@ -5,32 +5,31 @@
     <div class="grid grid-cols-2 py-10 h-auto ">
       <div v-for="(item, index) in localOptions" :key="item.serial_num" class="flex items-end justify-center my-10 mx-10">
         <div class="rounded ">
-          <div class="flex flex-col border-red-300 border-2 dark:border-0  justify-center bg-red-100 dark:bg-black lg:h-230 lg:w-230 md:h-150 md:w-150 sm:h-120 sm:w-120 h-160 w-160">
-            <div class="flex items-center flex-1 ">
+          <div class="flex flex-col items-center  border-red-300 border-2 dark:border-0  justify-center bg-red-50 dark:bg-black lg:h-280 lg:w-230 md:h-250 md:w-210 sm:h-210 sm:w-180 h-200 w-160">
+            <div class="flex items-center flex-1 w-full h-full justify-center">
               <el-image
                 v-if="item.img"
                 :src="item.img"
                 :preview-src-list="[item.img]"
                 alt="Preview"
-                style="width: 100%"
+                class="max-w-full h-full object-scale-down"
               />
             </div>
           </div>
           <label
-            class="flex gap-8 items-center justify-center  border-red-300 dark:border-0 dark:bg-customGray_shallow border border-t-0 lg:w-230 md:w-150 sm:w-120 w-160 cursor-pointer"
+            class="flex gap-4 items-center justify-center  border-red-300 dark:border-0 dark:bg-customGray_shallow border border-t-0 lg:w-230 md:w-210 sm:w-180 w-160 h-40 cursor-pointer"
             :class="{ 'opacity-50 pointer-events-none': answerArr.length >= props.maximum_option && !answerArr.includes(item.content) }"
-            style="flex: 0.5"
             @click="handleCheckboxClick(item.content)"
           >
             <input
               v-model="answerArr"
               type="checkbox"
               :name="props.serial_num"
-              class="my-5 cursor-pointer"
+              class="my-5 cursor-pointer ml-5"
               style="zoom: 140%"
               :value="item.content"
             >
-            <span v-if="item.content" class="text-sm">{{ item.content }}</span>
+            <span v-if="item.content" class="text-[0.75rem] lg:text-[0.85rem]">{{ item.content }}</span>
           </label>
 
           <span v-if="count !== undefined" class="text-sm text-gray-400 flex items-center gap-10 justify-center mt-5">
@@ -143,4 +142,13 @@ watch(otherAnswerChecked, () => {
 </script>
 
 <style scoped>
+:deep(.el-image__inner){
+  max-height: 100%;
+  height: auto;
+}
+
+:deep(.el-image){
+  display: flex;
+  align-items: center;
+}
 </style>
