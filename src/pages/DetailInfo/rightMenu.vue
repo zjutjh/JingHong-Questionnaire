@@ -16,8 +16,18 @@
         基础配置
       </div>
       <div class="pt-8">
-        <el-checkbox v-model="questionList[activeSerial-1].quesSetting.required" label="必选" size="large" />
-        <el-checkbox v-model="questionList[activeSerial-1].quesSetting.unique" label="唯一" size="large" />
+        <el-checkbox
+          v-if="questionList[activeSerial-1]?.quesSetting?.required"
+          v-model="questionList[activeSerial-1].quesSetting.required"
+          label="必选"
+          size="large"
+        />
+        <el-checkbox
+          v-if="questionList[activeSerial-1]?.quesSetting?.unique"
+          v-model="questionList[activeSerial-1].quesSetting.unique"
+          label="唯一"
+          size="large"
+        />
       </div>
 
       <!-- 有其他选项 -->
@@ -30,7 +40,12 @@
       </div>
 
       <div class="pt-16">
-        <el-input v-model="questionList[activeSerial-1].description" style="width: 240px" placeholder="Please input" />
+        <el-input
+          v-if="questionList[activeSerial-1]?.description"
+          v-model="questionList[activeSerial-1].description"
+          style="width: 240px"
+          placeholder="Please input"
+        />
       </div>
 
       <!-- 填空特殊逻辑 -->
@@ -98,6 +113,8 @@ const { activeSerial } = storeToRefs(useActiveStore());
 
 const editStore = storeToRefs(useEditStore());
 
+console.log(editStore.schema.value);
+
 const questionList = computed({
   get: () => editStore.schema.value?.quesConfig?.questionList || [],
   set: (val) => {
@@ -111,7 +128,7 @@ const currentType = computed<number>(() => {
   if (activeSerial.value === -1) {
     return 0;
   } else {
-    return (questionList.value[activeSerial.value - 1].quesSetting.questionType);
+    return (questionList.value[activeSerial.value - 1]?.quesSetting.questionType);
   }
 });
 
