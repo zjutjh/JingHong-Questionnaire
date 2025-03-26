@@ -141,7 +141,7 @@
         v-show="isNew === 'true'"
         class="btn dark:opacity-75 dark:text-white btn-sm flex-1 bg-red-100 hover:bg-red-200 hover:border-red-300"
         style="border-radius: 0"
-        @click="submit(1)"
+        @click="showModal('SaveQuestionnaireSubmit')"
       >
         保存
       </button>
@@ -176,7 +176,7 @@
       确认要保存更改吗?
     </template>
     <template #action>
-      <button class="btn btn-success dark:opacity-75 w-80" @click="submit">
+      <button class="btn btn-success dark:opacity-75 w-80" @click="saveEdit">
         确认
       </button>
     </template>
@@ -204,7 +204,7 @@ import { ElNotification } from "element-plus";
 import { showModal, modal } from "@/components";
 import router from "@/router";
 import { useRequest } from "vue-hooks-plus";
-import { setNewQuestionnaireDetailAPI } from "@/apis";
+import { setNewQuestionnaireDetailAPI, setQuestionnaireDetailAPI } from "@/apis";
 import { closeLoading, startLoading } from "@/utilities";
 import { deepCamelToSnake } from "@/utilities/deepCamelToSnake.ts";
 
@@ -251,6 +251,27 @@ const submit = (state: number) => {
         } else {
           ElNotification.success("创建并发布成功");
         }
+        router.push("/admin");
+      } else {
+        ElNotification.error(res.msg);
+      }
+    },
+    onError(e) {
+      ElNotification.error(e);
+    },
+    onFinally: () => {
+      showModal("SaveQuestionnaireSubmit", true);
+      closeLoading();
+    }
+  });
+};
+
+const saveEdit = () => {
+  useRequest(() => setQuestionnaireDetailAPI(deepCamelToSnake(schema.value)), {
+    onBefore: () => startLoading(),
+    onSuccess(res: any) {
+      if (res.code === 200 && res.msg === "OK") {
+        ElNotification.success("保存成功");
         router.push("/admin");
       } else {
         ElNotification.error(res.msg);
