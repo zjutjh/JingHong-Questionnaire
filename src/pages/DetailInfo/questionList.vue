@@ -149,7 +149,7 @@
         v-show="isNew === 'true'"
         class="btn btn-sm dark:opacity-75 dark:text-white flex-1 hover:bg-red-200 bg-red-100 hover:border-red-300"
         style="border-radius: 0"
-        @click="showModal('NewQuestionnaireSubmit')"
+        @click="showModal(surveyId === -1?'NewQuestionnaireSubmit':'SaveQuestionnaireSubmit')"
       >
         发布
       </button>
@@ -210,7 +210,9 @@ import { deepCamelToSnake } from "@/utilities/deepCamelToSnake.ts";
 
 const loading = ref(true);
 
-const { deleteQuestion, moveQuestion, resetSchema } = useEditStore();
+const { deleteQuestion, moveQuestion, resetSchema, surveyId } = useEditStore();
+
+// console.log(surveyId);
 
 const { schema } = storeToRefs(useEditStore());
 
