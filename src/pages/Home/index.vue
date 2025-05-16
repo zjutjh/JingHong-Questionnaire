@@ -19,7 +19,22 @@
           :id-name="item.id"
           :status="item.status"
           :survey-type="item.survey_type"
-          @update-list="() => getQuestionnaireList()"
+          @update-status="(targetStatus) => {
+            modalRef.title = item.title;
+            modalRef.id = item.id;
+            modalRef.targetStatus = targetStatus;
+            showModal('statusConfirmModal');
+          }"
+          @del-ques="() => {
+            modalRef.title = item.title;
+            modalRef.id = item.id;
+            showModal('delConfirmModal');
+          }"
+          @show-qr-code="(qrCodeURL, copyQrCode) => {
+            modalRef.qrCodeURL = qrCodeURL.value;
+            modalCopyCodeURL = copyQrCode;
+            showModal('showQRcodeModal');
+          }"
         />
         <el-pagination
           :current-page="tempStore.homePageNum"
@@ -30,17 +45,68 @@
       </el-skeleton>
     </div>
   </div>
+  <modal modal-id="statusConfirmModal">
+    <template #title>
+      {{ modalRef.targetStatus === 2 ? "发布问卷" : "下架问卷" }}
+    </template>
+    <template #default>
+      {{ modalRef.targetStatus === 2 ? "确认发布问卷: " : "确认下架问卷: " }} {{ modalRef.title }}
+    </template>
+    <template #action>
+      <div
+        class="btn btn-error dark:opacity-70 dark:text-white w-80"
+        @click="() => updateQuestionnaireStatus(modalRef.id, modalRef.targetStatus)"
+      >
+        确认
+      </div>
+    </template>
+  </modal>
+  <modal modal-id="delConfirmModal">
+    <template #title>
+      删除问卷
+    </template>
+    <template #default>
+      将删除标题为<span class="text-red-500">{{ modalRef.title }}</span>的问卷
+    </template>
+    <template #action>
+      <div
+        class="btn btn-error dark:opacity-70 dark:text-white w-80"
+        @click="() => delQuestionnaire(modalRef.id)"
+      >
+        确认
+      </div>
+    </template>
+  </modal>
+  <modal modal-id="showQRcodeModal">
+    <template #title>
+      分享二维码
+    </template>
+    <template #default>
+      <img :src="modalRef.qrCodeURL" class="w-1/2 mx-auto">
+    </template>
+    <template #action>
+      <div
+        class="btn btn-success dark:opacity-70 dark:text-white w-80"
+        @click="() => { modalCopyCodeURL && modalCopyCodeURL() }"
+      >
+        复制
+      </div>
+    </template>
+  </modal>
 </template>
 
 <script setup lang="ts">
 import questionnaireItem from "./questionnaireItem.vue";
 import { useRequest } from "vue-hooks-plus";
-import { getQuestionnaireListAPI } from "@/apis";
+import { getQuestionnaireListAPI, delQuestionnaireAPI, updateQuestionnaireStatusAPI } from "@/apis";
 import { onMounted, ref, watch } from "vue";
 import router from "@/router";
 import { closeLoading, startLoading } from "@/utilities";
 import { useMainStore } from "@/stores";
 import { useEditStore } from "@/stores/edit.ts";
+import { modal, showModal } from "@/components";
+import { ElNotification } from "element-plus";
+import { QuesStatus } from "@/utilities/constantMap.ts";
 
 const tempStore = useMainStore().useTempStore();
 const loginStore = useMainStore().useLoginStore();
@@ -51,12 +117,21 @@ const questionnaireList = ref();
 const loading = ref(true);
 const surveyType = ref(tempStore.surveyType);
 const { setSurveyId, init } = useEditStore();
+const modalRef = ref({
+  title: "",
+  id: 0,
+  targetStatus: 0,
+  qrCodeURL: ""
+});
+let modalCopyCodeURL: () => void;
+
 watch(surveyType, () => {
   tempStore.surveyType = surveyType;
 });
 onMounted(() => {
   loginStore.setShowHeader(true);
 });
+
 const getQuestionnaireList = (title?: string) => {
   useRequest(() => getQuestionnaireListAPI({
     page_num: tempStore.homePageNum,
@@ -91,5 +166,38 @@ const newQues = () => {
 const addVote = () => {
   localStorage.setItem("isNew", "true");
   router.push("/admin/addVote");
+};
+
+const updateQuestionnaireStatus = (id: number, status: QuesStatus.DRAFT | QuesStatus.PUBLISH) => {
+  useRequest(() => updateQuestionnaireStatusAPI({
+    id: id,
+    status: status
+  }), {
+    onSuccess(res: any) {
+      if (res.code === 200) {
+        ElNotification.success("修改成功");
+        getQuestionnaireList();
+      } else {
+        ElNotification.error(res.msg);
+      };
+      showModal("statusConfirmModal", true);
+    }
+  });
+};
+
+const delQuestionnaire = (id: number) => {
+  useRequest(() => delQuestionnaireAPI({ id: id }), {
+    onBefore: () => startLoading(),
+    onSuccess(res: any) {
+      if (res.code === 200) {
+        ElNotification.success("删除成功");
+        getQuestionnaireList();
+      } else {
+        ElNotification.error(res.msg);
+      };
+      showModal("delConfirmModal", true);
+    },
+    onFinally: () => closeLoading()
+  });
 };
 </script>
