@@ -210,6 +210,14 @@
 
         <template v-if="showData && !showData.baseConfig.verify || tokenOutDate" #default>
           你确认要提交问卷吗?
+          <el-button
+            v-if="showData && !showData.baseConfig.verify || tokenOutDate"
+            class="btn bg-red-800 text-red-50 w-full hover:bg-red-600 rounded-none h-40 min-h-0 mt-15"
+            :disabled="disabledInput"
+            @click="submit"
+          >
+            确认
+          </el-button>
         </template>
         <template v-else #default>
           <div class="flex-col">
@@ -217,9 +225,10 @@
               该问卷仅限校内本科生作答,提交前需要先进行<span class="font-bold">统一身份认证</span>
             </div>
             <div class="flex-col gap-10 mt-10">
-              <span class="flex gap-10 text-sm items-center"><span class="w-110 flex justify-end">职工号/学号</span> <el-input v-model="verifyData.stu_id" /></span>
+              <span class="flex gap-10 text-sm items-center"><span class="w-110 flex justify-end">职工号/学号</span> <el-input v-model="verifyData.stu_id" :disabled="disabledInput" /></span>
               <span class="text-sm flex gap-10 mt-10 items-center"><span class="w-110 flex justify-end">密码 </span><el-input
                 v-model="verifyData.password"
+                :disabled="disabledInput"
                 type="password"
               /></span>
             </div>
@@ -230,20 +239,22 @@
             </div>
           </div>
           <div>
-            <button
+            <el-button
               v-if="showData && !showData.baseConfig.verify || tokenOutDate"
               class="btn bg-red-800 text-red-50 w-full hover:bg-red-600 rounded-none h-40 min-h-0"
+              :disabled="disabledInput"
               @click="submit"
             >
               确认
-            </button>
-            <button
+            </el-button>
+            <el-button
               v-else
               class="btn bg-red-800 text-red-50 w-full hover:bg-red-600 rounded-none h-40 min-h-0"
+              :disabled="disabledInput"
               @click="verify"
             >
               确认
-            </button>
+            </el-button>
           </div>
         </template>
       </modal>
@@ -306,6 +317,7 @@ const verifyData = ref({
 });
 const optionStore = useMainStore().useOptionStore();
 const questionnaireStore = useMainStore().useQuetionnaireStore();
+const disabledInput = ref(false);
 onMounted(async () => {
 
   loginStore.setShowHeader(false);
@@ -336,6 +348,10 @@ const verify = () => {
   if (!lastDate || Date.now() - parseInt(lastDate) > 7 * 24 * 60 * 60 * 1000) {
     // 调用 verifyAPI 获取新的 token
     useRequest(() => verifyAPI(verifyData.value), {
+      onBefore() {
+        disabledInput.value = true;
+        startLoading();
+      },
       onSuccess(res) {
         if (res.code === 200) {
           // 更新 token 和 timestamp
@@ -345,6 +361,13 @@ const verify = () => {
         } else {
           ElNotification.error(res.msg);
         }
+      },
+      onError(e) {
+        ElNotification.error("请求超时, 请稍后重试")
+      },
+      onFinally() {
+        disabledInput.value = false;
+        closeLoading();
       }
     });
   } else {
