@@ -362,8 +362,8 @@ const verify = () => {
           ElNotification.error(res.msg);
         }
       },
-      onError(e) {
-        ElNotification.error("请求超时, 请稍后重试")
+      onError() {
+        ElNotification.error("请求超时, 请稍后重试");
       },
       onFinally() {
         disabledInput.value = false;
