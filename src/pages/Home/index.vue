@@ -19,22 +19,14 @@
           :id-name="item.id"
           :status="item.status"
           :survey-type="item.survey_type"
-          @update-status="(targetStatus) => {
-            modalRef.title = item.title;
-            modalRef.id = item.id;
-            modalRef.targetStatus = targetStatus;
-            showModal('statusConfirmModal');
-          }"
-          @del-ques="() => {
-            modalRef.title = item.title;
-            modalRef.id = item.id;
-            showModal('delConfirmModal');
-          }"
-          @show-qr-code="(qrCodeURL, copyQrCode) => {
-            modalRef.qrCodeURL = qrCodeURL.value;
-            modalCopyCodeURL = copyQrCode;
-            showModal('showQRcodeModal');
-          }"
+          @update-status="(
+            targetStatus: number
+          ) => statusConfirmModal(targetStatus, item.title, item.id)"
+          @del-ques="delConfirmModal(item.title, item.id)"
+          @show-qr-code="(
+            qrCodeURL: Ref<string, string>,
+            copyQrCode: () => Promise<void>
+          ) => showQRcodeModal(qrCodeURL, copyQrCode)"
         />
         <el-pagination
           :current-page="tempStore.homePageNum"
@@ -99,7 +91,7 @@
 import questionnaireItem from "./questionnaireItem.vue";
 import { useRequest } from "vue-hooks-plus";
 import { getQuestionnaireListAPI, delQuestionnaireAPI, updateQuestionnaireStatusAPI } from "@/apis";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, Ref, ref, watch } from "vue";
 import router from "@/router";
 import { closeLoading, startLoading } from "@/utilities";
 import { useMainStore } from "@/stores";
@@ -123,6 +115,12 @@ const modalRef = ref({
   targetStatus: 0,
   qrCodeURL: ""
 });
+
+const showQRcodeModal = (qrCodeURL: Ref<string, string>, copyQrCode: () => Promise<void>) => {
+  modalRef.value.qrCodeURL = qrCodeURL.value;
+  modalCopyCodeURL = copyQrCode;
+  showModal("showQRcodeModal");
+};
 let modalCopyCodeURL: () => void;
 
 watch(surveyType, () => {
@@ -168,6 +166,12 @@ const addVote = () => {
   router.push("/admin/addVote");
 };
 
+const statusConfirmModal = (targetStatus: number, title: string, id: number) => {
+  modalRef.value.title = title;
+  modalRef.value.id = id;
+  modalRef.value.targetStatus = targetStatus;
+  showModal("statusConfirmModal");
+};
 const updateQuestionnaireStatus = (id: number, status: QuesStatus.DRAFT | QuesStatus.PUBLISH) => {
   useRequest(() => updateQuestionnaireStatusAPI({
     id: id,
@@ -185,6 +189,11 @@ const updateQuestionnaireStatus = (id: number, status: QuesStatus.DRAFT | QuesSt
   });
 };
 
+const delConfirmModal = (title: string, id: number) => {
+  modalRef.value.title = title;
+  modalRef.value.id = id;
+  showModal("delConfirmModal");
+};
 const delQuestionnaire = (id: number) => {
   useRequest(() => delQuestionnaireAPI({ id: id }), {
     onBefore: () => startLoading(),
