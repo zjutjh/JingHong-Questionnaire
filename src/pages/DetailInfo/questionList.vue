@@ -3,7 +3,12 @@
     <div v-if="mode === 'ques'" class="bg-base-200 dark:bg-customGray flex-1  overflow-y-auto h-[80vh]">
       <div v-if="schema && schema.quesConfig" class="flex-col justify-center p-20 pb-0">
         <div class="flex justify-center items-center flex-col gap-10">
-          <input v-model="schema.quesConfig.title" class="input bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-2xl w-[100%] text-center dark:bg-customGray" placeholder="问卷标题">
+          <input
+            v-model="schema.quesConfig.title"
+            placeholder="问卷标题"
+            :class="['input bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-2xl w-[100%] text-center dark:bg-customGray', titleError ? 'border-red-500 border-2' : '']"
+            @blur="validataTitle(schema.quesConfig.title)"
+          >
           <textarea v-model="schema.quesConfig.desc" class=" textarea bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-md w-[100%] resize-none dark:bg-customGray" placeholder="问卷描述" />
         </div>
       </div>
@@ -207,6 +212,7 @@ import { useRequest } from "vue-hooks-plus";
 import { setNewQuestionnaireDetailAPI, setQuestionnaireDetailAPI } from "@/apis";
 import { closeLoading, startLoading } from "@/utilities";
 import { deepCamelToSnake } from "@/utilities/deepCamelToSnake.ts";
+import { validataTitle, titleError } from "@/utilities/addQuesValidata.ts";
 
 const loading = ref(true);
 

@@ -19,6 +19,7 @@
               type="datetime"
               placeholder="开始日期-时间"
               value-format="YYYY-MM-DDTHH:mm:ssZ"
+              @change="validataStarttime(schema.baseConfig.startTime, schema.baseConfig.endTime)"
             />
             <span>至</span>
             <el-date-picker
@@ -26,6 +27,7 @@
               type="datetime"
               placeholder="结束日期-时间"
               value-format="YYYY-MM-DDTHH:mm:ssZ"
+              @change="validataEndtime(schema.baseConfig.startTime, schema.baseConfig.endTime)"
             />
           </span>
         </div>
@@ -119,5 +121,6 @@
 
 <script setup lang="ts">
 import { useEditVoteStore } from "@/stores/voteEdit.ts";
+import { validataStarttime, validataEndtime } from "@/utilities/addQuesValidata";
 const { schema } = useEditVoteStore();
 </script>

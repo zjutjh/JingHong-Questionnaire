@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-200 dark:bg-customGray_shallow p-30 hover:shadow-md " :class="isActive? 'bg-base-300' : ''">
+  <div class="bg-base-200 dark:bg-customGray_shallow p-30 hover:shadow-md " :class="isActive ? 'bg-base-300' : ''">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">
@@ -9,7 +9,8 @@
             v-model="localTitle"
             type="text"
             placeholder="Question"
-            class="dark:bg-customGray_more_shallow input rounded-none h-40  focus:outline-none  w-350"
+            :class="['dark:bg-customGray_more_shallow input rounded-none h-40  focus:outline-none  w-350', quesError[serialNum] ? 'border-red-500 border-2' : '']"
+            @blur="validataQuestion(localTitle, serialNum)"
           >
           <div v-else>
             {{ localTitle }}
@@ -26,6 +27,7 @@
 
 <script setup lang="ts">
 import { computed, defineEmits, ref, watch } from "vue";
+import { validataQuestion, quesError } from "@/utilities/addQuesValidata.ts";
 
 const props = defineProps<{
   isActive: boolean,
@@ -96,7 +98,6 @@ const pal = computed(() => {
     return "自定义";
   }
 });
-
 </script>
 
 <style scoped>

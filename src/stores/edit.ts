@@ -8,6 +8,7 @@ import { QuesItemType, QuesStatus, QuesType } from "@/utilities/constMap.ts";
 import { Question, Option } from "@/utilities/type.ts";
 import { quesSettingMap } from "@/utilities/quesSettingMap.ts";
 import { deepSnakeToCamel } from "@/utilities/deepSnakeToCamel.ts";
+import { quesError } from "@/utilities/addQuesValidata";
 
 /**
  * 返回默认的问卷 schema
@@ -117,6 +118,7 @@ function useQuestionListReducer(questionDataList: Ref<Question[]>) {
 
   function deleteQuestion(index: number) {
     questionDataList.value.splice(index, 1);
+    quesError.value.splice(index, 1);
     questionDataList.value.forEach((q, idx) => {
       q.serialNum = idx + 1;
     });

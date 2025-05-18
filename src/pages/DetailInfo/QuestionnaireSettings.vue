@@ -19,6 +19,9 @@
               type="datetime"
               placeholder="开始日期-时间"
               value-format="YYYY-MM-DDTHH:mm:ssZ"
+              :class="timeError?'time-error':''"
+              @blur="validataStarttime(schema.baseConfig.startTime, schema.baseConfig.endTime)"
+              @change="validataStarttime(schema.baseConfig.startTime, schema.baseConfig.endTime)"
             />
             <span>至</span>
             <el-date-picker
@@ -26,6 +29,8 @@
               type="datetime"
               placeholder="结束日期-时间"
               value-format="YYYY-MM-DDTHH:mm:ssZ"
+              :class="timeError?'time-error':''"
+              @change="validataEndtime(schema.baseConfig.startTime, schema.baseConfig.endTime)"
             />
           </span>
         </div>
@@ -89,5 +94,13 @@
 
 <script setup lang="ts">
 import { useEditStore } from "@/stores/edit";
+import { validataStarttime, validataEndtime, timeError } from "@/utilities/addQuesValidata";
 const { schema } = useEditStore();
 </script>
+
+<style>
+.time-error .el-input__wrapper{
+  border: 1px solid red !important;
+  box-shadow: 0 0 2px rgba(255, 0, 0, 0.2) !important;
+}
+</style>
