@@ -95,6 +95,7 @@ const removeOption = (index: number) => {
       item.serialNum -= 1;
     }
   });
+  voteError.value.splice(index, 1);
 };
 
 </script>
