@@ -108,11 +108,11 @@ const { setSurveyId, init } = useEditStore();
 const { setVoteId, initVote } = useEditVoteStore();
 
 const updateStatus = (status: QuesStatus.DRAFT | QuesStatus.PUBLISH) => {
-  emit("updateStatus", status);
+  emit("updateStatus", status, props.title, props.idName);
 };
 
 const delQues = () => {
-  emit("delQues");
+  emit("delQues", props.title, props.idName);
 };
 
 const showQrCode = () => {

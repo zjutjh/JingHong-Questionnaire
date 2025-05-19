@@ -19,14 +19,9 @@
           :id-name="item.id"
           :status="item.status"
           :survey-type="item.survey_type"
-          @update-status="(
-            targetStatus: number
-          ) => statusConfirmModal(targetStatus, item.title, item.id)"
-          @del-ques="delConfirmModal(item.title, item.id)"
-          @show-qr-code="(
-            qrCodeURL: Ref<string, string>,
-            copyQrCode: () => Promise<void>
-          ) => showQRcodeModal(qrCodeURL, copyQrCode)"
+          @update-status="statusConfirmModal"
+          @del-ques="delConfirmModal"
+          @show-qr-code="showQRcodeModal"
         />
         <el-pagination
           :current-page="tempStore.homePageNum"
@@ -47,7 +42,7 @@
     <template #action>
       <div
         class="btn btn-error dark:opacity-70 dark:text-white w-80"
-        @click="() => updateQuestionnaireStatus(modalRef.id, modalRef.targetStatus)"
+        @click="updateQuestionnaireStatus(modalRef.id, modalRef.targetStatus)"
       >
         确认
       </div>
@@ -63,7 +58,7 @@
     <template #action>
       <div
         class="btn btn-error dark:opacity-70 dark:text-white w-80"
-        @click="() => delQuestionnaire(modalRef.id)"
+        @click="delQuestionnaire(modalRef.id)"
       >
         确认
       </div>
@@ -79,7 +74,7 @@
     <template #action>
       <div
         class="btn btn-success dark:opacity-70 dark:text-white w-80"
-        @click="() => { modalCopyCodeURL && modalCopyCodeURL() }"
+        @click="modalCopyCodeURL && modalCopyCodeURL()"
       >
         复制
       </div>
