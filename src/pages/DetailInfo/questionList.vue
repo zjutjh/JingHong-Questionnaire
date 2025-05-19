@@ -204,7 +204,7 @@ import { ElNotification } from "element-plus";
 import { showModal, modal } from "@/components";
 import router from "@/router";
 import { useRequest } from "vue-hooks-plus";
-import { setNewQuestionnaireDetailAPI, setQuestionnaireDetailAPI } from "@/apis";
+import { setNewQuestionnaireDetailAPI } from "@/apis";
 import { closeLoading, startLoading } from "@/utilities";
 import { deepCamelToSnake } from "@/utilities/deepCamelToSnake.ts";
 
@@ -269,7 +269,7 @@ const submit = (state: number) => {
 };
 
 const saveEdit = () => {
-  useRequest(() => setQuestionnaireDetailAPI(deepCamelToSnake(schema.value)), {
+  useRequest(() => setNewQuestionnaireDetailAPI(deepCamelToSnake(schema.value)), {
     onBefore: () => startLoading(),
     onSuccess(res: any) {
       if (res.code === 200 && res.msg === "OK") {
