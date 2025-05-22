@@ -17,7 +17,7 @@
         <el-button class="flex-1" @click="submit(1)">
           保存
         </el-button>
-        <el-button class="flex-1 " @click="voteValidator(schema) && voteId === -1 ? submit(2) : saveEdit()">
+        <el-button class="flex-1 " @click="voteValidator(schema) && (voteId === -1 ? submit(2) : saveEdit())">
           发布
         </el-button>
       </div>

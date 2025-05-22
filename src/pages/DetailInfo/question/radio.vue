@@ -163,6 +163,7 @@ watch(localOtherOption, (newOtherOption) => {
 watch(localOptions, (newOptions) => {
   emits("update:options", newOptions);
 });
+
 </script>
 
 <style scoped>

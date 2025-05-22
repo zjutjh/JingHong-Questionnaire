@@ -96,6 +96,7 @@ const pal = computed(() => {
     return "自定义";
   }
 });
+
 </script>
 
 <style scoped>
