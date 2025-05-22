@@ -1,5 +1,5 @@
 <template>
-  <dialog :id="modalId" class="modal">
+  <dialog :id="modalId" class="modal z-10">
     <div class="bg-gray-300 dark:bg-customGray_shallow modal-box" :class="{ 'bg-white': white, 'rounded-none': unRounded, 'pb-0 bt-[1rem]': noPb }">
       <form method="dialog">
         <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 outline-none">

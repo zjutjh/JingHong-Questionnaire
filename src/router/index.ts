@@ -51,8 +51,6 @@ const router = createRouter({
   ]
 });
 
-
-
 router.beforeEach((to, from, next) => {
   const loginStore = useMainStore().useLoginStore();
   nextTick(() => {

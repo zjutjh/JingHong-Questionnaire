@@ -12,7 +12,7 @@
                 :src="item.img"
                 :preview-src-list="[item.img]"
                 alt="Preview"
-                class="max-w-full h-full object-scale-down"
+                class=" max-h-full object-contain"
               />
             </div>
           </div>
