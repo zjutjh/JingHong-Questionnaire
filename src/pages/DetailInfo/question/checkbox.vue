@@ -9,8 +9,7 @@
             v-model="localTitle"
             type="text"
             placeholder="Question"
-            :class="['rounded-none focus:outline-none dark:bg-customGray_more_shallow input input-bordered shadow-md w-350', quesError[serialNum]? 'border-red-500 border-2' : '']"
-            @blur="validataQuestion(localTitle, serialNum)"
+            class="rounded-none focus:outline-none dark:bg-customGray_more_shallow input input-bordered shadow-md w-350"
           >
           <div v-else class="w-350">
             {{ localTitle }}
@@ -28,7 +27,6 @@
             type="text"
             class="rounded-none focus:outline-none dark:bg-customGray_more_shallow input input-bordered h-40 shadow-md"
             placeholder="option"
-            @blur="validataOptions(item.content, item.serialNum)"
           >
           <div class="ml-10 flex items-center gap-20">
             <div v-if="item.img" class="mt-4">
@@ -64,7 +62,6 @@ import { ref, watch, defineProps, defineEmits } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { saveImgAPI } from "@/apis";
 import { ElNotification } from "element-plus";
-import { validataQuestion, quesError, validataOptionsList, validataOptions } from "@/utilities/addQuesValidata.ts";
 
 const props = defineProps<{
   isActive: boolean,
@@ -116,17 +113,12 @@ const handleFileChange = async (event, serialNum: number) => {
 };
 
 const deleteOption = (serialNum: number) => {
-  if (!validataOptionsList(localOptions.value)) {
-    ElNotification.error("不能没有选项");
-    return;
-  } else {
-    localOptions.value = localOptions.value.filter(item => item.serialNum !== serialNum);
-    localOptions.value.forEach((item) => {
-      if (item.serialNum > serialNum) {
-        item.serialNum -= 1;
-      }
-    });
-  }
+  localOptions.value = localOptions.value.filter(item => item.serialNum !== serialNum);
+  localOptions.value.forEach((item) => {
+    if (item.serialNum > serialNum) {
+      item.serialNum -= 1;
+    }
+  });
   emits("update:options", localOptions.value);
 };
 

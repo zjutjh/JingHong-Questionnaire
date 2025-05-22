@@ -9,8 +9,7 @@
             v-model="localTitle"
             type="text"
             placeholder="Question"
-            :class="['dark:bg-customGray_more_shallow input rounded-none h-40  focus:outline-none  w-350', quesError[serialNum] ? 'border-red-500 border-2' : '']"
-            @blur="validataQuestion(localTitle, serialNum)"
+            class="dark:bg-customGray_more_shallow input rounded-none h-40  focus:outline-none  w-350"
           >
           <div v-else>
             {{ localTitle }}
@@ -27,7 +26,6 @@
 
 <script setup lang="ts">
 import { computed, defineEmits, ref, watch } from "vue";
-import { validataQuestion, quesError } from "@/utilities/addQuesValidata.ts";
 
 const props = defineProps<{
   isActive: boolean,

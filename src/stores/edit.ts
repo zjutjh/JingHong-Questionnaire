@@ -118,7 +118,6 @@ function useQuestionListReducer(questionDataList: Ref<Question[]>) {
 
   function deleteQuestion(index: number) {
     questionDataList.value.splice(index, 1);
-    quesError.value.splice(index, 1);
     questionDataList.value.forEach((q, idx) => {
       q.serialNum = idx + 1;
     });

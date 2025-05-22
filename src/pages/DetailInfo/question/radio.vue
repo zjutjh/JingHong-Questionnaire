@@ -9,8 +9,7 @@
             v-model="localTitle"
             type="text"
             placeholder="Question"
-            :class="['dark:bg-customGray_more_shallow input rounded-none h-40  focus:outline-none  w-350', quesError[serialNum] ? 'border-red-500 border-2' : '']"
-            @blur="validataQuestion(localTitle, serialNum)"
+            class="dark:bg-customGray_more_shallow input rounded-none h-40  focus:outline-none  w-350"
           >
           <div v-else>
             {{ localTitle }}
@@ -26,7 +25,6 @@
           type="text"
           class="dark:bg-customGray_more_shallow input input-bordered h-40 shadow-md rounded-none focus:outline-none"
           placeholder="option"
-          @blur="validataOptions(item.content, item.serialNum)"
         >
         <div class="ml-10 flex items-center gap-20">
           <div v-if="item.img" class="mt-4">
@@ -61,7 +59,6 @@ import { ref, watch, defineProps, defineEmits } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { saveImgAPI } from "@/apis";
 import { ElNotification } from "element-plus";
-import { validataQuestion, quesError, validataOptionsList, validataOptions } from "@/utilities/addQuesValidata.ts";
 
 const props = defineProps<{
   isActive: boolean,
@@ -108,17 +105,12 @@ const handleFileChange = async (event, serialNum: number) => {
 };
 
 const deleteOption = (serialNum: number) => {
-  if (!validataOptionsList(localOptions.value)) {
-    ElNotification.error("不能没有选项");
-    return;
-  } else {
-    localOptions.value = localOptions.value.filter(item => item.serialNum !== serialNum);
-    localOptions.value.forEach((item) => {
-      if (item.serialNum > serialNum) {
-        item.serialNum -= 1;
-      }
-    });
-  }
+  localOptions.value = localOptions.value.filter(item => item.serialNum !== serialNum);
+  localOptions.value.forEach((item) => {
+    if (item.serialNum > serialNum) {
+      item.serialNum -= 1;
+    }
+  });
 };
 
 // Watchers to sync local state with props

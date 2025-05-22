@@ -18,14 +18,12 @@
         </el-upload>
         <el-input
           v-model="item.content"
-          :class="voteError[index]?'voteerror':''"
-          @blur="validataVote(item.content , index)"
         />
         <el-button
           v-if="schema.quesConfig.questionList[0].options.length > 1"
           type="danger"
           size="small"
-          @click="removeOption(index)"
+          @click="removeOption(index), deleteQuesError"
         >
           删除
         </el-button>
@@ -44,10 +42,10 @@ import { useEditVoteStore } from "@/stores/voteEdit.ts";
 import { useRequest } from "vue-hooks-plus";
 import { saveImgAPI } from "@/apis";
 import { ElNotification } from "element-plus";
-import { validataVote, voteError } from "@/utilities/addQuesValidata";
-import Vote from "../View/vote.vue";
+import { useValidator } from "../DetailInfo/validate";
 
 const { schema } = useEditVoteStore();
+const { deleteQuesError } = useValidator();
 
 const handleFileChange = async (file: File, serialNum: number) => {
   if (!file) return;
@@ -95,7 +93,6 @@ const removeOption = (index: number) => {
       item.serialNum -= 1;
     }
   });
-  voteError.value.splice(index, 1);
 };
 
 </script>
@@ -128,13 +125,5 @@ const removeOption = (index: number) => {
   width: 250px;
   height: 250px;
   text-align: center;
-}
-
-.voteerror .el-input__wrapper {
-  border: 1px solid red;
-}
-
-.voteerror .el-input__wrapper.is-focus {
-  box-shadow: 0 0 1px red !important;
 }
 </style>
