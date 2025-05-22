@@ -20,6 +20,7 @@
     <div class="divider" />
     <div ref="scrollContainer" class="flex-col p-5 overflow-y-auto h-180 mt-10" style="scroll-behavior: smooth;">
       <div v-for="item in localOptions" :key="item.serialNum" class="flex items-center gap-10 my-5">
+        <input type="radio" :name="props.serialNum" class="radio-sm my-5">
         <input
           v-model="item.content"
           type="text"
@@ -163,3 +164,6 @@ watch(localOptions, (newOptions) => {
   emits("update:options", newOptions);
 });
 </script>
+
+<style scoped>
+</style>

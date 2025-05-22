@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-200 dark:bg-customGray_shallow p-30 hover:shadow-md " :class="isActive ? 'bg-base-300' : ''">
+  <div class="bg-base-200 dark:bg-customGray_shallow p-30 hover:shadow-md " :class="isActive? 'bg-base-300' : ''">
     <div class="flex justify-between">
       <div class="flex-col">
         <div class="flex items-center gap-20">

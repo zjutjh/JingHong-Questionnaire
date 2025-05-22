@@ -179,3 +179,7 @@ watch(localOptions, (newOptions) => {
 });
 
 </script>
+
+<style scoped>
+
+</style>

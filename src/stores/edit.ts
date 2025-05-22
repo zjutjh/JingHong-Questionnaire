@@ -8,7 +8,6 @@ import { QuesItemType, QuesStatus, QuesType } from "@/utilities/constMap.ts";
 import { Question, Option } from "@/utilities/type.ts";
 import { quesSettingMap } from "@/utilities/quesSettingMap.ts";
 import { deepSnakeToCamel } from "@/utilities/deepSnakeToCamel.ts";
-import { quesError } from "@/utilities/addQuesValidata";
 
 /**
  * 返回默认的问卷 schema

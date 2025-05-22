@@ -16,9 +16,7 @@
             <Plus />
           </el-icon>
         </el-upload>
-        <el-input
-          v-model="item.content"
-        />
+        <el-input v-model="item.content"/>
         <el-button
           v-if="schema.quesConfig.questionList[0].options.length > 1"
           type="danger"

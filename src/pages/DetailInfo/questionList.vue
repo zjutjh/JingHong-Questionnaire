@@ -294,4 +294,4 @@ const saveEdit = () => {
     }
   });
 };
-</script>@/stores/validate@/pages/DetailInfo/validate
+</script>

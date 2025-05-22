@@ -20,9 +20,7 @@
     <div class="divider" />
     <div class="flex-col p-5 overflow-y-auto h-160">
       <el-upload action="#" list-type="picture-card" :auto-upload="false">
-        <el-icon>
-          <Plus />
-        </el-icon>
+        <el-icon><Plus /></el-icon>
       </el-upload>
     </div>
     <!-- <div class="divider" />
@@ -86,4 +84,6 @@ watch(localUnique, (newUnique) => {
 
 </script>
 
-<style scoped></style>@/utilities/addQuesValidata
+<style scoped>
+
+</style>
