@@ -20,7 +20,8 @@ function defaultSchema() {
       endTime: "",
       dayLimit: 1,
       verify: false,
-      sumLimit: 1
+      sumLimit: 1,
+      undergradOnly: false // 是否仅本科生
     },
     quesConfig: {
       title: "投票标题",
