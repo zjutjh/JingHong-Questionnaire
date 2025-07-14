@@ -20,7 +20,8 @@ function defaultSchema() {
       startTime: "",
       endTime: "",
       dayLimit: 0,
-      verify: false
+      verify: false,
+      undergradOnly: false // 是否仅本科生
     },
     quesConfig: {
       title: "",
