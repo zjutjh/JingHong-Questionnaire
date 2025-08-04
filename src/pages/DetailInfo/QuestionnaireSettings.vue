@@ -82,6 +82,16 @@
             </el-tooltip>
           </div>
         </div>
+        <div class="w-full px-2">
+          <div class="flex items-center mt-6 mb-2.5 space-x-8">
+            <span class="ml-30 mt-20 mb-20 mr-15 w-100">是否仅本科生</span>
+            <div class="flex items-center space-x-4">
+              <el-checkbox v-model="schema.baseConfig.undergradOnly" @click="console.log(schema)">
+                是
+              </el-checkbox>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

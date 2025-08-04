@@ -221,8 +221,8 @@
         </template>
         <template v-else #default>
           <div class="flex-col">
-            <div class="text-sm">
-              该问卷仅限校内本科生作答,提交前需要先进行<span class="font-bold">统一身份认证</span>
+            <div v-if="showData?.baseConfig.undergradOnly" class="text-sm">
+              该问卷仅限校内{{ showData?.baseConfig.undergradOnly ? '本科生':'学生' }}作答,提交前需要先进行<span class="font-bold">统一身份认证</span>
             </div>
             <div class="flex-col gap-10 mt-10">
               <span class="flex gap-10 text-sm items-center"><span class="w-110 flex justify-end">职工号/学号</span> <el-input v-model="verifyData.stu_id" :disabled="disabledInput" /></span>
@@ -415,7 +415,7 @@ const getQuestionnaireView = async () => {
           answer: ""
         }));
 
-        console.log(showData.value);
+        // console.log(showData.value);
 
         if (showData.value.surveyType === QuesType.VOTE) {
           try {
