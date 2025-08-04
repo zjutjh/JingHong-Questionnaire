@@ -415,7 +415,7 @@ const getQuestionnaireView = async () => {
           answer: ""
         }));
 
-        console.log(showData.value);
+        // console.log(showData.value);
 
         if (showData.value.surveyType === QuesType.VOTE) {
           try {

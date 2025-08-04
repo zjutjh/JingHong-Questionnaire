@@ -21,7 +21,8 @@ function defaultSchema() {
       endTime: "",
       dayLimit: 0,
       verify: false,
-      undergradOnly: false // 是否仅本科生
+      /** 是否仅本科生 */
+      undergradOnly: false
     },
     quesConfig: {
       title: "",
