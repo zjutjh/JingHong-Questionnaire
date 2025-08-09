@@ -103,7 +103,7 @@ import { useEditVoteStore } from "@/stores/voteEdit.ts";
 import { QuesStatus, SurveyType } from "@/utilities/constantMap.ts";
 import { useClipboard } from "@vueuse/core";
 
-const baseURL = import.meta.env.VITE_COPY_LINK;
+const baseURL = window.location.origin;
 const tempStore = useMainStore().useTempStore();
 const props = defineProps<{
   title: string,
