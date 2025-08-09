@@ -20,7 +20,7 @@
           </li>
           <li
             v-show="loginStore.loginSession"
-            @click="router.push('/login'); loginStore.setLogin(false); ElNotification.success('登出成功')"
+            @click="router.push('/admin/login'); loginStore.setLogin(false); ElNotification.success('登出成功')"
           >
             <a>登出</a>
           </li>
