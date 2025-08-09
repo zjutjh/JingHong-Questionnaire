@@ -128,4 +128,5 @@
 <script setup lang="ts">
 import { useEditVoteStore } from "@/stores/voteEdit.ts";
 const { schema } = useEditVoteStore();
+// console.log(schema);
 </script>

@@ -4,8 +4,8 @@ import { getQuestionnaireDetailAPI } from "@/apis";
 import { closeLoading, startLoading } from "@/utilities";
 import { ElNotification } from "element-plus";
 import { defineStore } from "pinia";
-import { QuesStatus, QuesType } from "@/utilities/constMap.ts";
 import { deepSnakeToCamel } from "@/utilities/deepSnakeToCamel.ts";
+import { dayjs } from "element-plus";
 
 const VOTE = 1;
 /**
@@ -13,11 +13,11 @@ const VOTE = 1;
  */
 function defaultSchema() {
   return {
-    status: QuesStatus.DRAFT,
-    surveyType: QuesType.VOTE,
+    startTime: dayjs().format("YYYY-MM-DDTHH:mm:ssZ"),
+    endTime: dayjs().add(1, "week").format("YYYY-MM-DDTHH:mm:ssZ"),
     baseConfig: {
-      startTime: "",
-      endTime: "",
+      startTime: dayjs().format("YYYY-MM-DDTHH:mm:ssZ"),
+      endTime: dayjs().add(1, "week").format("YYYY-MM-DDTHH:mm:ssZ"),
       dayLimit: 1,
       verify: false,
       sumLimit: 1,
