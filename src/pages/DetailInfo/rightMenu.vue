@@ -41,7 +41,6 @@
 
       <div class="pt-16">
         <el-input
-          v-if="questionList[activeSerial-1]?.description"
           v-model="questionList[activeSerial-1].description"
           style="width: 240px"
           placeholder="Please input"

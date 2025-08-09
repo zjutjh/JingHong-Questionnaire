@@ -313,7 +313,7 @@ const isOutDate = ref(false);
 const verifyData = ref({
   stu_id: "",
   password: "",
-  survey_id: -1
+  id: -1
 });
 const optionStore = useMainStore().useOptionStore();
 const questionnaireStore = useMainStore().useQuetionnaireStore();
@@ -327,7 +327,7 @@ onMounted(async () => {
     idParam = idParam.replace(/ /g, "+");
     decryptedId.value = decryptId(idParam) as string | null;
     // console.log(decryptedId.value)
-    verifyData.value.survey_id = Number(decryptedId.value);
+    verifyData.value.id = Number(decryptedId.value);
     if (decryptedId.value === "") {
       ElNotification.error("无效的问卷id");
     }

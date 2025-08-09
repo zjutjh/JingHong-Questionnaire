@@ -8,6 +8,7 @@ import { QuesItemType, QuesStatus, QuesType } from "@/utilities/constMap.ts";
 import { Question, Option } from "@/utilities/type.ts";
 import { quesSettingMap } from "@/utilities/quesSettingMap.ts";
 import { deepSnakeToCamel } from "@/utilities/deepSnakeToCamel.ts";
+import { dayjs } from "element-plus";
 
 /**
  * 返回默认的问卷 schema
@@ -17,8 +18,8 @@ function defaultSchema() {
     status: QuesStatus.DRAFT,
     surveyType: QuesType.SURVEY,
     baseConfig: {
-      startTime: "",
-      endTime: "",
+      startTime: dayjs().format("YYYY-MM-DDTHH:mm:ssZ"),
+      endTime: dayjs().add(1, "week").format("YYYY-MM-DDTHH:mm:ssZ"),
       dayLimit: 0,
       verify: false,
       /** 是否仅本科生 */
