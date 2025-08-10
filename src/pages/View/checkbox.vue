@@ -4,49 +4,74 @@
       <div class="flex-col">
         <div class="flex items-center gap-20">
           <span class="lg:text-xl md:text-md">{{ props.serial_num }}</span>
-          <span class="lg:text-xl md:text-md flex gap-5 items-center" >{{ props.title }}
+          <span class="lg:text-xl md:text-md flex gap-5 items-center">{{ props.title }}
             <el-tag type="primary" class="ml-5">多选</el-tag>
-            <el-tag type="warning" v-if="!required">选答</el-tag>
-            <el-tag type="danger" v-if="localUnique">唯一</el-tag>
+            <el-tag v-if="!required" type="warning">选答</el-tag>
+            <el-tag v-if="localUnique" type="danger">唯一</el-tag>
           </span>
         </div>
         <div class="flex items-center mt-15 ml-10">
-          <pre  class="text-sm text-gray-500 break-all">{{ props.describe }}</pre>
+          <pre class="text-sm text-gray-500 break-all">{{ props.describe }}</pre>
         </div>
       </div>
-      <div class="flex-col justify-center items-center">
-      </div>
+      <div class="flex-col justify-center items-center" />
     </div>
-    <div class="divider my-5"></div>
+    <div class="divider my-5" />
     <div class="flex-col p-5 h-auto">
-      <span class="dark:opacity-80 text-gray-700 dark:text-gray-400 text-sm my-5" v-if="props.minimum_option !== 0">最少选 {{ props.minimum_option }} 个&ensp;</span>
-      <span class="dark:opacity-80 text-gray-700 dark:text-gray-400 text-sm my-5" v-if="props.maximum_option !== 0">最多选 {{ props.maximum_option }} 个</span>
+      <span v-if="props.minimum_option !== 0" class="dark:opacity-80 text-gray-700 dark:text-gray-400 text-sm my-5">最少选 {{ props.minimum_option }} 个&ensp;</span>
+      <span v-if="props.maximum_option !== 0" class="dark:opacity-80 text-gray-700 dark:text-gray-400 text-sm my-5">最多选 {{ props.maximum_option }} 个</span>
       <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
-        <input type="checkbox" :name="props.serial_num" class="my-5" style="zoom: 140%" :value="item.content" v-model="answerArr"/>
-        <span v-if="item.content" class="text-sm">{{ item.content }}</span>
+        <el-checkbox
+          v-model="answerArr"
+          :name="props.serial_num"
+          class="my-5"
+          style="zoom: 110%; width: 100%"
+          :value="item.content"
+          :label="item.content"
+          :disabled="isOptionDisabled && !answerArr.includes(item.content)"
+        />
         <div class="ml-10 flex items-center gap-20">
           <div v-if="item.img" class="mt-4">
-            <img v-if="item.img" :src="item.img" alt="Preview" style="max-width: 150px; max-height: 150px;" />
+            <img
+              v-if="item.img"
+              :src="item.img"
+              alt="Preview"
+              style="max-width: 150px; max-height: 150px;"
+            >
           </div>
         </div>
       </div>
-      <div class="flex gap-10 mt-10" v-if="localOtherOption">
-        <input ref="otherCheckbox" type="checkbox" :name="props.serial_num" class="my-5" style="zoom: 140%" :value="otherAnswer" v-model="otherAnswerChecked"/>
-        <input type="text" class="input-sm w-150" placeholder="其他" v-model="otherAnswer" @input="updateOtherAnswer"  />
+      <div v-if="localOtherOption" class="flex gap-10 items-center">
+        <el-checkbox
+          ref="otherCheckbox"
+          v-model="otherAnswerChecked"
+          :disabled="!otherAnswer || (!otherAnswerChecked && isOptionDisabled)"
+          :name="props.serial_num"
+          class="my-5"
+          style="zoom: 110%"
+          :value="otherAnswer"
+        />
+        <input
+          v-model="otherAnswer"
+          type="text"
+          class="input-sm w-150 border border-gray-300"
+          placeholder="其他"
+          :disabled="otherAnswerChecked"
+          @input="updateOtherAnswer"
+        >
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useMainStore } from '@/stores';
-import { ref, watch, defineProps, defineEmits, computed, onMounted } from 'vue'
+import { useMainStore } from "@/stores";
+import { ref, watch, defineProps, defineEmits, computed, onMounted } from "vue";
 
-const optionStore = useMainStore().useOptionStore()
-
+const optionStore = useMainStore().useOptionStore();
 
 const props = defineProps<{
-  questionnaireID:string
+  questionnaireID: string
   serial_num: number,
   title?: string,
   required: boolean,
@@ -66,22 +91,22 @@ const props = defineProps<{
 const localUnique = ref<boolean>(props.unique);
 const localOtherOption = ref<boolean>(props.otherOption);
 const localOptions = ref(props.options ? [...props.options] : []);
-const otherAnswer = ref<string>(optionStore.search(props.questionnaireID,props.serial_num));
-const answerArr = ref<string[]>(props.answer ? props.answer.split('┋') : []);
+const otherAnswer = ref<string>(optionStore.search(props.questionnaireID, props.serial_num));
+const answerArr = ref<string[]>(props.answer ? props.answer.split("┋") : []);
 // console.log(answerArr)
-const emits = defineEmits(['update:answer']);
-const otherAnswerChecked = ref(false)
+const emits = defineEmits(["update:answer"]);
+const otherAnswerChecked = ref(false);
 const otherCheckbox = ref<HTMLInputElement | null>(null);
 
 // console.log(answerArr.value + ' '+ otherAnswer.value)
 
 onMounted(() => {
-    if(answerArr.value.includes(otherAnswer.value)){
-      // console.log("111")
-      otherAnswerChecked.value = true
-    }
+  if (answerArr.value.includes(otherAnswer.value)) {
+    // console.log("111")
+    otherAnswerChecked.value = true;
   }
-)
+}
+);
 
 // console.log(otherAnswerChecked.value)
 const deleteOldAnswer = () => {
@@ -89,7 +114,7 @@ const deleteOldAnswer = () => {
   if (otherIndex !== -1) {
     answerArr.value.splice(otherIndex, 1);
   }
-}
+};
 
 const updateOtherAnswer = (event: Event) => {
   if (otherCheckbox.value && otherCheckbox.value.checked) {
@@ -101,46 +126,46 @@ const updateOtherAnswer = (event: Event) => {
 };
 
 const filteredAnswerArr = computed(() => {
-  return answerArr.value.filter(answer => answer !== '');
-})
+  const answers = [...answerArr.value];
+  if (otherAnswer.value && otherAnswerChecked.value) {
+    answers.push(otherAnswer.value);
+  }
+  return answers.filter(answer => answer !== "");
+});
 
 watch(filteredAnswerArr, () => {
   if (otherCheckbox.value && otherCheckbox.value.checked && !answerArr.value.includes(otherAnswer.value)) {
-    answerArr.value.push(otherAnswer.value)
+    answerArr.value.push(otherAnswer.value);
   }
   // console.log(filteredAnswerArr.value)
   // console.log(otherAnswerChecked.value)
-  const combinedAnswers = filteredAnswerArr.value.join('┋');
-  emits('update:answer', combinedAnswers);
+  const combinedAnswers = filteredAnswerArr.value.join("┋");
+  emits("update:answer", combinedAnswers);
 });
 
-
 watch(otherAnswer, (newOtherAnswer, oldOtherAnswer) => {
-  if(newOtherAnswer){
-    optionStore.update(props.questionnaireID,props.serial_num,newOtherAnswer)
+  if (newOtherAnswer) {
+    optionStore.update(props.questionnaireID, props.serial_num, newOtherAnswer);
   }
-  if (newOtherAnswer !== oldOtherAnswer && otherCheckbox.value && otherCheckbox.value.checked) {
-    const otherIndex = answerArr.value.indexOf(oldOtherAnswer);
-    if (otherIndex !== -1) {
-      answerArr.value.splice(otherIndex, 1);
-    }
+
+  const otherIndex = answerArr.value.indexOf(oldOtherAnswer);
+  if (otherIndex !== -1) {
+    answerArr.value.splice(otherIndex, 1);
+  }
+
+  if (otherAnswerChecked.value && newOtherAnswer) {
     answerArr.value.push(newOtherAnswer);
   }
-})
 
-watch(otherAnswerChecked,() => {
-  if(otherAnswerChecked.value) {
-    if (!answerArr.value.includes(otherAnswer.value)) {
-      answerArr.value.push(otherAnswer.value);
-    }
-  }
-  if (!otherAnswerChecked.value) {
-    if (answerArr.value.includes(otherAnswer.value)) {
-      deleteOldAnswer()
-    }
-  }
-})
+  emits("update:answer", answerArr.value.join("┋"));
+});
+
+const isOptionDisabled = computed(() => {
+  const totalCount = filteredAnswerArr.value.length;
+  return props.maximum_option !== 0 && totalCount >= props.maximum_option;
+});
 </script>
 
 <style scoped>
+
 </style>

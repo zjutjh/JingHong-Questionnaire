@@ -6,7 +6,7 @@ const updateQuestionnaireStatusAPI = (data: {
 }) => {
   return request("/api/admin/update/status", {
     data: data,
-    method: "PUT",
+    method: "PUT"
   });
 };
 

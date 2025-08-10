@@ -7,25 +7,25 @@
           <span class="lg:text-xl md:text-md flex gap-5 items-center">
             {{ title }}
             <el-tag type="primary" class="ml-5">论述</el-tag>
-            <el-tag type="warning" v-if="!required">选答</el-tag>
-            <el-tag type="danger" v-if="unique">唯一</el-tag>
+            <el-tag v-if="!required" type="warning">选答</el-tag>
+            <el-tag v-if="unique" type="danger">唯一</el-tag>
           </span>
         </div>
         <div class="flex items-center mt-15 ml-10">
           <pre class="text-sm text-gray-500 " style="overflow-wrap: break-word;">{{ describe }}</pre>
         </div>
       </div>
-      <div class="flex-col justify-center items-center"></div>
+      <div class="flex-col justify-center items-center" />
     </div>
-    <div class="divider my-5"></div>
+    <div class="divider my-5" />
     <div class="flex-col p-5 h-auto">
-      <textarea placeholder="请输入答案" class="textarea textarea-bordered shadow-md w-full h-100 dark:bg-customGray_more_shallow" v-model="localAnswer" />
+      <textarea v-model="localAnswer" placeholder="请输入答案" class="textarea textarea-bordered shadow-md w-full h-100 dark:bg-customGray_more_shallow" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits } from 'vue';
+import { ref, watch, defineProps, defineEmits } from "vue";
 
 const props = defineProps({
   serial_num: Number,
@@ -33,23 +33,21 @@ const props = defineProps({
   required: Boolean,
   unique: Boolean,
   describe: String,
-  answer: String,
+  answer: String
 });
 
-const emits = defineEmits(['update:answer']);
+const emits = defineEmits(["update:answer"]);
 
 const localAnswer = ref(props.answer);
 
 watch(localAnswer, (newAnswer) => {
-  emits('update:answer', newAnswer);
+  emits("update:answer", newAnswer);
 });
 
 </script>
 
 <style scoped>
 </style>
-
-
 
 <style scoped>
 pre {
