@@ -32,7 +32,7 @@ export const useQrCode = (url: string) => {
       const blob = await response.blob();
       const tempItem = new ClipboardItem({ [blob.type]: blob });
       await navigator.clipboard.write([tempItem]);
-      showModal("QRcode", true);
+      showModal("showQRcodeModal", true);
       ElMessage({
         message: "二维码复制成功",
         type: "success"
