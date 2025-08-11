@@ -8,7 +8,7 @@
     <div v-if="state === 'edit'" class="bg-base-200 min-w-900  overflow-y-auto flex flex-col justify-center ">
       <div class="p-20">
         <div class="flex justify-center items-center flex-col gap-10">
-          <input v-model="schema.quesConfig.title" class="input bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-2xl w-[80%] text-center" placeholder="投票标题">
+          <input v-model="schema.quesConfig.title" :class="['input bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-2xl w-[80%] text-center', titleError ? 'border-red-500 border-2 transition-all duration-300' : '']" placeholder="投票标题">
           <textarea v-model="schema.quesConfig.desc" class=" textarea bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-md w-[80%] resize-none" placeholder="投票描述" />
         </div>
       </div>
@@ -17,7 +17,7 @@
         <el-button class="flex-1" @click="submit(1)">
           保存
         </el-button>
-        <el-button class="flex-1 " @click="voteId === -1 ? submit(2) : saveEdit()">
+        <el-button class="flex-1 " @click="voteValidator(schema) && (voteId === -1 ? submit(2) : saveEdit())">
           发布
         </el-button>
       </div>
@@ -37,10 +37,13 @@ import { closeLoading, startLoading } from "@/utilities";
 import { ElNotification } from "element-plus";
 import router from "@/router";
 import VoteSetting from "@/pages/addVote/voteSetting.vue";
+import { useValidator } from "../DetailInfo/validate";
 import { storeToRefs } from "pinia";
 
 const { resetSchema, voteId } = useEditVoteStore();
 const { schema } = storeToRefs(useEditVoteStore());
+const { titleError, voteValidator } = useValidator();
+
 const state = ref("edit");
 const saveEdit = () => {
   useRequest(() => setQuestionnaireDetailAPI(deepCamelToSnake(schema.value)), {
