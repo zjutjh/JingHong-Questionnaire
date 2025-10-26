@@ -1,3 +1,4 @@
+//和setNewQuestionnaireDetailApi重复了
 import { request } from "@/apis/axios";
 import { deepCamelToSnake } from "@/utilities/deepCamelToSnake";
 
