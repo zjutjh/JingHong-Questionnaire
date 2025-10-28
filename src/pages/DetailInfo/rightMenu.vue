@@ -100,6 +100,7 @@ import { basicReg } from "@/utilities/regs";
 import { storeToRefs } from "pinia";
 
 const typeChinese = {
+  0: "",
   1: "单项选择题",
   2: "多项选择题",
   3: "单行输入框",
@@ -123,7 +124,7 @@ const questionList = computed({
   }
 });
 
-const currentType = computed<number>(() => {
+const currentType = computed<QuesItemType>(() => {
   if (activeSerial.value === -1) {
     return 0;
   } else {
