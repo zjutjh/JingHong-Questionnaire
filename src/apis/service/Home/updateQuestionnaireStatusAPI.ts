@@ -1,9 +1,8 @@
 import { request } from "@/apis/axios";
+import { UpdateQuestionnaireStatusRequest, UpdateQuestionnaireStatusResponse } from "@/apis/types/Home/updateQuestionnaireStatusTypes";
 
-const updateQuestionnaireStatusAPI = (data: {
-  id: number,
-  status: 1 | 2,
-}) => {
+const updateQuestionnaireStatusAPI = (data: UpdateQuestionnaireStatusRequest):
+  Promise<UpdateQuestionnaireStatusResponse> => {
   return request("/api/admin/update/status", {
     data: data,
     method: "PUT"
