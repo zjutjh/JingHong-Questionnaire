@@ -9,7 +9,7 @@
             v-model="localTitle"
             type="text"
             placeholder="Question"
-            class="rounded-none focus:outline-none dark:bg-customGray_more_shallow input input-bordered shadow-md w-350"
+            class="questionCheckboxName w-350"
           >
           <div v-else class="w-350">
             {{ localTitle }}
@@ -25,7 +25,7 @@
           <input
             v-model="item.content"
             type="text"
-            class="rounded-none focus:outline-none dark:bg-customGray_more_shallow input input-bordered h-40 shadow-md"
+            class="questionCheckboxName h-40"
             placeholder="option"
           >
           <div class="ml-10 flex items-center gap-20">
@@ -181,5 +181,7 @@ watch(localOptions, (newOptions) => {
 </script>
 
 <style scoped>
-
+.questionCheckboxName {
+  @apply rounded-none focus:outline-none dark:bg-customGray_more_shallow input input-bordered shadow-md
+}
 </style>

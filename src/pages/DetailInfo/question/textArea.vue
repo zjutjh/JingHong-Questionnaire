@@ -9,7 +9,7 @@
             v-model="localTitle"
             type="text"
             placeholder="Question"
-            class="rounded-none focus:outline-none dark:bg-customGray_more_shallow input input-bordered shadow-md w-350"
+            class="qestionTextInput input input-bordered w-350"
           >
           <div v-else class="w-350">
             {{ localTitle }}
@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="divider" />
-    <textarea placeholder="Type here" class="rounded-none focus:outline-none dark:bg-customGray_more_shallow textarea textarea-bordered shadow-md w-full h-100" />
+    <textarea placeholder="Type here" class="qestionTextInput textarea textarea-bordered w-full h-100" />
     <!-- <div class="divider" />
     <div class="mt-20 flex justify-evenly items-center ">
       <button class="btn btn-error dark:opacity-75 shadow-md dark:text-white" @click="$emit('on-click')">
@@ -80,4 +80,7 @@ watch(localUnique, (newUnique) => {
 </script>
 
 <style scoped>
+.qestionTextInput {
+  @apply rounded-none focus:outline-none dark:bg-customGray_more_shallow shadow-md
+}
 </style>
