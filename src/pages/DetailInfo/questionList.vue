@@ -3,8 +3,8 @@
     <div v-if="mode === 'ques'" class="bg-base-200 dark:bg-customGray flex-1  overflow-y-auto h-[80vh]">
       <div v-if="schema && schema.quesConfig" class="flex-col justify-center p-20 pb-0">
         <div class="flex justify-center items-center flex-col gap-10">
-          <input v-model="schema.quesConfig.title" class="input bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-2xl w-[100%] text-center dark:bg-customGray" placeholder="问卷标题">
-          <textarea v-model="schema.quesConfig.desc" class=" textarea bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-md w-[100%] resize-none dark:bg-customGray" placeholder="问卷描述" />
+          <input v-model="schema.quesConfig.title" class="input questionHeader text-2xl text-center" placeholder="问卷标题">
+          <textarea v-model="schema.quesConfig.desc" class=" textarea questionHeader text-md resize-none" placeholder="问卷描述" />
         </div>
       </div>
       <div class="divider" />
@@ -15,7 +15,7 @@
           @click="activeSerial = q.serialNum"
         >
           <div class="relative flex items-center gap-4 w-full">
-            <div v-if="q.quesSetting.questionType === QuesItemType.RADIO" class="flex-grow w-full">
+            <div v-if="q.quesSetting.questionType === QuesItemType.RADIO" class="qestionItems">
               <el-skeleton animated :loading="loading">
                 <radio
                   v-model:title="q.subject"
@@ -30,7 +30,7 @@
                 />
               </el-skeleton>
             </div>
-            <div v-if="q.quesSetting.questionType === QuesItemType.CHECKBOX" class="flex-grow w-full">
+            <div v-if="q.quesSetting.questionType === QuesItemType.CHECKBOX" class="qestionItems">
               <el-skeleton animated :loading="loading">
                 <template #template>
                   <skeleton-card />
@@ -52,7 +52,7 @@
                 </template>
               </el-skeleton>
             </div>
-            <div v-if="q.quesSetting.questionType === QuesItemType.INPUT" class="flex-grow w-full">
+            <div v-if="q.quesSetting.questionType === QuesItemType.INPUT" class="qestionItems">
               <el-skeleton animated :loading="loading">
                 <template #template>
                   <skeleton-card />
@@ -71,7 +71,7 @@
                 </template>
               </el-skeleton>
             </div>
-            <div v-if="q.quesSetting.questionType === QuesItemType.TEXTAREA" class="flex-grow w-full">
+            <div v-if="q.quesSetting.questionType === QuesItemType.TEXTAREA" class="qestionItems">
               <el-skeleton :loading="loading">
                 <template #template>
                   <skeleton-card />
@@ -89,7 +89,7 @@
                 </template>
               </el-skeleton>
             </div>
-            <div v-if="q.quesSetting.questionType === QuesItemType.PHOTO" class="flex-grow w-full">
+            <div v-if="q.quesSetting.questionType === QuesItemType.PHOTO" class="qestionItems">
               <el-skeleton animated :loading="loading">
                 <template #template>
                   <skeleton-card />
@@ -111,7 +111,7 @@
             <div v-if="q.serialNum === activeSerial" class="flex flex-col gap-10">
               <button
                 v-if="q.serialNum !== 1"
-                class="rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200"
+                class="questionButton"
                 @click.stop="activeMove(activeSerial-1, 'up')"
               >
                 ↑
@@ -119,14 +119,14 @@
 
               <button
                 v-if="q.serialNum !== schema.quesConfig.questionList.length"
-                class="rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200"
+                class="questionButton"
                 @click.stop="activeMove(activeSerial-1, 'down')"
               >
                 ↓
               </button>
 
               <button
-                class="rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200"
+                class="questionButton"
                 @click.stop="activeDelete(activeSerial-1)"
               >
                 x
@@ -139,7 +139,7 @@
     <div class="flex justify-center items-center gap-10 mt-10">
       <button
         v-show="isNew === 'true'"
-        class="btn dark:opacity-75 dark:text-white btn-sm flex-1 bg-red-100 hover:bg-red-200 hover:border-red-300"
+        class="btn btn-sm qestionActionButton"
         style="border-radius: 0"
         @click="showModal('SaveQuestionnaireSubmit')"
       >
@@ -147,7 +147,7 @@
       </button>
       <button
         v-show="isNew === 'true'"
-        class="btn btn-sm dark:opacity-75 dark:text-white flex-1 hover:bg-red-200 bg-red-100 hover:border-red-300"
+        class="btn btn-sm qestionActionButton"
         style="border-radius: 0"
         @click="showModal(surveyId === -1?'NewQuestionnaireSubmit':'SaveQuestionnaireSubmit')"
       >
@@ -289,3 +289,18 @@ const saveEdit = () => {
   });
 };
 </script>
+
+<style scoped>
+.questionButton {
+  @apply rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200;
+}
+.questionHeader {
+  @apply bg-base-200 flex focus:bg-base-100 hover:border-gray-300 w-[100%] dark:bg-customGray
+}
+.qestionItems {
+  @apply flex-grow w-full
+}
+.qestionActionButton {
+  @apply dark:opacity-75 dark:text-white flex-1 hover:bg-red-200 bg-red-100 hover:border-red-300
+}
+</style>

@@ -9,7 +9,7 @@
             v-model="localTitle"
             type="text"
             placeholder="Question"
-            class="dark:bg-customGray_more_shallow input rounded-none h-40  focus:outline-none  w-350"
+            class="h-40 w-350 questionContent"
           >
           <div v-else>
             {{ localTitle }}
@@ -19,7 +19,7 @@
     </div>
     <div class="divider" />
     <div class="flex-col p-5 overflow-y-auto h-60">
-      <input class="dark:bg-customGray_more_shallow input input-bordered rounded-none  focus:outline-none w-full" :placeholder="pal">
+      <input class="input-bordered w-full questionContent" :placeholder="pal">
     </div>
   </div>
 </template>
@@ -100,4 +100,7 @@ const pal = computed(() => {
 </script>
 
 <style scoped>
+.questionContent {
+  @apply dark:bg-customGray_more_shallow input rounded-none focus:outline-none
+}
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col items-center">
-    <div class="w-1/2 bg-gray-100 dark:bg-gray-700 border rounded-sm p-6 mb-20 shadow-md">
+    <div class="mb-20 questionSettings">
       <div class="flex items-center mt-15 ml-5 mb-15 px-10">
         <h3 class="text-lg font-bold">
           时间配置
@@ -32,7 +32,7 @@
       </div>
     </div>
 
-    <div class="w-1/2 bg-gray-100 dark:bg-gray-700 border rounded-sm p-6 mb-5 shadow-md">
+    <div class="mb-5 questionSettings">
       <div class="flex items-center mt-15 ml-5 mb-15 px-10">
         <h3 class="text-lg font-bold">
           作答限制
@@ -57,7 +57,7 @@
       </div>
     </div>
 
-    <div v-if="schema.baseConfig.verify" class="w-1/2 bg-gray-100 dark:bg-gray-700 border rounded-sm p-6 mt-20 shadow-md">
+    <div v-if="schema.baseConfig.verify" class="mt-20 questionSettings">
       <div class="flex items-center mt-15 ml-5 mb-15 px-10">
         <h3 class="text-lg font-bold">
           提交限制
@@ -101,3 +101,9 @@
 import { useEditStore } from "@/stores/edit";
 const { schema } = useEditStore();
 </script>
+
+<style scoped>
+.questionSettings {
+  @apply w-1/2 bg-gray-100 dark:bg-gray-700 border rounded-sm p-6 shadow-md
+}
+</style>
