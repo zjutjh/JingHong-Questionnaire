@@ -149,7 +149,7 @@
         v-show="isNew === 'true'"
         class="btn btn-sm dark:opacity-75 dark:text-white flex-1 hover:bg-red-200 bg-red-100 hover:border-red-300"
         style="border-radius: 0"
-        @click="showModal(surveyId === -1?'NewQuestionnaireSubmit':'SaveQuestionnaireSubmit')"
+        @click="openPublish"
       >
         发布
       </button>
@@ -204,17 +204,15 @@ import { ElNotification } from "element-plus";
 import { showModal, modal } from "@/components";
 import router from "@/router";
 import { useRequest } from "vue-hooks-plus";
-import { setNewQuestionnaireDetailAPI } from "@/apis";
+import { setNewQuestionnaireDetailAPI ,setQuestionnaireDetailAPI } from "@/apis";
 import { closeLoading, startLoading } from "@/utilities";
 import { deepCamelToSnake } from "@/utilities/deepCamelToSnake.ts";
 
 const loading = ref(true);
 
-const { deleteQuestion, moveQuestion, resetSchema, surveyId } = useEditStore();
-
-// console.log(surveyId);
-
-const { schema } = storeToRefs(useEditStore());
+const editStore = useEditStore();
+const { deleteQuestion, moveQuestion, resetSchema } = editStore;
+const { schema, surveyId } = storeToRefs(editStore); // 响应式
 
 watch(schema, (newVal) => {
   if (newVal) {
@@ -241,6 +239,11 @@ const activeDelete = (index: number) => {
 
 const mode = ref("ques");
 
+// 统一控制“发布”按钮弹窗
+const openPublish = () => {
+  showModal(surveyId.value === -1 ? "NewQuestionnaireSubmit" : "SaveQuestionnaireSubmit");
+};
+
 const submit = (state: number) => {
   schema.value.status = state;
   useRequest(() => setNewQuestionnaireDetailAPI(deepCamelToSnake(schema.value)), {
@@ -262,14 +265,39 @@ const submit = (state: number) => {
       ElNotification.error(e);
     },
     onFinally: () => {
-      showModal("SaveQuestionnaireSubmit", true);
+      showModal("NewQuestionnaireSubmit", true); // 关闭对应弹窗
       closeLoading();
     }
   });
 };
 
 const saveEdit = () => {
-  useRequest(() => setNewQuestionnaireDetailAPI(deepCamelToSnake(schema.value)), {
+  // 新建场景的“保存”为创建草稿
+  if (surveyId.value === -1) {
+    schema.value.status = 1;
+    useRequest(() => setNewQuestionnaireDetailAPI(deepCamelToSnake(schema.value)), {
+      onBefore: () => startLoading(),
+      onSuccess(res: any) {
+        if (res.code === 200 && res.msg === "OK") {
+          ElNotification.success("保存成功");
+          router.push("/admin");
+        } else {
+          ElNotification.error(res.msg);
+        }
+      },
+      onError(e) {
+        ElNotification.error(e);
+      },
+      onFinally: () => {
+        showModal("SaveQuestionnaireSubmit", true);
+        closeLoading();
+      }
+    });
+    return;
+  }
+
+  // 编辑场景才走更新
+  useRequest(() => setQuestionnaireDetailAPI(deepCamelToSnake(schema.value)), {
     onBefore: () => startLoading(),
     onSuccess(res: any) {
       if (res.code === 200 && res.msg === "OK") {
