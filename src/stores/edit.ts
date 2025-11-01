@@ -38,7 +38,10 @@ function defaultSchema() {
             required: true,
             unique: false,
             otherOption: false,
-            questionType: QuesItemType.RADIO
+            questionType: QuesItemType.RADIO,
+            minimumOption: 1,
+            maximumOption: 1,
+            reg: "^.*$"
           },
           options: [
             {
