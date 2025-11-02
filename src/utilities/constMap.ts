@@ -10,11 +10,13 @@ enum QuesType {
 }
 
 enum QuesItemType {
+  UNDEFINED = 0,
   RADIO = 1,
   CHECKBOX = 2,
   INPUT = 3,
   TEXTAREA = 4,
-  PHOTO = 5
+  PHOTO = 5,
+  VOTE = 6
 }
 
 export {
