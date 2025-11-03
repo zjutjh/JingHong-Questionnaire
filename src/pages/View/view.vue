@@ -462,7 +462,7 @@ const checkAnswer = () => {
       if (q.answer.split("┋").length > q.quesSetting.maximumOption) {
         ElNotification.error(`该投票最多只能选择${q.quesSetting.maximumOption}个选项`);
       } else if (q.answer.split("┋").length < q.quesSetting.minimumOption) {
-        ElNotification.error(`该投票最少需要选择${q.quesSetting.maximumOption}个选项`);
+        ElNotification.error(`该投票最少需要选择${q.quesSetting.minimumOption}个选项`);
       }
       return true;
     }
