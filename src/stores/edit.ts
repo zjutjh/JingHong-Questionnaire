@@ -10,6 +10,23 @@ import { quesSettingMap } from "@/utilities/quesSettingMap.ts";
 import { deepSnakeToCamel } from "@/utilities/deepSnakeToCamel.ts";
 import { dayjs } from "element-plus";
 
+interface Schema {
+  status: QuesStatus;
+  surveyType: QuesType;
+  baseConfig: {
+    startTime: string;
+    endTime: string;
+    dayLimit: number;
+    verify: boolean;
+    undergradOnly: boolean;
+  };
+  quesConfig: {
+    title: string;
+    desc: string;
+    questionList: Question[]; // 已包含img字段的Question数组
+  };
+}
+
 /**
  * 返回默认的问卷 schema
  */
@@ -60,7 +77,7 @@ function defaultSchema() {
   };
 }
 function useInitializeSchema(surveyId: Ref<number>) {
-  const schema = ref(defaultSchema());
+ const schema = ref(defaultSchema()) as Ref<Schema>;
   const { run } = useRequest(() => getQuestionnaireDetailAPI({ id: surveyId.value }), {
     manual: true,
     onBefore: () => startLoading(),
