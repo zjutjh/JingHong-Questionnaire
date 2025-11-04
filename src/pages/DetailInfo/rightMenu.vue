@@ -2,7 +2,7 @@
   <div class="bg-base-100 flex-1">
     <!-- 题型显示 -->
     <div class="flex bg-base-200 w-full opacity-0.6 items-center" style="height: 4vh;">
-      <div v-if="activeSerial!==-1" class="text-red-400 pl-16 text-sm">
+      <div v-if="questionList[activeSerial-1]" class="text-red-400 pl-16 text-sm">
         {{ typeChinese[currentType] }}
       </div>
     </div>
@@ -10,7 +10,7 @@
     <!-- 垂直间距 -->
     <div class="w-full" style="height: 2vh;" />
 
-    <div v-if="activeSerial!==-1" class="pl-16">
+    <div v-if="questionList[activeSerial-1]" class="pl-16">
       <!-- 所有题型通用 -->
       <div class="text-sm font-medium">
         基础配置
