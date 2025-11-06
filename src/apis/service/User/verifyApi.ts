@@ -1,18 +1,8 @@
 import { request } from "@/apis/axios";
-// import CryptoJS from 'crypto-js';
+import { VerifyRequest, VerifyResponse } from "@/apis/types/User/verifyTypes";
 
-/*
-const urlen =
-
-const urlde =
-*/
-// 定义参数的类型
-type verifyData = {
-  stu_id: string,
-  password: string,
-  id: number
-};
-const verifyAPI = (data: verifyData) => {
+const verifyAPI = (data: VerifyRequest):
+  Promise<VerifyResponse> => {
   return request("/api/user/oauth", {
     method: "POST",
     data: data
