@@ -2,7 +2,7 @@
   <div>
     <el-dialog v-model="imgVisible" width="25%" @close="closeImg()">
       <div class="flex justify-center items-center">
-        <img :src="imgSrc" class="large max-w-full h-auto center">
+        <img :src="imgSrc" :key="imgSrc" class="large max-w-full h-auto center">
       </div>
       <!-- <div class="flex justify-end mt-30">
         <button class="btn bg-blue-500 dark-opacity-40 mr-20" @click="copyImgUrl()">复制链接</button>
@@ -42,6 +42,7 @@
             <div v-else>
               <img
                 :src="ans.answers[index]"
+                :key="ans.answers[index]"
                 class="w-16 h-auto md:w-24 lg:w-32"
                 tabindex="0"
                 @click="showImg(ans.answers[index])"
