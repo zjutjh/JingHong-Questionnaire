@@ -208,10 +208,10 @@
           <span class="text-red-950 dark:text-red-500 text-[1.5rem]">提交问卷</span>
         </template>
 
-        <template v-if="showData && !showData.baseConfig.verify || tokenOutDate" #default>
+        <template v-if="(showData && !showData.baseConfig.verify) || tokenOutDate" #default>
           你确认要提交问卷吗?
           <el-button
-            v-if="showData && !showData.baseConfig.verify || tokenOutDate"
+            v-if="(showData && !showData.baseConfig.verify) || tokenOutDate"
             class="btn bg-red-800 text-red-50 w-full hover:bg-red-600 rounded-none h-40 min-h-0 mt-15"
             :disabled="disabledInput"
             @click="submit"
@@ -219,10 +219,17 @@
             确认
           </el-button>
         </template>
-        <template v-else #default>
+      </modal>
+      <modal-no-close
+        modal-id="AuthOnly"
+        white
+        un-rounded
+        no-pb
+      >
+        <template #default>
           <div class="flex-col">
-            <div v-if="showData?.baseConfig.undergradOnly" class="text-sm">
-              该问卷仅限校内{{ showData?.baseConfig.undergradOnly ? '本科生':'学生' }}作答,提交前需要先进行<span class="font-bold">统一身份认证</span>
+            <div v-if="showData && showData.baseConfig && showData.baseConfig.undergradOnly !== undefined" class="text-sm">
+              该问卷仅限校内{{ showData && showData.baseConfig && showData.baseConfig.undergradOnly ? '本科生' : '学生' }}作答,提交前需要先进行<span class="font-bold">统一身份认证</span>
             </div>
             <div class="flex-col gap-10 mt-10">
               <span class="flex gap-10 text-sm items-center"><span class="w-110 flex justify-end">职工号/学号</span> <el-input v-model="verifyData.stu_id" :disabled="disabledInput" /></span>
@@ -240,24 +247,15 @@
           </div>
           <div>
             <el-button
-              v-if="showData && !showData.baseConfig.verify || tokenOutDate"
               class="btn bg-red-800 text-red-50 w-full hover:bg-red-600 rounded-none h-40 min-h-0"
-              :disabled="disabledInput"
-              @click="submit"
-            >
-              确认
-            </el-button>
-            <el-button
-              v-else
-              class="btn bg-red-800 text-red-50 w-full hover:bg-red-600 rounded-none h-40 min-h-0"
-              :disabled="disabledInput"
+              :disabled="disabledInput || !canVerify"
               @click="verify"
             >
               确认
             </el-button>
           </div>
         </template>
-      </modal>
+      </modal-no-close>
     </div>
   </div>
 </template>
@@ -267,7 +265,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useRequest } from "vue-hooks-plus";
 import { getUserAPI, setUserSubmitAPI } from "@/apis";
 import { ElNotification } from "element-plus";
-import { modal, showModal } from "@/components";
+import { modal, showModal, ModalNoClose } from "@/components";
 import radio from "@/pages/View/radio.vue";
 import Checkbox from "@/pages/View/checkbox.vue";
 import Fill from "@/pages/View/fill.vue";
@@ -318,62 +316,73 @@ const verifyData = ref({
 const optionStore = useMainStore().useOptionStore();
 const questionnaireStore = useMainStore().useQuetionnaireStore();
 const disabledInput = ref(false);
-onMounted(async () => {
 
+// 新增：响应式保存本地时间戳，验证成功后更新
+const tokenTimestamp = ref<number>(localStorage.getItem("timestamp") ? Number(localStorage.getItem("timestamp")) : 0);
+
+// 新增/修改：控制认证按钮是否可用（学号/密码非空且有有效问卷 id）
+const canVerify = computed(() => {
+  return verifyData.value.stu_id?.toString().trim() !== "" &&
+         verifyData.value.password?.toString().trim() !== "" &&
+         verifyData.value.id && verifyData.value.id !== -1;
+});
+
+// 修改：tokenOutDate 改为依赖 tokenTimestamp（响应式）
+const tokenOutDate = computed(() => {
+  const lastDate = tokenTimestamp.value;
+  return !!(lastDate && Date.now() - lastDate <= 7 * 24 * 60 * 60 * 1000);
+});
+onMounted(async () => {
   loginStore.setShowHeader(false);
-  let idParam = route.query.id as string | undefined;
+
+  const idParam = route.query.id as string | undefined;
   if (idParam) {
-    // 解密 ID
-    idParam = idParam.replace(/ /g, "+");
-    decryptedId.value = decryptId(idParam) as string | null;
-    // console.log(decryptedId.value)
+    const raw = idParam.replace(/ /g, "+");
+    decryptedId.value = decryptId(raw) as string | null;
     verifyData.value.id = Number(decryptedId.value);
     if (decryptedId.value === "") {
       ElNotification.error("无效的问卷id");
+      return;
     }
   }
-  getQuestionnaireView();
 
-});
+  await getQuestionnaireView(); // ① 先拉配置
 
-const tokenOutDate = computed(() => {
-  const lastDate = localStorage.getItem("timestamp");
-  // 如果没有存储时间戳（首次请求或过期），调用 verifyAPI
-  return !(!lastDate || Date.now() - parseInt(lastDate) > 7 * 24 * 60 * 60 * 1000);
-});
-
-const verify = () => {
-  const lastDate = localStorage.getItem("timestamp");
-  // 如果没有存储时间戳（首次请求或过期），调用 verifyAPI
-  if (!lastDate || Date.now() - parseInt(lastDate) > 7 * 24 * 60 * 60 * 1000) {
-    // 调用 verifyAPI 获取新的 token
-    useRequest(() => verifyAPI(verifyData.value), {
-      onBefore() {
-        disabledInput.value = true;
-        startLoading();
-      },
-      onSuccess(res) {
-        if (res.code === 200) {
-          // 更新 token 和 timestamp
-          localStorage.setItem("token", res.data.token);
-          localStorage.setItem("timestamp", String(Date.now()));
-          submit();
-        } else {
-          ElNotification.error(res.msg);
-        }
-      },
-      onError() {
-        ElNotification.error("请求超时, 请稍后重试");
-      },
-      onFinally() {
-        disabledInput.value = false;
-        closeLoading();
-      }
-    });
-  } else {
-    // 如果 timestamp 存在且未过期，直接调用 submit
-    submit();
+  // ② 再决定要不要弹认证（只在需要认证且 token 过期/不存在时弹窗）
+  if (showData.value?.baseConfig?.verify && !tokenOutDate.value) {
+    showModal("AuthOnly");
   }
+});
+
+const verify = () => { 
+  // 前端可选校验已在其他处保证，这里直接请求
+  useRequest(() => verifyAPI(verifyData.value), {
+    onBefore() {
+      disabledInput.value = true;
+      startLoading();
+    },
+    onSuccess(res) {
+      if (res.code === 200) {
+        // 更新 token 和本地时间戳（同时更新响应式变量）
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("timestamp", String(Date.now()));
+        tokenTimestamp.value = Date.now(); // 更新响应式，触发模板重新判断
+
+        // 认证成功后关闭弹窗
+        showModal("AuthOnly", true);
+        ElNotification.success("认证成功");
+      } else {
+        ElNotification.error(res.msg);
+      }
+    },
+    onError() {
+      ElNotification.error("请求超时, 请稍后重试");
+    },
+    onFinally() {
+      disabledInput.value = false;
+      closeLoading();
+    }
+  });
 };
 
 watch(question, (newQuestions) => {
@@ -395,9 +404,15 @@ const decryptId = (encryptedId) => {
 
 const handleSubmit = () => {
   checkAnswer();
-  if (allowSend.value) {
-    showModal("QuestionnaireSubmit");
+  if (!allowSend.value) return;
+
+  // 若问卷需要统一身份认证，但本地 token 已过期或不存在，先弹认证窗口
+  if (showData.value?.baseConfig?.verify && !tokenOutDate.value) {
+    showModal("AuthOnly");
+    return;
   }
+
+  showModal("QuestionnaireSubmit");
 };
 const getQuestionnaireView = async () => {
   if (decryptedId.value) {
@@ -415,8 +430,7 @@ const getQuestionnaireView = async () => {
           answer: ""
         }));
 
-        // console.log(showData.value);
-
+        
         if (showData.value.surveyType === QuesType.VOTE) {
           try {
             const statRes = await getStatistic({ id: Number(decryptedId.value) });
@@ -485,6 +499,13 @@ const submit = () => {
   if (allowSend.value === false) {
     return;
   }
+
+  // 再次保护：提交前如果需要认证但 token 无效，先弹认证窗口并中断提交
+  if (showData.value?.baseConfig?.verify && !tokenOutDate.value) {
+    showModal("AuthOnly");
+    return;
+  }
+
   ans.value.token = localStorage.getItem("token") ?? "";
   ans.value.questionsList = showData.value.quesConfig.questionList.map((item) => {
     return {
