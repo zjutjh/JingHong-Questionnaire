@@ -9,7 +9,7 @@
             v-model="localTitle"
             type="text"
             placeholder="Question"
-            class="dark:bg-customGray_more_shallow input rounded-none h-40  focus:outline-none  w-350"
+            class="w-350 questionRadioName"
           >
           <div v-else>
             {{ localTitle }}
@@ -24,7 +24,7 @@
         <input
           v-model="item.content"
           type="text"
-          class="dark:bg-customGray_more_shallow input input-bordered h-40 shadow-md rounded-none focus:outline-none"
+          class="input-bordered shadow-md questionRadioName"
           placeholder="option"
         >
         <div class="ml-10 flex items-center gap-20">
@@ -167,4 +167,7 @@ watch(localOptions, (newOptions) => {
 </script>
 
 <style scoped>
+.questionRadioName {
+  @apply dark:bg-customGray_more_shallow input rounded-none h-40 focus:outline-none
+}
 </style>
