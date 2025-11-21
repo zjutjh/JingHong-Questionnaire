@@ -1,10 +1,10 @@
 <template>
-  <div class="bg-base-100 flex-1 ">
+  <div class="bg-base-100 dark:bg-[#1A1A1A] flex-1 ">
     <div class="flex items-center">
       <div class="text-md flex-1 h-40 text-red-400 flex justify-center items-center cursor-pointer">
         题型选择
       </div>
-      <div class="text-md flex-1 text-gray-600 bg-base-200 flex h-40 justify-center items-center cursor-not-allowed ">
+      <div class="text-md flex-1 text-gray-600 bg-base-200 flex h-40 justify-center items-center cursor-not-allowed dark:bg-customGray_shallow dark:text-white">
         敬请期待
       </div>
     </div>
