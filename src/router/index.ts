@@ -50,13 +50,30 @@ const router = createRouter({
     }
   ]
 });
-
+   
 router.beforeEach((to, from, next) => {
   const loginStore = useMainStore().useLoginStore();
   nextTick(() => {
     loginStore.setShowHeader(to.path.startsWith("/admin/"));
   });
-  next();
+
+  if (to.path.startsWith("/admin")) {
+    if (!loginStore.loginSession || !loginStore.isTokenValid) {
+      if (to.path !== "/admin/Login") {
+        next({
+          path: "/admin/Login",
+          query: { redirect: to.fullPath }
+        });
+      } else
+        next();
+    } else {
+      if (to.path === "/admin/Login")
+        next("/admin");
+      else
+        next();
+    }
+  } else
+    next();
 });
 
 export default router;

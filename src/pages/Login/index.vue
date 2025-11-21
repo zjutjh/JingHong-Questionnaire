@@ -66,11 +66,13 @@ import { loginAPI } from "@/apis";
 import { ElNotification } from "element-plus";
 import { useMainStore } from "@/stores";
 import router from "@/router";
+import { useRoute } from "vue-router";
 import { closeLoading, startLoading } from "@/utilities";
 
 const password = ref<string>("");
 const username = ref<string>("");
 const loginStore = useMainStore().useLoginStore();
+const route = useRoute();
 
 onMounted(() => {
   loginStore.setShowHeader(true);
@@ -85,7 +87,14 @@ const send = () => {
       if (res.code === 200) {
         ElNotification.success("登录成功");
         loginStore.setLogin(true);
-        router.push("/admin");
+        localStorage.setItem("timestamp", String(Date.now()));
+        const redirect = route.query.redirect as string;
+        
+        Promise.resolve().then(() => {
+          setTimeout(() => {
+            router.push(redirect || "/admin");
+          }, 0);
+        });
       } else {
         ElNotification.error(res.msg);
       }
