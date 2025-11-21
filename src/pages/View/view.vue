@@ -208,7 +208,6 @@
           <span class="text-red-950 dark:text-red-500 text-[1.5rem]">提交问卷</span>
         </template>
 
-        <!-- 修正优先级：保证在 showData 存在且 baseConfig.verify 为 false 时 或 tokenOutDate 为 true 都会渲染完整内容 -->
         <template v-if="(showData && !showData.baseConfig.verify) || tokenOutDate" #default>
           你确认要提交问卷吗?
           <el-button
@@ -241,7 +240,7 @@
               /></span>
             </div>
             <div class="flex justify-end">
-              <a href="https://oauth.zjut.edu.cn/im/V3/securitycenter/findPwd/index.zf " style=" text-decoration: underline;" class="text-sm my-5 text-blue-500 dark:text-white ">
+              <a href="https://oauth.zjut.edu.cn/im/V3/securitycenter/findPwd/index.zf" style=" text-decoration: underline;" class="text-sm my-5 text-blue-500 dark:text-white ">
                 忘记密码?
               </a>
             </div>
@@ -355,7 +354,7 @@ onMounted(async () => {
   }
 });
 
-const verify = () => { // //////11111
+const verify = () => { 
   // 前端可选校验已在其他处保证，这里直接请求
   useRequest(() => verifyAPI(verifyData.value), {
     onBefore() {
@@ -367,7 +366,7 @@ const verify = () => { // //////11111
         // 更新 token 和本地时间戳（同时更新响应式变量）
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("timestamp", String(Date.now()));
-        tokenTimestamp.value = Date.now(); // <- 关键：更新响应式，触发模板重新判断
+        tokenTimestamp.value = Date.now(); // 更新响应式，触发模板重新判断
 
         // 认证成功后关闭弹窗
         showModal("AuthOnly", true);
@@ -431,8 +430,7 @@ const getQuestionnaireView = async () => {
           answer: ""
         }));
 
-        // console.log(showData.value);
-
+        
         if (showData.value.surveyType === QuesType.VOTE) {
           try {
             const statRes = await getStatistic({ id: Number(decryptedId.value) });
