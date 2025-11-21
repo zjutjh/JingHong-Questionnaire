@@ -2,7 +2,7 @@
   <div class="bg-base-100 dark:bg-[#1A1A1A] flex-1">
     <!-- 题型显示 -->
     <div class="flex bg-base-200 dark:bg-customGray_shallow w-full opacity-0.6 items-center" style="height: 4vh;">
-      <div v-if="activeSerial!==-1" class="text-red-400 dark:text-white pl-16 text-sm">
+      <div v-if="questionList[activeSerial - 1]" class="text-red-400 dark:text-white pl-16 text-sm">
         {{ typeChinese[currentType] }}
       </div>
     </div>
@@ -10,7 +10,7 @@
     <!-- 垂直间距 -->
     <div class="w-full" style="height: 2vh;" />
 
-    <div v-if="activeSerial!==-1" class="pl-16">
+    <div v-if="questionList[activeSerial-1]" class="pl-16">
       <!-- 所有题型通用 -->
       <div class="text-sm font-medium">
         基础配置
@@ -42,6 +42,7 @@
       <div class="pt-16">
         <el-input
           v-model="questionList[activeSerial-1].description"
+          type="textarea"
           style="width: 240px"
           placeholder="Please input"
         />
@@ -100,6 +101,7 @@ import { basicReg } from "@/utilities/regs";
 import { storeToRefs } from "pinia";
 
 const typeChinese = {
+  0: "",
   1: "单项选择题",
   2: "多项选择题",
   3: "单行输入框",
@@ -123,7 +125,7 @@ const questionList = computed({
   }
 });
 
-const currentType = computed<number>(() => {
+const currentType = computed<QuesItemType>(() => {
   if (activeSerial.value === -1) {
     return 0;
   } else {
