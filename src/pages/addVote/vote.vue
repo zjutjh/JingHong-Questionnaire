@@ -16,12 +16,12 @@
             <Plus />
           </el-icon>
         </el-upload>
-        <el-input v-model="item.content" />
+        <el-input v-model="item.content"/>
         <el-button
           v-if="schema.quesConfig.questionList[0].options.length > 1"
           type="danger"
           size="small"
-          @click="removeOption(index)"
+          @click="removeOption(index), deleteQuesError"
         >
           删除
         </el-button>
@@ -40,8 +40,10 @@ import { useEditVoteStore } from "@/stores/voteEdit.ts";
 import { useRequest } from "vue-hooks-plus";
 import { saveImgAPI } from "@/apis";
 import { ElNotification } from "element-plus";
+import { useValidator } from "../DetailInfo/validate";
 
 const { schema } = useEditVoteStore();
+const { deleteQuesError } = useValidator();
 
 const handleFileChange = async (file: File, serialNum: number) => {
   if (!file) return;

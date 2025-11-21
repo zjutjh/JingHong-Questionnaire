@@ -3,7 +3,11 @@
     <div v-if="mode === 'ques'" class="bg-base-200 dark:bg-customGray flex-1  overflow-y-auto h-[80vh]">
       <div v-if="schema && schema.quesConfig" class="flex-col justify-center p-20 pb-0">
         <div class="flex justify-center items-center flex-col gap-10">
-          <input v-model="schema.quesConfig.title" class="input bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-2xl w-[100%] text-center dark:bg-customGray" placeholder="问卷标题">
+          <input
+            v-model="schema.quesConfig.title"
+            placeholder="问卷标题"
+            :class="['input bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-2xl w-[100%] text-center dark:bg-customGray', titleError ? 'border-red-500 border-2 transition-all duration-300' : '']"
+          >
           <textarea v-model="schema.quesConfig.desc" class=" textarea bg-base-200 flex focus:bg-base-100 hover:border-gray-300 text-md w-[100%] resize-none dark:bg-customGray" placeholder="问卷描述" />
         </div>
       </div>
@@ -15,7 +19,7 @@
           @click="activeSerial = q.serialNum"
         >
           <div class="relative flex items-center gap-4 w-full">
-            <div v-if="q.quesSetting.questionType === QuesItemType.RADIO" class="flex-grow w-full">
+            <div v-if="q.quesSetting.questionType === QuesItemType.RADIO" :class="['flex-grow w-full', quesError[q.serialNum - 1] ? 'border-red-500 border-2 transition-all duration-300' : '']">
               <el-skeleton animated :loading="loading">
                 <radio
                   v-model:title="q.subject"
@@ -30,7 +34,7 @@
                 />
               </el-skeleton>
             </div>
-            <div v-if="q.quesSetting.questionType === QuesItemType.CHECKBOX" class="flex-grow w-full">
+            <div v-if="q.quesSetting.questionType === QuesItemType.CHECKBOX" :class="['flex-grow w-full', quesError[q.serialNum - 1] ? 'border-red-500 border-2 transition-all duration-300' : '']">
               <el-skeleton animated :loading="loading">
                 <template #template>
                   <skeleton-card />
@@ -52,7 +56,7 @@
                 </template>
               </el-skeleton>
             </div>
-            <div v-if="q.quesSetting.questionType === QuesItemType.INPUT" class="flex-grow w-full">
+            <div v-if="q.quesSetting.questionType === QuesItemType.INPUT" :class="['flex-grow w-full', quesError[q.serialNum - 1] ? 'border-red-500 border-2 transition-all duration-300' : '']">
               <el-skeleton animated :loading="loading">
                 <template #template>
                   <skeleton-card />
@@ -71,7 +75,7 @@
                 </template>
               </el-skeleton>
             </div>
-            <div v-if="q.quesSetting.questionType === QuesItemType.TEXTAREA" class="flex-grow w-full">
+            <div v-if="q.quesSetting.questionType === QuesItemType.TEXTAREA" :class="['flex-grow w-full', quesError[q.serialNum - 1] ? 'border-red-500 border-2 transition-all duration-300' : '']">
               <el-skeleton :loading="loading">
                 <template #template>
                   <skeleton-card />
@@ -89,7 +93,7 @@
                 </template>
               </el-skeleton>
             </div>
-            <div v-if="q.quesSetting.questionType === QuesItemType.PHOTO" class="flex-grow w-full">
+            <div v-if="q.quesSetting.questionType === QuesItemType.PHOTO" :class="['flex-grow w-full', quesError[q.serialNum - 1] ? 'border-red-500 border-2 transition-all duration-300' : '']">
               <el-skeleton animated :loading="loading">
                 <template #template>
                   <skeleton-card />
@@ -127,7 +131,7 @@
 
               <button
                 class="rounded-full w-24 h-24 flex justify-center items-center bg-gray-300 hover:bg-gray-400 text-white transition-colors duration-200"
-                @click.stop="activeDelete(activeSerial-1)"
+                @click.stop="activeDelete(activeSerial-1), deleteQuesError(q.serialNum - 1)"
               >
                 x
               </button>
@@ -149,7 +153,7 @@
         v-show="isNew === 'true'"
         class="btn btn-sm dark:opacity-75 dark:text-white flex-1 hover:bg-red-200 bg-red-100 hover:border-red-300"
         style="border-radius: 0"
-        @click="showModal(surveyId === -1?'NewQuestionnaireSubmit':'SaveQuestionnaireSubmit')"
+        @click="allValidator(schema) && showModal(surveyId === -1?'NewQuestionnaireSubmit':'SaveQuestionnaireSubmit')"
       >
         发布
       </button>
@@ -207,10 +211,12 @@ import { useRequest } from "vue-hooks-plus";
 import { setNewQuestionnaireDetailAPI } from "@/apis";
 import { closeLoading, startLoading } from "@/utilities";
 import { deepCamelToSnake } from "@/utilities/deepCamelToSnake.ts";
+import { useValidator } from "@/pages/DetailInfo/validate";
 
 const loading = ref(true);
 
 const { deleteQuestion, moveQuestion, resetSchema, surveyId } = useEditStore();
+const { titleError, quesError, deleteQuesError, allValidator } = useValidator();
 
 // console.log(surveyId);
 
