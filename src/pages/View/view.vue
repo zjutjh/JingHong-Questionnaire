@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed inset-0 flex items-center justify-center bg-red-50 text-red-950 dark:text-white dark:bg-black">
+  <div class="fixed inset-0 flex items-center justify-center bg-red-50 " :class="bgClasses">
     <div class="bg-white  dark:bg-customGray flex-col overflow-auto lg:w-1/2 w-full sm:w-2/3  py-30 sm:px-15 px-10 h-full  shadow-lg">
       <div class="flex-col justify-center relative">
         <div class="flex justify-center">
@@ -169,10 +169,26 @@
             </el-skeleton>
           </div>
         </div>
-        <div class="flex justify-center items-center py-50">
-          <button v-if="decryptedId !== '' && !isOutDate" class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75 hover:bg-red-600" @click="handleSubmit">
+        <div class="flex justify-center items-center pt-50 pb-20">
+          <button v-if="decryptedId !== '' && !isOutDate && showData.status === 2"
+            class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75 hover:bg-red-600" @click="handleSubmit">
             提交问卷
           </button>
+          <button v-if="decryptedId !== '' && !isOutDate && showData.status === 1"
+            class="btn  w-1/3 bg-red-800 text-red-50 dark:opacity-75 hover:bg-red-600" @click="refuseSubmit">
+            预览模式，无法提交
+          </button>
+        </div>
+        <div v-if="decryptedId !== '' && !isOutDate && showData.status === 1"
+          class="lex justify-center items-center py-20">
+          <div class="text-red-600 dark:text-red-400 text-center">
+            <p class="text-slate-950 dark:text-red-100">您设置的提交限制：<br /></p>
+            <div class="w-2/3 mx-auto border-t border-b border-gray-200 my-4 dark:border-gray-700 my-4"></div>
+            每日提交次数：{{ showData.baseConfig.dayLimit === 0 ? "不限制次数" : showData.baseConfig.dayLimit + '次' }} <br />
+            总提交次数：{{ showData.baseConfig.sumLimit === 0 ? "不限制次数" : showData.baseConfig.sumLimit + '次' }} <br />
+            是否需要统一身份验证：{{ showData?.baseConfig.verify ? '是' : '否' }}<br />
+            是否仅允许本科生提交：{{ showData?.baseConfig.undergradOnly ? '是' : '否' }}<br />
+          </div>
         </div>
       </div>
       <div v-if="showData && showData.surveyType === 1" class="flex flex-col  ">
@@ -318,6 +334,15 @@ const verifyData = ref({
 const optionStore = useMainStore().useOptionStore();
 const questionnaireStore = useMainStore().useQuetionnaireStore();
 const disabledInput = ref(false);
+const bgClasses = computed(() => {
+  if (!showData.value || typeof showData.value.status === "undefined") {
+    return "bg-red-50 text-red-950 dark:text-white dark:bg-black";
+  }
+  if (showData.value.status === 1) {
+    return "bg-amber-50 text-blue-900 dark:bg-blue-900 dark:text-blue-200";
+  }
+  return "bg-red-50 text-red-950 dark:text-white dark:bg-black";
+});
 onMounted(async () => {
 
   loginStore.setShowHeader(false);
@@ -398,6 +423,9 @@ const handleSubmit = () => {
   if (allowSend.value) {
     showModal("QuestionnaireSubmit");
   }
+};
+const refuseSubmit = () => {
+  ElNotification.info("预览模式下无法提交问卷");
 };
 const getQuestionnaireView = async () => {
   if (decryptedId.value) {

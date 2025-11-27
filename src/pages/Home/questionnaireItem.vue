@@ -39,6 +39,9 @@
         <div v-if="status===2" class="btn btn-sm btn-ghost" @click="handleCopy">
           复制分享链接
         </div>
+        <div v-if="status === 1" class="btn btn-sm btn-ghost" @click="handleCopy">
+          复制草稿链接
+        </div>
         <div class="pt-4" :class="classMap[status]">
           {{ statusMap[status] }}
         </div>
