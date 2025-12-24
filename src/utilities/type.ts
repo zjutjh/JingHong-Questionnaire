@@ -79,19 +79,11 @@ interface FormData {
   quesConfig: {
     desc: string
     title: string
-    questionList: Question[]
+    questionList: any[]
   }
 }
 
-// 在QuesSetting相关接口后新增：图片题设置（如果需要）
-interface PhotoQuesSetting extends BaseQuesSetting {
-  questionType: QuesItemType.PHOTO; // 明确是图片题类型
-  // 图片题特有的设置（如最大上传尺寸，可选）
-  maxImgSize?: number; 
-}
-
-// 然后更新QuesSetting类型，加入PhotoQuesSetting
-type QuesSetting = RadioQuesSetting | CheckboxQuesSetting | TextQuesSetting | VoteQuesSetting | BaseQuesSetting | PhotoQuesSetting;
+type QuesSetting = RadioQuesSetting | CheckboxQuesSetting | TextQuesSetting | VoteQuesSetting | BaseQuesSetting;
 
 export type {
   Option,

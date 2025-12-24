@@ -103,8 +103,6 @@
                     v-model:describe="q.description"
                     :is-active="q.serialNum === activeSerial"
                     @on-click="deleteQuestion(q.serialNum)"
-                    :img="q.img" 
-                    @update:img="(newImg:string) => q.img = newImg"
                   />
                 </template>
               </el-skeleton>
