@@ -6,6 +6,7 @@ import { ElNotification } from "element-plus";
 import { defineStore } from "pinia";
 import { deepSnakeToCamel } from "@/utilities/deepSnakeToCamel.ts";
 import { dayjs } from "element-plus";
+import { QuesStatus, QuesType } from "@/utilities/constMap";
 
 const VOTE = 1;
 /**
@@ -13,8 +14,8 @@ const VOTE = 1;
  */
 function defaultSchema() {
   return {
-    startTime: dayjs().format("YYYY-MM-DDTHH:mm:ssZ"),
-    endTime: dayjs().add(1, "week").format("YYYY-MM-DDTHH:mm:ssZ"),
+    status: QuesStatus.DRAFT,
+    surveyType: QuesType.VOTE,
     baseConfig: {
       startTime: dayjs().format("YYYY-MM-DDTHH:mm:ssZ"),
       endTime: dayjs().add(1, "week").format("YYYY-MM-DDTHH:mm:ssZ"),
@@ -81,29 +82,22 @@ function useInitializeSchema(voteId: Ref<number>) {
   const schema = ref(defaultSchema());
   const { run } = useRequest(() => getQuestionnaireDetailAPI({ id: voteId.value }), {
     manual: true,
-    onBefore: () => startLoading(),
+    onBefore: startLoading,
     onSuccess(res: any) {
-      if (res.code === 200) {
-        console.log("valueChanged");
-        Object.assign(schema.value, deepSnakeToCamel(res.data));
-      } else {
-        ElNotification.error(res.msg);
-      }
+      res.code === 200
+        ? Object.assign(schema.value, deepSnakeToCamel(res.data))
+        : ElNotification.error(res.msg);
     },
     onError(e) {
       ElNotification.error("获取失败，请重试" + e);
     },
-    onFinally: () => closeLoading()
+    onFinally: closeLoading
   });
   function getSchemaFromRemote() {
-    if (voteId.value === -1) return; // 新建问卷时不拉取远程数据
-    run();
+    if (voteId.value !== -1) run(); // 新建问卷时不拉取远程数据
   }
 
-  return {
-    schema,
-    getSchemaFromRemote
-  };
+  return { schema, getSchemaFromRemote };
 }
 
 export const useEditVoteStore = defineStore("voteEdit", () => {
@@ -122,11 +116,9 @@ export const useEditVoteStore = defineStore("voteEdit", () => {
     voteId.value = id;
   }
   function initVote() {
-    console.log("Initializing...");
     if (voteId.value === -1) {
       // resetSchema(); // 新建问卷时，重置 schema
     } else {
-
       getSchemaFromRemote(); // 编辑问卷时，拉取远程数据
     }
   }
@@ -139,13 +131,9 @@ export const useEditVoteStore = defineStore("voteEdit", () => {
     voteId,
     getSchemaFromRemote
   };
-}, {
-  persist: true
-});
+}, { persist: true });
 
 export const useActiveStore = defineStore("active", () => {
   const activeSerial = ref(-1);
-  return {
-    activeSerial
-  };
+  return { activeSerial };
 });

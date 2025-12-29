@@ -8,13 +8,13 @@
         </div>
       </div>
       <div class="divider" />
-      <div v-if="schema && schema.quesConfig" class="flex flex-col gap-5 bg-base-100">
+      <div v-if="schema && schema.quesConfig" class="flex flex-col gap-5 bg-base-100 dark:bg-customGray">
         <div
           v-for="q in schema.quesConfig.questionList"
           :key="q.serialNum"
           @click="activeSerial = q.serialNum"
         >
-          <div class="relative flex items-center gap-4 w-full">
+          <div class="relative flex items-center gap-4 w-full dark:bg-[#1A1A1A]">
             <div v-if="q.quesSetting.questionType === QuesItemType.RADIO" class="flex-grow w-full">
               <el-skeleton animated :loading="loading">
                 <radio

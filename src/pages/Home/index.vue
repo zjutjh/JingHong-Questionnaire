@@ -119,7 +119,7 @@ const showQRcodeModal = (qrCodeURL: Ref<string, string>, copyQrCode: () => Promi
 let modalCopyCodeURL: () => void;
 
 watch(surveyType, () => {
-  tempStore.surveyType = surveyType;
+  tempStore.surveyType = surveyType.value;
 });
 onMounted(() => {
   loginStore.setShowHeader(true);

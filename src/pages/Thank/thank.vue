@@ -3,7 +3,7 @@
     <div class="flex flex-col bg-white lg:w-1/2 p-6 h-full justify-between shadow-lg dark:bg-customGray   w-full sm:w-2/3  py-30 sm:px-15 px-10 ">
       <div>
         <div class="flex justify-center mt-50">
-          <el-image class="h-250" src="https://img.lonesome.cn/jhwl/project/questionnaire/thank.webp" />
+          <el-image class="h-250" src="/thank.webp" />
         </div>
         <div class="flex items-center justify-center">
           <div class=" text-3xl text-red-950  dark:text-red-400">
@@ -11,7 +11,7 @@
           </div>
         </div>
       </div>
-      <el-image class="h-80 " src="https://img.lonesome.cn/jhwl/project/questionnaire/JH_logo.svg" />
+      <el-image class="h-80 " src="/JH_logo.svg" />
     </div>
   </div>
 </template>

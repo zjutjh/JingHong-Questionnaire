@@ -9,6 +9,7 @@ import { Question, Option } from "@/utilities/type.ts";
 import { quesSettingMap } from "@/utilities/quesSettingMap.ts";
 import { deepSnakeToCamel } from "@/utilities/deepSnakeToCamel.ts";
 import { dayjs } from "element-plus";
+import { cloneDeep } from "lodash-es";
 
 /**
  * 返回默认的问卷 schema
@@ -38,7 +39,10 @@ function defaultSchema() {
             required: true,
             unique: false,
             otherOption: false,
-            questionType: QuesItemType.RADIO
+            questionType: QuesItemType.RADIO,
+            minimumOption: 1,
+            maximumOption: 1,
+            reg: "^.*$"
           },
           options: [
             {
@@ -90,6 +94,10 @@ function useInitializeSchema(surveyId: Ref<number>) {
 
 function useQuestionListReducer(questionDataList: Ref<Question[]>) {
   function createQuestion(type: QuesItemType, serialNum: number): Question {
+    if (!(type in quesSettingMap)) {
+      throw new Error("未知的题目类型");
+    }
+
     const commonSettings = {
       serialNum,
       subject: "新问题",
@@ -102,13 +110,9 @@ function useQuestionListReducer(questionDataList: Ref<Question[]>) {
       { serialNum: 2, content: "选项2", img: "", description: "" }
     ];
 
-    if (!(type in quesSettingMap)) {
-      throw new Error("未知的题目类型");
-    }
-
     return {
       ...commonSettings,
-      quesSetting: quesSettingMap[type],
+      quesSetting: cloneDeep(quesSettingMap[type]),
       ...(type === QuesItemType.RADIO || type === QuesItemType.CHECKBOX ? { options: [...defaultOptions] } : {})
     } as Question;
   }

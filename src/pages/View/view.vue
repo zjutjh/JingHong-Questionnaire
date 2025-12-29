@@ -38,7 +38,7 @@
             </button>
           </div>
 
-          <el-image class="w-2/3" src="https://img.lonesome.cn/jhwl/project/questionnaire/jxh_logo.webp" />
+          <el-image class="w-2/3" src="/jxh_logo.webp" />
         </div>
         <el-skeleton
           :loading="loading"
