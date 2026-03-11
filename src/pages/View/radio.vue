@@ -13,8 +13,8 @@
       <div class="flex-col justify-center items-center" />
     </div>
     <div class="divider my-5" />
-    <div class="flex-col px-5 h-auto">
-      <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center h-40 ">
+    <div class="flex-col p-5 h-auto">
+      <div v-for="item in localOptions" :key="item.serial_num" class="flex items-center gap-10 my-5">
         <el-radio
           v-model="localAnswer"
           :name="props.serial_num"
@@ -33,21 +33,24 @@
           </div>
         </div>
       </div>
-      <div v-if="localOtherOption" class="flex gap-10 mt-10">
-        <input
+      <div v-if="localOtherOption" class="flex gap-10 items-center my-5">
+        <el-radio
           v-model="localAnswer"
-          type="radio"
           :name="props.serial_num"
-          class="my-5"
-          style="zoom: 140%"
-          :value="otherAnswer"
+          :value="OTHER_OPTION_VALUE"
+          :label="OTHER_OPTION_VALUE"
+          class="my-5 shrink-0 !mr-0"
+          style="zoom: 110%"
         >
+          <span class="sr-only">其他</span>
+        </el-radio>
         <input
           v-model="otherAnswer"
           type="text"
-          class="input-sm w-150"
+          class="input-sm w-150 border border-gray-300"
           placeholder="其他"
-          @keyup="localAnswer = otherAnswer "
+          @focus="selectOtherOption"
+          @input="selectOtherOption"
         >
       </div>
     </div>
@@ -56,9 +59,10 @@
 
 <script setup lang="ts">
 import { useMainStore } from "@/stores";
-import { ref, watch, defineProps, defineEmits } from "vue";
+import { computed, ref, watch, defineProps, defineEmits } from "vue";
 
 const optionStore = useMainStore().useOptionStore();
+const OTHER_OPTION_VALUE = "__other_option__";
 
 const props = defineProps<{
   questionnaireID: string,
@@ -79,19 +83,44 @@ const props = defineProps<{
 const localUnique = ref<boolean>(props.unique);
 const localOtherOption = ref<boolean>(props.otherOption);
 const localOptions = ref(props.options ? [...props.options] : []);
-const otherAnswer = ref<string>(optionStore.search(props.questionnaireID, props.serial_num));
 const emits = defineEmits(["update:answer"]);
-const localAnswer = ref(props.answer);
 
-watch([localAnswer, otherAnswer], ([newLocalAnswer, newOtherAnswer]) => {
-  if (newOtherAnswer) {
-    optionStore.update(props.questionnaireID, props.serial_num, newOtherAnswer);
+const isPresetOption = (answer: string) => {
+  return localOptions.value.some(option => option.content === answer);
+};
+
+const getInitialOtherAnswer = () => {
+  const storedAnswer = optionStore.search(props.questionnaireID, props.serial_num);
+  if (storedAnswer) {
+    return storedAnswer;
   }
-  if (localOtherOption.value && newLocalAnswer === newOtherAnswer) {
+  if (localOtherOption.value && props.answer && !isPresetOption(props.answer)) {
+    return props.answer;
+  }
+  return "";
+};
+
+const otherAnswer = ref<string>(getInitialOtherAnswer());
+const localAnswer = ref(
+  localOtherOption.value && props.answer && !isPresetOption(props.answer)
+    ? OTHER_OPTION_VALUE
+    : props.answer
+);
+const isOtherSelected = computed(() => localAnswer.value === OTHER_OPTION_VALUE);
+
+const selectOtherOption = () => {
+  localAnswer.value = OTHER_OPTION_VALUE;
+};
+
+watch(otherAnswer, (newOtherAnswer) => {
+  optionStore.update(props.questionnaireID, props.serial_num, newOtherAnswer);
+  if (isOtherSelected.value) {
     emits("update:answer", newOtherAnswer);
-  } else {
-    emits("update:answer", newLocalAnswer);
   }
+});
+
+watch(localAnswer, (newLocalAnswer) => {
+  emits("update:answer", newLocalAnswer === OTHER_OPTION_VALUE ? otherAnswer.value : newLocalAnswer);
 });
 
 </script>
