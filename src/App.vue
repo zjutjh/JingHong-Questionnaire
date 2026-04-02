@@ -34,6 +34,7 @@
 </template>
 
 <script setup lang="ts">
+import { onBeforeMount } from "vue";
 import { RouterView } from "vue-router";
 import router from "@/router";
 import { useMainStore } from "@/stores";
@@ -42,7 +43,12 @@ import { ElNotification } from "element-plus";
 const loginStore = useMainStore().useLoginStore();
 
 // 暗黑模式功能
-import { useDarkModeSwitch } from "./utilities/darkModeSwitch";
+import { initDarkMode, useDarkModeSwitch } from "./utilities/darkModeSwitch";
+
+onBeforeMount(() => {
+  initDarkMode();
+});
+
 const { darkModeStatus } = useDarkModeSwitch(); // 暗黑模式 状态
 
 </script>

@@ -1,16 +1,14 @@
 import { ElLoading, ElNotification } from "element-plus";
-import { useMainStore } from "@/stores";
-import { ref } from "vue";
+import useDarkModeStore from "@/stores/service/darkStore";
 
 let loadingInstance: any = null;
 let isSuccess = false;
 const startLoading = () => {
-  const darkModeStore = useMainStore().useDarkModeStore();
-  const darkModeStatus = ref(darkModeStore.status);
+  const darkModeStore = useDarkModeStore();
   loadingInstance = ElLoading.service({
     lock: true,
     text: "Loading",
-    background: darkModeStatus.value ? "rgba(32, 32, 32, 0.7)" : "rgba(255, 255, 255, 0.7)"
+    background: darkModeStore.status ? "rgba(32, 32, 32, 0.7)" : "rgba(255, 255, 255, 0.7)"
   });
   setTimeout(() => {
     loadingInstance.close();

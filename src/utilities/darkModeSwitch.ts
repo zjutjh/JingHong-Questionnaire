@@ -1,24 +1,30 @@
-import { ref, watch, onBeforeMount } from "vue";
-import { useMainStore } from "@/stores";
-import darkModeSwitch from "./isDark"; // 导入暗黑模式切换dom操作
+import { computed } from "vue";
+import { storeToRefs } from "pinia";
+import useDarkModeStore from "@/stores/service/darkStore";
+
+const syncDOM = (enabled: boolean) => {
+  document.documentElement.classList.toggle("dark", enabled);
+};
+
+export const initDarkMode = () => {
+  const { status } = storeToRefs(useDarkModeStore());
+  syncDOM(status.value);
+};
 
 export function useDarkModeSwitch() {
-  const darkModeStore = useMainStore().useDarkModeStore();
-  const darkModeStatus = ref(false); // 暗黑模式 状态
-  onBeforeMount( // 从store中获取当前状态
-    () => {
-      darkModeStatus.value = darkModeStore.status;
-    }
-  );
-  watch(darkModeStatus, (newValue) => { // 修改status时 上传到store 保存状态
-    // console.log("watched")
-    darkModeStore.setStatus(newValue);
-    darkModeSwitch(newValue);
+  const { status } = storeToRefs(useDarkModeStore());
+
+  const setStatus = (val: boolean) => {
+    status.value = val;
+    syncDOM(val);
+  };
+
+  const darkModeStatus = computed({
+    get: () => status.value,
+    set: (val: boolean) => setStatus(val)
   });
 
-  const switchDarkMode = () => {
-    darkModeStatus.value = !darkModeStatus.value;
-  };
+  const switchDarkMode = () => setStatus(!status.value);
 
   return { darkModeStatus, switchDarkMode };
 }
